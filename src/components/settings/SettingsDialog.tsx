@@ -4,12 +4,18 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useRoomStore } from '@/store/room';
 import { RoomSettings } from '@/types/room';
 import { CogIcon } from 'lucide-react';
@@ -46,9 +52,16 @@ const SettingsDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <CogIcon />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)}>
+              <CogIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Room settings</p>
+          </TooltipContent>
+        </Tooltip>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -63,6 +76,15 @@ const SettingsDialog = () => {
             <SettingsToggle key={setting.settingKey} setting={setting} />
           ))}
         </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            className="w-full"
+          >
+            Close
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
