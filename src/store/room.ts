@@ -40,7 +40,7 @@ export const useRoomStore = create<RoomState>((set, get) => ({
   deleteVotes: () =>
     set((state) => ({
       votes: Object.fromEntries(
-        Object.keys(state.votes).map((userId) => [userId, ''])
+        Object.keys(state.votes).map((userId) => [userId, null])
       ),
       votesRevealed: false,
     })),

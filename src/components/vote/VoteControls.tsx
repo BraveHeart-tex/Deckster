@@ -1,4 +1,5 @@
 'use client';
+import SettingsDialog from '@/components/settings/SettingsDialog';
 import { Button } from '@/components/ui/button';
 import { useRoomStore } from '@/store/room';
 
@@ -24,6 +25,7 @@ const VoteControls = () => {
       <Button onClick={handleRevealVotes} className="min-w-[110px]">
         {votesRevealed ? 'Hide' : 'Show'} Votes
       </Button>
+      <SettingsDialog />
     </div>
   );
 };

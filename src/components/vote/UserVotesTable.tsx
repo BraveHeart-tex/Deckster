@@ -9,11 +9,10 @@ import {
 import UserVotesTableRow from '@/components/vote/UserVotesTableRow';
 import { useRoomStore } from '@/store/room';
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 const UserVotesTable = () => {
-  const usersRecord = useRoomStore((state) => state.users);
-  const votes = useRoomStore((state) => state.votes);
-  const votesRevealed = useRoomStore((state) => state.votesRevealed);
+  const usersRecord = useRoomStore(useShallow((state) => state.users));
   const currentUserId = useRoomStore((state) => state.currentUserId);
 
   const users = useMemo(() => {
@@ -40,10 +39,7 @@ const UserVotesTable = () => {
             <UserVotesTableRow
               key={user.id}
               user={user}
-              vote={votes[user.id]}
-              votesRevealed={votesRevealed}
               isSelf={user.id === currentUserId}
-              hasVoted={Boolean(votes[user.id])}
             />
           ))
         )}

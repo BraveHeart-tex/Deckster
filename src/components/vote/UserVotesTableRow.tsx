@@ -2,57 +2,57 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { generateAvatarUrl } from '@/lib/avatar.utils';
 import { cn } from '@/lib/utils';
+import { useRoomStore } from '@/store/room';
 import { User } from '@/types/user';
 import { CheckIcon } from 'lucide-react';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 interface UserVotesTableRowProps {
   user: User;
-  vote: string;
-  votesRevealed: boolean;
   isSelf: boolean;
-  hasVoted: boolean;
 }
 
-const UserVotesTableRow = memo(
-  ({ isSelf, user, vote, votesRevealed, hasVoted }: UserVotesTableRowProps) => {
-    const avatarUrl = useMemo(() => {
-      return generateAvatarUrl(user.id);
-    }, [user.id]);
+const UserVotesTableRow = memo(({ isSelf, user }: UserVotesTableRowProps) => {
+  const vote = useRoomStore(useShallow((state) => state.votes[user.id]));
+  const votesRevealed = useRoomStore((state) => state.votesRevealed);
 
-    return (
-      <TableRow>
-        <TableCell className={cn(isSelf && 'font-semibold')}>
-          <div className="flex items-center gap-2">
-            <Image
-              src={avatarUrl}
-              alt={`${user.name} avatar`}
-              width={32}
-              height={32}
-              className="rounded-full object-cover"
-            />
-            <span className="truncate">
-              {user.name} {isSelf && '(You)'}
-            </span>
-          </div>
-        </TableCell>
-        <TableCell className="flex items-center justify-center text-center">
-          <UserVoteCard
-            hasVoted={hasVoted}
-            vote={vote}
-            votesRevealed={votesRevealed}
+  const avatarUrl = useMemo(() => {
+    return generateAvatarUrl(user.id);
+  }, [user.id]);
+
+  return (
+    <TableRow>
+      <TableCell className={cn(isSelf && 'font-semibold')}>
+        <div className="flex items-center gap-2">
+          <Image
+            src={avatarUrl}
+            alt={`${user.name} avatar`}
+            width={32}
+            height={32}
+            className="rounded-full object-cover"
           />
-        </TableCell>
-      </TableRow>
-    );
-  }
-);
+          <span className="truncate">
+            {user.name} {isSelf && '(You)'}
+          </span>
+        </div>
+      </TableCell>
+      <TableCell className="flex items-center justify-center text-center">
+        <UserVoteCard
+          hasVoted={!!vote}
+          vote={vote}
+          votesRevealed={votesRevealed}
+        />
+      </TableCell>
+    </TableRow>
+  );
+});
 
 UserVotesTableRow.displayName = 'UserVotesTableRow';
 
 interface UserVoteCardProps {
-  vote: string;
+  vote: string | null;
   votesRevealed: boolean;
   hasVoted: boolean;
 }

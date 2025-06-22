@@ -3,6 +3,9 @@ import { User } from '@/types/user';
 export interface RoomSettings {
   allowOthersToRevealVotes?: boolean;
   allowOthersToDeleteVotes?: boolean;
+  showTimer?: boolean;
+  showUserPresence?: boolean;
+  showAverageOfVotes?: boolean;
 }
 
 export interface RoomData {
@@ -11,7 +14,7 @@ export interface RoomData {
   ownerId: string;
   settings: RoomSettings;
   users: Record<string, User>;
-  votes: Record<string, string>;
+  votes: Record<string, string | null>;
   currentUserId: string;
 }
 
