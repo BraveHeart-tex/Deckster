@@ -13,10 +13,10 @@ import { CheckIcon, ClipboardCopyIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
 
-const mockUrl = 'https://example.com/session/12345';
+const mockUrl = 'https://example.com/room/12345';
 const mockRoomName = 'Room 82253004';
 
-const SessionCodeDisplayDialog = () => {
+const RoomCodeDisplayDialog = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const timeoutReference = useRef<NodeJS.Timeout | null>(null);
@@ -41,7 +41,7 @@ const SessionCodeDisplayDialog = () => {
       }, 2000);
     } catch (error) {
       console.error('Failed to copy URL:', error);
-      showErrorToast('Failed to copy the session URL. Please try again.');
+      showErrorToast('Failed to copy the room URL. Please try again.');
     }
   };
 
@@ -49,7 +49,7 @@ const SessionCodeDisplayDialog = () => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Share Your Session Code & QR</DialogTitle>
+          <DialogTitle>Share Your Room Code</DialogTitle>
           <DialogDescription>
             Share this code or let teammates scan the QR code to join instantly.
             Tap the copy icon to copy the code with one click.
@@ -74,4 +74,4 @@ const SessionCodeDisplayDialog = () => {
   );
 };
 
-export default SessionCodeDisplayDialog;
+export default RoomCodeDisplayDialog;

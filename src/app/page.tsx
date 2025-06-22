@@ -1,9 +1,9 @@
-import SessionCodeDisplayDialog from '@/components/session/SessionCodeDisplayDialog';
+import RoomCodeDisplayDialog from '@/components/room/RoomCodeDisplayDialog';
 
 export default function Home() {
   return (
     <div>
-      <SessionCodeDisplayDialog />
+      <RoomCodeDisplayDialog />
     </div>
   );
 }

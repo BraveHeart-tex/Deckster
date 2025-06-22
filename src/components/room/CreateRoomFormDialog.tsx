@@ -52,7 +52,7 @@ const CreateRoomFormDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Session</Button>
+        <Button variant="outline">Create Room</Button>
       </DialogTrigger>
 
       <DialogContent>
@@ -60,7 +60,7 @@ const CreateRoomFormDialog = () => {
           <DialogTitle>Create Your Room Instantly</DialogTitle>
           <DialogDescription>
             No sign-ups or logins required. Just enter a display name and start
-            your session.
+            your room.
           </DialogDescription>
         </DialogHeader>
 
