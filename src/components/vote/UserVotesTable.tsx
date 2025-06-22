@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ const UserVotesTable = () => {
   const usersRecord = useRoomStore((state) => state.users);
   const votes = useRoomStore((state) => state.votes);
   const votesRevealed = useRoomStore((state) => state.votesRevealed);
+
   const currentUserId = useRoomStore((state) => state.currentUserId);
 
   const users = useMemo(() => {
@@ -24,8 +26,19 @@ const UserVotesTable = () => {
     <Table>
       <TableHeader>
         <TableRow>
+          <Button
+            onClick={() => {
+              useRoomStore.setState((state) => ({
+                votesRevealed: !state.votesRevealed,
+              }));
+            }}
+          >
+            {votesRevealed ? 'Hide Votes' : 'Reveal Votes'}
+          </Button>
+        </TableRow>
+        <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Story Points</TableHead>
+          <TableHead className="text-center">Story Points</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -36,6 +49,7 @@ const UserVotesTable = () => {
             vote={votes[user.id]}
             votesRevealed={votesRevealed}
             isSelf={user.id === currentUserId}
+            hasVoted={Boolean(votes[user.id])}
           />
         ))}
       </TableBody>
