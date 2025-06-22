@@ -11,18 +11,25 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showErrorToast, showSuccessToast } from '@/components/ui/sonner';
+import {
+  MAX_ROOM_NAME_LENGTH,
+  MIN_ROOM_NAME_LENGTH,
+} from '@/constants/room.constants';
 import { useRef, useState } from 'react';
 
 const CreateRoomFormDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [roomName, setRoomName] = useState('');
   const inputReference = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const formData = new FormData(event.currentTarget);
+    const roomName = formData.get('roomName') as string;
     const trimmedName = roomName.trim();
-    if (trimmedName.length < 2) {
+    if (
+      trimmedName.length < MIN_ROOM_NAME_LENGTH ||
+      trimmedName.length > MAX_ROOM_NAME_LENGTH
+    ) {
       inputReference.current?.focus();
       return;
     }
@@ -31,7 +38,6 @@ const CreateRoomFormDialog = () => {
       localStorage.setItem('roomName', trimmedName);
       showSuccessToast(`Room "${trimmedName}" created successfully!`);
       setIsOpen(false);
-      setRoomName('');
     } catch (error) {
       console.error('Failed to save room name:', error);
       showErrorToast(
@@ -61,11 +67,10 @@ const CreateRoomFormDialog = () => {
             <Input
               id="roomName"
               name="roomName"
-              value={roomName}
               ref={inputReference}
-              onChange={(e) => setRoomName(e.target.value)}
               type="text"
-              minLength={2}
+              minLength={MIN_ROOM_NAME_LENGTH}
+              maxLength={MAX_ROOM_NAME_LENGTH}
               required
               autoFocus
             />
