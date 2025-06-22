@@ -18,11 +18,24 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export default defineConfig([
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: { globals: globals.browser },
+  },
+  {
+    files: ['**/*.{js,ts,jsx,tsx}'],
+    rules: {
+      'no-console': [
+        isProduction ? 'error' : 'warn',
+        {
+          allow: isProduction ? [] : ['warn', 'error'],
+        },
+      ],
+    },
   },
   tseslint.configs.recommended,
   {
@@ -72,9 +85,9 @@ export default defineConfig([
       'promise/param-names': 'error',
 
       // unicorn plugin — example rules (tune as needed)
-      'unicorn/filename-case': ['error', { case: 'kebabCase' }],
       'unicorn/prefer-add-event-listener': 'error',
       'unicorn/prevent-abbreviations': 'warn',
+      'unicorn/filename-case': 'off',
 
       // sonarjs plugin — example rules
       'sonarjs/no-duplicate-string': 'warn',
