@@ -4,7 +4,8 @@ import { User } from '@/types/user';
 import { create } from 'zustand';
 
 interface RoomSettings {
-  allowVoteReveal?: boolean;
+  allowOthersToRevealVotes?: boolean;
+  allowOthersToDeleteVotes?: boolean;
 }
 
 interface RoomState {
@@ -18,6 +19,7 @@ interface RoomState {
 
   setUsers: (users: Record<string, User>) => void;
   voteForCurrentUser: (vote: string) => void;
+  deleteVotes: () => void;
   setVotes: (votes: Record<string, string>) => void;
   getAllVoted: () => boolean;
 }
@@ -38,13 +40,21 @@ export const useRoomStore = create<RoomState>((set, get) => ({
   votesRevealed: false,
   ownerId: '',
   settings: {
-    allowVoteReveal: false,
+    allowOthersToRevealVotes: false,
+    allowOthersToDeleteVotes: false,
   },
   currentUserId: MOCK_USERS.user1.id,
   users: MOCK_USERS,
   setUsers: (users) => set({ users }),
   votes: {},
   setVotes: (votes) => set({ votes }),
+  deleteVotes: () =>
+    set((state) => ({
+      votes: Object.fromEntries(
+        Object.keys(state.votes).map((userId) => [userId, ''])
+      ),
+      votesRevealed: false,
+    })),
   getAllVoted: () => {
     const { users, votes } = get();
     return Object.values(users).every((user) => votes[user.id] !== null);

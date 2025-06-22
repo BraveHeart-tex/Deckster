@@ -1,5 +1,6 @@
 import UserVotesTable from '@/components/vote/UserVotesTable';
 import VoteCards from '@/components/vote/VoteCards';
+import VoteControls from '@/components/vote/VoteControls';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         </p>
       </div>
       <VoteCards />
+      <VoteControls />
       <UserVotesTable />
     </div>
   );
