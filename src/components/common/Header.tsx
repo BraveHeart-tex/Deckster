@@ -1,4 +1,5 @@
 'use client';
+import UserMenu from '@/components/common/UserMenu';
 import ModeToggle from '@/components/ModeToggle';
 import { Button } from '@/components/ui/button';
 import { useRoomStore } from '@/store/room';
@@ -30,7 +31,8 @@ const Header = () => {
         </div>
 
         {/* Right - Mode Toggle */}
-        <div className="flex justify-end">
+        <div className="flex items-center justify-end space-x-2">
+          <UserMenu />
           <ModeToggle />
         </div>
       </div>

@@ -1,28 +1,12 @@
 'use client';
 import { MOCK_ROOM_CODE } from '@/constants/room.constants';
-import { User } from '@/types/user';
+import type { RoomData, RoomSettings, RoomState } from '@/types/room';
 import { create } from 'zustand';
 
-interface RoomSettings {
-  allowOthersToRevealVotes?: boolean;
-  allowOthersToDeleteVotes?: boolean;
-}
-
-interface RoomState {
-  roomCode: string;
-  votesRevealed: boolean;
-  ownerId: string;
-  settings: RoomSettings;
-  users: Record<string, User>;
-  votes: Record<string, string>;
-  currentUserId: string;
-
-  setUsers: (users: Record<string, User>) => void;
-  voteForCurrentUser: (vote: string) => void;
-  deleteVotes: () => void;
-  setVotes: (votes: Record<string, string>) => void;
-  getAllVoted: () => boolean;
-}
+const defaultSettings: RoomSettings = {
+  allowOthersToRevealVotes: false,
+  allowOthersToDeleteVotes: false,
+};
 
 const MOCK_USERS = {
   user1: { id: 'user1', name: 'Alice', isOwner: true },
@@ -35,18 +19,23 @@ const MOCK_USERS = {
   user8: { id: 'user8', name: 'Heidi', isOwner: false },
 };
 
-export const useRoomStore = create<RoomState>((set, get) => ({
+const defaultRoomState: RoomData = {
   roomCode: MOCK_ROOM_CODE,
   votesRevealed: false,
   ownerId: '',
-  settings: {
-    allowOthersToRevealVotes: false,
-    allowOthersToDeleteVotes: false,
-  },
+  settings: defaultSettings,
   currentUserId: MOCK_USERS.user1.id,
   users: MOCK_USERS,
-  setUsers: (users) => set({ users }),
   votes: {},
+};
+
+export const useRoomStore = create<RoomState>((set, get) => ({
+  ...defaultRoomState,
+  resetState: () =>
+    set({
+      ...defaultRoomState,
+    }),
+  setUsers: (users) => set({ users }),
   setVotes: (votes) => set({ votes }),
   deleteVotes: () =>
     set((state) => ({
