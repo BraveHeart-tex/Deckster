@@ -17,7 +17,7 @@ const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
       aria-pressed={isSelected}
       title={option.description}
       type="button"
-      className="flex h-16 w-full items-center justify-center text-lg font-semibold hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+      className="flex h-[4.375rem] w-[4.375rem] items-center justify-center text-lg font-semibold"
       variant={isSelected ? 'default' : 'outline'}
       onClick={() => onClick(option)}
     >
@@ -32,7 +32,7 @@ const VoteCards = () => {
   );
 
   return (
-    <div className="grid grid-cols-2 justify-center gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+    <div className="flex flex-wrap items-center justify-center gap-2">
       {VOTE_OPTIONS.map((option) => (
         <VoteCard
           key={option.value}
