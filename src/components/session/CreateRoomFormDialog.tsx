@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -12,8 +13,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { showErrorToast, showSuccessToast } from '@/components/ui/sonner';
 import {
-  MAX_ROOM_NAME_LENGTH,
-  MIN_ROOM_NAME_LENGTH,
+  DISPLAY_NAME_INPUT_ID,
+  DISPLAY_NAME_LOCAL_STORAGE_KEY,
+  MAX_DISPLAY_NAME_LENGTH,
+  MIN_DISPLAY_NAME_LENGTH,
 } from '@/constants/room.constants';
 import { useRef, useState } from 'react';
 
@@ -24,24 +27,24 @@ const CreateRoomFormDialog = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const roomName = formData.get('roomName') as string;
+    const roomName = formData.get(DISPLAY_NAME_INPUT_ID) as string;
     const trimmedName = roomName.trim();
     if (
-      trimmedName.length < MIN_ROOM_NAME_LENGTH ||
-      trimmedName.length > MAX_ROOM_NAME_LENGTH
+      trimmedName.length < MIN_DISPLAY_NAME_LENGTH ||
+      trimmedName.length > MAX_DISPLAY_NAME_LENGTH
     ) {
       inputReference.current?.focus();
       return;
     }
 
     try {
-      localStorage.setItem('roomName', trimmedName);
-      showSuccessToast(`Room "${trimmedName}" created successfully!`);
+      localStorage.setItem(DISPLAY_NAME_LOCAL_STORAGE_KEY, trimmedName);
+      showSuccessToast('Room created successfully!');
       setIsOpen(false);
     } catch (error) {
-      console.error('Failed to save room name:', error);
+      console.error('Failed to create room:', error);
       showErrorToast(
-        'Unexpected error occurred saving room name. Please try again later.'
+        'Unexpected error occurred while creating your room. Please try again later.'
       );
     }
   };
@@ -56,34 +59,32 @@ const CreateRoomFormDialog = () => {
         <DialogHeader>
           <DialogTitle>Create Your Room Instantly</DialogTitle>
           <DialogDescription>
-            No sign-ups or logins required. Just enter a room name and start
+            No sign-ups or logins required. Just enter a display name and start
             your session.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col space-y-2">
-            <Label htmlFor="roomName">Room Name</Label>
+            <Label htmlFor={DISPLAY_NAME_INPUT_ID}>Display Name</Label>
             <Input
-              id="roomName"
-              name="roomName"
+              id={DISPLAY_NAME_INPUT_ID}
+              name={DISPLAY_NAME_INPUT_ID}
               ref={inputReference}
               type="text"
-              minLength={MIN_ROOM_NAME_LENGTH}
-              maxLength={MAX_ROOM_NAME_LENGTH}
+              minLength={MIN_DISPLAY_NAME_LENGTH}
+              maxLength={MAX_DISPLAY_NAME_LENGTH}
               required
               autoFocus
             />
           </div>
           <div className="flex justify-end space-x-2">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setIsOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Create Session</Button>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit">Create Room</Button>
           </div>
         </form>
       </DialogContent>
