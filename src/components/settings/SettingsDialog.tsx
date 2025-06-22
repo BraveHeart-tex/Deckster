@@ -58,9 +58,11 @@ const SettingsDialog = () => {
             account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
-        {roomSettingToggles.map((setting) => (
-          <SettingsToggle key={setting.settingKey} setting={setting} />
-        ))}
+        <div className="flex flex-col gap-4">
+          {roomSettingToggles.map((setting) => (
+            <SettingsToggle key={setting.settingKey} setting={setting} />
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   );

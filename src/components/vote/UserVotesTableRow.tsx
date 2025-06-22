@@ -58,14 +58,6 @@ interface UserVoteCardProps {
 }
 
 const UserVoteCard = ({ hasVoted, vote, votesRevealed }: UserVoteCardProps) => {
-  const frontFace = useMemo(() => {
-    if (!hasVoted) {
-      return votesRevealed ? '?' : '-';
-    }
-
-    return <CheckIcon className="text-muted-foreground" />;
-  }, [hasVoted, votesRevealed]);
-
   return (
     <div className="h-12 w-8 [perspective:800px]">
       <div
@@ -76,12 +68,12 @@ const UserVoteCard = ({ hasVoted, vote, votesRevealed }: UserVoteCardProps) => {
       >
         {/* Front face */}
         <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center rounded-md text-sm font-medium [backface-visibility:hidden]">
-          {frontFace}
+          {hasVoted ? <CheckIcon className="text-muted-foreground" /> : '?'}
         </div>
 
         {/* Back face */}
         <div className="bg-muted text-muted-foreground absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-md text-sm font-medium [backface-visibility:hidden]">
-          {vote}
+          {vote || '-'}
         </div>
       </div>
     </div>
