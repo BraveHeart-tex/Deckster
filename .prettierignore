@@ -1,0 +1,32 @@
+# Ignore node_modules (always)
+node_modules/
+
+# Ignore build and output folders
+.next/
+out/
+dist/
+
+# Ignore static files and public assets
+public/
+
+# Ignore generated files
+*.min.js
+*.bundle.js
+
+# Ignore environment files
+.env*
+
+# Ignore lockfiles and package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore log files
+*.log
+
+coverage/
+**/__snapshots__/
+
+# Ignore editor config files
+.vscode/
+.idea/
