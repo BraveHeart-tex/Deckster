@@ -29,16 +29,24 @@ const UserVotesTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <UserVotesTableRow
-            key={user.id}
-            user={user}
-            vote={votes[user.id]}
-            votesRevealed={votesRevealed}
-            isSelf={user.id === currentUserId}
-            hasVoted={Boolean(votes[user.id])}
-          />
-        ))}
+        {users.length === 0 ? (
+          <TableRow>
+            <TableHead colSpan={2} className="text-center">
+              No users found
+            </TableHead>
+          </TableRow>
+        ) : (
+          users.map((user) => (
+            <UserVotesTableRow
+              key={user.id}
+              user={user}
+              vote={votes[user.id]}
+              votesRevealed={votesRevealed}
+              isSelf={user.id === currentUserId}
+              hasVoted={Boolean(votes[user.id])}
+            />
+          ))
+        )}
       </TableBody>
     </Table>
   );
