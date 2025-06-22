@@ -1,4 +1,5 @@
 'use client';
+import { MOCK_ROOM_CODE } from '@/constants/room.constants';
 import { User } from '@/types/user';
 import { create } from 'zustand';
 
@@ -33,7 +34,7 @@ const MOCK_USERS = {
 };
 
 export const useRoomStore = create<RoomState>((set, get) => ({
-  roomCode: '',
+  roomCode: MOCK_ROOM_CODE,
   votesRevealed: false,
   ownerId: '',
   settings: {

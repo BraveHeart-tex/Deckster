@@ -5,3 +5,6 @@ export const DISPLAY_NAME_INPUT_ID = 'displayName';
 export const ROOM_CODE_LENGTH = 10;
 // TODO: Update regex to properly match the room code format
 export const ROOM_CODE_REGEX = /^[A-Z2-9]{10}$/;
+
+export const MOCK_ROOM_CODE = '3PZ7K8QB';
+export const MOCK_ROOM_URL = `https://example.com/room/${MOCK_ROOM_CODE}`;

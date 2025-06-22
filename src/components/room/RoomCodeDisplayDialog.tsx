@@ -9,12 +9,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { showErrorToast } from '@/components/ui/sonner';
+import { MOCK_ROOM_CODE, MOCK_ROOM_URL } from '@/constants/room.constants';
 import { CheckIcon, ClipboardCopyIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
-
-const MOCK_ROOM_CODE = '3PZ7K8QB';
-const MOCK_ROOM_URL = `https://example.com/room/${MOCK_ROOM_CODE}`;
 
 const RoomCodeDisplayDialog = () => {
   const [isOpen, setIsOpen] = useState(true);

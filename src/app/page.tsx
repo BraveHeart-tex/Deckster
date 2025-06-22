@@ -3,7 +3,7 @@ import VoteCards from '@/components/vote/VoteCards';
 
 export default function Home() {
   return (
-    <div className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center space-y-4">
+    <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col items-center justify-center space-y-4">
       <div className="space-y-2 text-center">
         <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Estimate the Effort
