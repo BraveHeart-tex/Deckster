@@ -13,8 +13,8 @@ import { CheckIcon, ClipboardCopyIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
 
-const mockUrl = 'https://example.com/room/12345';
-const mockRoomName = 'Room 82253004';
+const MOCK_ROOM_CODE = '3PZ7K8QB';
+const MOCK_ROOM_URL = `https://example.com/room/${MOCK_ROOM_CODE}`;
 
 const RoomCodeDisplayDialog = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -29,7 +29,7 @@ const RoomCodeDisplayDialog = () => {
 
   const handleCopyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(mockUrl);
+      await navigator.clipboard.writeText(MOCK_ROOM_URL);
       setIsCopied(true);
 
       if (timeoutReference.current) {
@@ -56,10 +56,10 @@ const RoomCodeDisplayDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
-          <p>{mockRoomName}</p>
-          <QRCodeSVG value={mockUrl} size={225} />
+          <p>{MOCK_ROOM_CODE}</p>
+          <QRCodeSVG value={MOCK_ROOM_URL} size={225} />
           <div className="flex items-center gap-2">
-            <span className="text-foreground">{mockUrl}</span>
+            <span className="text-foreground">{MOCK_ROOM_URL}</span>
             <Button size="icon" variant="outline" onClick={handleCopyUrl}>
               {isCopied ? (
                 <CheckIcon className="stroke-green-600" />

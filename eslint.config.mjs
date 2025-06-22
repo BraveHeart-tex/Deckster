@@ -88,6 +88,19 @@ export default defineConfig([
       'unicorn/prefer-add-event-listener': 'error',
       'unicorn/prevent-abbreviations': 'warn',
       'unicorn/filename-case': 'off',
+      'unicorn/prevent-abbreviations': [
+        'warn',
+        {
+          checkFilenames: false,
+          checkProperties: true,
+          checkVariables: true,
+          replacements: {
+            props: false, // allow 'props' as a variable name
+            fn: false, // allow 'fn' as a variable name
+            cb: false, // allow 'cb' as a variable name
+          },
+        },
+      ],
 
       // sonarjs plugin — example rules
       'sonarjs/no-duplicate-string': 'warn',

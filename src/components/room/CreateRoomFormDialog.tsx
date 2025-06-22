@@ -24,7 +24,7 @@ const CreateRoomFormDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const inputReference = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const roomName = formData.get(DISPLAY_NAME_INPUT_ID) as string;

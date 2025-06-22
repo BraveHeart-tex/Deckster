@@ -1,9 +1,9 @@
-import RoomCodeDisplayDialog from '@/components/room/RoomCodeDisplayDialog';
+import JoinRoomInput from '@/components/room/JoinRoomInput';
 
 export default function Home() {
   return (
     <div>
-      <RoomCodeDisplayDialog />
+      <JoinRoomInput />
     </div>
   );
 }
