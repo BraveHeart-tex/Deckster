@@ -32,7 +32,7 @@ const VoteCards = () => {
   );
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex max-w-screen-sm flex-wrap items-center justify-center gap-2">
       {VOTE_OPTIONS.map((option) => (
         <VoteCard
           key={option.value}

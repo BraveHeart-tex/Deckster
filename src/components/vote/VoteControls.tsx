@@ -21,11 +21,7 @@ const VoteControls = () => {
       <Button onClick={handleDeleteEstimates} variant="outline">
         Delete Estimates
       </Button>
-      <Button
-        onClick={handleRevealVotes}
-        variant="secondary"
-        className="min-w-[110px]"
-      >
+      <Button onClick={handleRevealVotes} className="min-w-[110px]">
         {votesRevealed ? 'Hide' : 'Show'} Votes
       </Button>
     </div>
