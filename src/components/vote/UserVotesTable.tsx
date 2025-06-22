@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import UserVotesTableRow from '@/components/voting/UserVotesTableRow';
+import UserVotesTableRow from '@/components/vote/UserVotesTableRow';
 import { useRoomStore } from '@/store/room';
 import { useMemo } from 'react';
 
