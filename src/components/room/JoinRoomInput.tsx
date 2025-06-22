@@ -32,29 +32,35 @@ const JoinRoomInput = () => {
   }, [roomCode]);
 
   return (
-    <div className="flex items-end gap-2">
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="roomCode">Room Code</Label>
-        <Input
-          type="text"
-          id="roomCode"
-          name="roomCode"
-          value={roomCode}
-          ref={inputReference}
-          onChange={handleRoomCodeChange}
-          minLength={ROOM_CODE_LENGTH}
-          max={ROOM_CODE_LENGTH}
-        />
-        {isInvalidRoomCode && (
-          <p className="text-destructive text-sm">Invalid room code format</p>
-        )}
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="roomCode">Room Code</Label>
+      <div className="flex items-start gap-2">
+        <div className="flex flex-col">
+          <Input
+            type="text"
+            id="roomCode"
+            name="roomCode"
+            value={roomCode}
+            ref={inputReference}
+            onChange={handleRoomCodeChange}
+            minLength={ROOM_CODE_LENGTH}
+            maxLength={ROOM_CODE_LENGTH}
+          />
+          {isInvalidRoomCode && (
+            <p className="text-destructive mt-1 text-sm">
+              Invalid room code format
+            </p>
+          )}
+        </div>
+
+        <Button
+          disabled={roomCode.length < ROOM_CODE_LENGTH}
+          onClick={handleJoinRoom}
+          className="self-start"
+        >
+          Join Room
+        </Button>
       </div>
-      <Button
-        disabled={roomCode.length < ROOM_CODE_LENGTH}
-        onClick={handleJoinRoom}
-      >
-        Join Room
-      </Button>
     </div>
   );
 };
