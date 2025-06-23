@@ -1,4 +1,5 @@
 'use client';
+import FormField from '@/components/common/FormField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -65,7 +66,7 @@ const CreateRoomFormDialog = () => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-col space-y-2">
+          <FormField>
             <Label htmlFor={DISPLAY_NAME_INPUT_ID}>Display Name</Label>
             <Input
               id={DISPLAY_NAME_INPUT_ID}
@@ -77,7 +78,7 @@ const CreateRoomFormDialog = () => {
               required
               autoFocus
             />
-          </div>
+          </FormField>
           <div className="flex justify-end space-x-2">
             <DialogClose asChild>
               <Button type="button" variant="secondary">

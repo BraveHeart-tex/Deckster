@@ -1,4 +1,5 @@
 'use client';
+import CustomVoteOptionsInput from '@/components/settings/CustomVoteOptionsInput';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -67,10 +68,13 @@ const SettingsDialog = () => {
             account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
-          {roomSettingToggles.map((setting) => (
-            <SettingsToggle key={setting.settingKey} setting={setting} />
-          ))}
+        <div className="flex flex-col gap-6">
+          <CustomVoteOptionsInput />
+          <div className="flex flex-col gap-4">
+            {roomSettingToggles.map((setting) => (
+              <SettingsToggle key={setting.settingKey} setting={setting} />
+            ))}
+          </div>
         </div>
         <DialogFooter>
           <Button
