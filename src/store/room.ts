@@ -6,6 +6,8 @@ import { create } from 'zustand';
 const defaultSettings: RoomSettings = {
   allowOthersToRevealVotes: false,
   allowOthersToDeleteVotes: false,
+  showAverageOfVotes: false,
+  showUserPresence: false,
 };
 
 const MOCK_USERS = {

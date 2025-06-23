@@ -33,10 +33,6 @@ const roomSettingToggles: { label: string; settingKey: keyof RoomSettings }[] =
       settingKey: 'allowOthersToRevealVotes',
     },
     {
-      label: 'Show timer',
-      settingKey: 'showTimer',
-    },
-    {
       label: 'Show user presence',
       settingKey: 'showUserPresence',
     },
