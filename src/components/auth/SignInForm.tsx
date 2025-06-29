@@ -1,9 +1,9 @@
 'use client';
-import FormField from '@/components/common/FormField';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ROUTES } from '@/constants/routes';
+import FormField from '@/src/components/common/FormField';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { ROUTES } from '@/src/constants/routes';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { GalleryVerticalEnd } from 'lucide-react';
 import { FormEvent, useState } from 'react';

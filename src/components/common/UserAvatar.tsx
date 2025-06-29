@@ -1,6 +1,10 @@
 'use client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getAvatarFallback } from '@/lib/avatar.utils';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/src/components/ui/avatar';
+import { getAvatarFallback } from '@/src/lib/avatar.utils';
 import { useMemo } from 'react';
 
 interface UserAvatarProps {

@@ -5,9 +5,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import UserVotesTableRow from '@/components/vote/UserVotesTableRow';
-import { useRoomStore } from '@/store/room';
+} from '@/src/components/ui/table';
+import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
+import { useRoomStore } from '@/src/store/room';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/shallow';
 

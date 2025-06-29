@@ -1,4 +1,4 @@
-import { User } from '@/types/user';
+import { User } from '@/src/types/user';
 
 export interface RoomSettings {
   allowOthersToRevealVotes?: boolean;

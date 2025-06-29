@@ -1,6 +1,6 @@
 'use client';
-import CustomVoteOptionsInput from '@/components/settings/CustomVoteOptionsInput';
-import { Button } from '@/components/ui/button';
+import CustomVoteOptionsInput from '@/src/components/settings/CustomVoteOptionsInput';
+import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -9,16 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+} from '@/src/components/ui/dialog';
+import { Label } from '@/src/components/ui/label';
+import { Switch } from '@/src/components/ui/switch';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useRoomStore } from '@/store/room';
-import { RoomSettings } from '@/types/room';
+} from '@/src/components/ui/tooltip';
+import { useRoomStore } from '@/src/store/room';
+import { RoomSettings } from '@/src/types/room';
 import { CogIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useShallow } from 'zustand/shallow';

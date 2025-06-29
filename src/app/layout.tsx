@@ -1,5 +1,5 @@
-import Header from '@/components/common/Header';
-import { ConvexClientProvider } from '@/components/ConvexClientProvider';
+import Header from '@/src/components/common/Header';
+import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
 import {
   ConvexAuthNextjsServerProvider,
   isAuthenticatedNextjs,

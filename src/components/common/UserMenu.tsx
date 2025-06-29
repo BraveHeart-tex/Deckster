@@ -1,5 +1,5 @@
 'use client';
-import UserAvatar from '@/components/common/UserAvatar';
+import UserAvatar from '@/src/components/common/UserAvatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,9 +7,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { generateAvatarUrl } from '@/lib/avatar.utils';
-import { useRoomStore } from '@/store/room';
+} from '@/src/components/ui/dropdown-menu';
+import { generateAvatarUrl } from '@/src/lib/avatar.utils';
+import { useRoomStore } from '@/src/store/room';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { LogOutIcon } from 'lucide-react';
 import { useShallow } from 'zustand/shallow';

@@ -1,8 +1,8 @@
 'use client';
-import UserMenu from '@/components/common/UserMenu';
-import ModeToggle from '@/components/ModeToggle';
-import { Button } from '@/components/ui/button';
-import { useRoomStore } from '@/store/room';
+import UserMenu from '@/src/components/common/UserMenu';
+import ModeToggle from '@/src/components/ModeToggle';
+import { Button } from '@/src/components/ui/button';
+import { useRoomStore } from '@/src/store/room';
 import { Share2Icon } from 'lucide-react';
 import Link from 'next/link';
 

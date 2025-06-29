@@ -1,6 +1,6 @@
 'use client';
-import FormField from '@/components/common/FormField';
-import { Button } from '@/components/ui/button';
+import FormField from '@/src/components/common/FormField';
+import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -9,16 +9,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { showErrorToast, showSuccessToast } from '@/components/ui/sonner';
+} from '@/src/components/ui/dialog';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import {
   DISPLAY_NAME_INPUT_ID,
   DISPLAY_NAME_LOCAL_STORAGE_KEY,
   MAX_DISPLAY_NAME_LENGTH,
   MIN_DISPLAY_NAME_LENGTH,
-} from '@/constants/room.constants';
+} from '@/src/constants/room.constants';
 import { useRef, useState } from 'react';
 
 const CreateRoomFormDialog = () => {

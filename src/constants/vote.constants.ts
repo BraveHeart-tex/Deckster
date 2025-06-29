@@ -1,4 +1,4 @@
-import { VoteOption } from '@/types/voteOption';
+import { VoteOption } from '@/src/types/voteOption';
 
 export const VOTE_OPTIONS: VoteOption[] = [
   { value: '?', label: '?', description: 'I am unsure or need more info' },

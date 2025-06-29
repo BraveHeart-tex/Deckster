@@ -1,7 +1,7 @@
 'use client';
-import SettingsDialog from '@/components/settings/SettingsDialog';
-import { Button } from '@/components/ui/button';
-import { useRoomStore } from '@/store/room';
+import SettingsDialog from '@/src/components/settings/SettingsDialog';
+import { Button } from '@/src/components/ui/button';
+import { useRoomStore } from '@/src/store/room';
 
 const VoteControls = () => {
   const votesRevealed = useRoomStore((state) => state.votesRevealed);

@@ -1,4 +1,4 @@
-import { ROUTES } from '@/constants/routes';
+import { ROUTES } from '@/src/constants/routes';
 import {
   convexAuthNextjsMiddleware,
   createRouteMatcher,

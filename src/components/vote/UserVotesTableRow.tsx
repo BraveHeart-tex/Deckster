@@ -1,9 +1,9 @@
 'use client';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { generateAvatarUrl } from '@/lib/avatar.utils';
-import { cn } from '@/lib/utils';
-import { useRoomStore } from '@/store/room';
-import { User } from '@/types/user';
+import { TableCell, TableRow } from '@/src/components/ui/table';
+import { generateAvatarUrl } from '@/src/lib/avatar.utils';
+import { cn } from '@/src/lib/utils';
+import { useRoomStore } from '@/src/store/room';
+import { User } from '@/src/types/user';
 import { CheckIcon } from 'lucide-react';
 import Image from 'next/image';
 import { memo, useMemo } from 'react';

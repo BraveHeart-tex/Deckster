@@ -1,7 +1,7 @@
 'use client';
-import FormField from '@/components/common/FormField';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import FormField from '@/src/components/common/FormField';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
 import { useState } from 'react';
 
 // TODO: Handle blur and enter key to submit the input value

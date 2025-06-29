@@ -1,8 +1,8 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { VOTE_OPTIONS } from '@/constants/vote.constants';
-import { useRoomStore } from '@/store/room';
-import { VoteOption } from '@/types/voteOption';
+import { Button } from '@/src/components/ui/button';
+import { VOTE_OPTIONS } from '@/src/constants/vote.constants';
+import { useRoomStore } from '@/src/store/room';
+import { VoteOption } from '@/src/types/voteOption';
 import { useShallow } from 'zustand/shallow';
 
 interface VoteCardProps {

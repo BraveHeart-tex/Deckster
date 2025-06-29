@@ -1,6 +1,6 @@
 'use client';
-import { MOCK_ROOM_CODE } from '@/constants/room.constants';
-import type { RoomData, RoomSettings, RoomState } from '@/types/room';
+import { MOCK_ROOM_CODE } from '@/src/constants/room.constants';
+import type { RoomData, RoomSettings, RoomState } from '@/src/types/room';
 import { create } from 'zustand';
 
 const defaultSettings: RoomSettings = {

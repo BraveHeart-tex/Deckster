@@ -1,15 +1,15 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { showErrorToast } from '@/components/ui/sonner';
-import { MOCK_ROOM_CODE, MOCK_ROOM_URL } from '@/constants/room.constants';
+} from '@/src/components/ui/dialog';
+import { showErrorToast } from '@/src/components/ui/sonner';
+import { MOCK_ROOM_CODE, MOCK_ROOM_URL } from '@/src/constants/room.constants';
 import { CheckIcon, ClipboardCopyIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';

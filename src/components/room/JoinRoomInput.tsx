@@ -1,10 +1,10 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { showErrorToast } from '@/components/ui/sonner';
-import { ROOM_CODE_LENGTH } from '@/constants/room.constants';
-import { isValidRoomCode } from '@/lib/roomCode.utils';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { showErrorToast } from '@/src/components/ui/sonner';
+import { ROOM_CODE_LENGTH } from '@/src/constants/room.constants';
+import { isValidRoomCode } from '@/src/lib/roomCode.utils';
 import { useMemo, useRef, useState } from 'react';
 
 const JoinRoomInput = () => {
