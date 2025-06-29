@@ -2,6 +2,7 @@
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import CreateRoomFormDialog from '@/src/components/room/CreateRoomFormDialog';
 import { Button } from '@/src/components/ui/button';
 import { ROUTES } from '@/src/constants/routes';
 import { useQuery } from 'convex/react';
@@ -19,9 +20,7 @@ const RoomList = () => {
           started.
         </p>
         <div className="grid w-full max-w-sm grid-cols-1 gap-4 sm:grid-cols-2">
-          <Button variant="default" className="w-full">
-            Create Room
-          </Button>
+          <CreateRoomFormDialog />
           <Button variant="secondary" className="w-full">
             Join Room
           </Button>
