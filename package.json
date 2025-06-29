@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@auth/core": "0.37.0",
     "@convex-dev/auth": "^0.0.87",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",

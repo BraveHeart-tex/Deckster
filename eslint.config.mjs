@@ -47,8 +47,14 @@ export default defineConfig([
       unicorn: unicornPlugin,
       sonarjs: sonarjsPlugin,
     },
-
     extends: [...compat.extends('prettier')],
+    settings: {
+      'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
+    },
     rules: {
       // prettier
       'prettier/prettier': ['error', {}, { usePrettierrc: true }],
@@ -58,7 +64,7 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'warn',
       'react/react-in-jsx-scope': 'off',
 
-      // import plugin — example rules
+      // import plugin
       'import/no-unresolved': 'error',
       'import/named': 'error',
       'import/default': 'error',
@@ -84,7 +90,7 @@ export default defineConfig([
       'promise/no-promise-in-callback': 'warn',
       'promise/param-names': 'error',
 
-      // unicorn plugin — example rules (tune as needed)
+      // unicorn plugin
       'unicorn/prefer-add-event-listener': 'error',
       'unicorn/prevent-abbreviations': 'warn',
       'unicorn/filename-case': 'off',
