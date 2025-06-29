@@ -104,6 +104,9 @@ export default defineConfig([
             props: false, // allow 'props' as a variable name
             fn: false, // allow 'fn' as a variable name
             cb: false, // allow 'cb' as a variable name
+            args: false, // allow 'args' as a variable name
+            ctx: false, // allow 'ctx' as a variable name,
+            Doc: false,
           },
         },
       ],
