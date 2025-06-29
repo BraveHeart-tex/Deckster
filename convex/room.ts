@@ -1,10 +1,10 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
+import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 
 // TODO: Refactor these with relation helpers
-
 export const createRoom = mutation({
   args: {
     name: v.string(),
@@ -12,12 +12,18 @@ export const createRoom = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in to create a room');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: "'Must be logged in to create a room'",
+      });
     }
 
     const user = await ctx.db.get(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'User not found',
+      });
     }
 
     const roomId = await ctx.db.insert('rooms', {
@@ -46,17 +52,26 @@ export const joinRoom = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in to join a room');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to join a room',
+      });
     }
 
     const user = await ctx.db.get(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new ApplicationError({
+        message: 'User not found',
+        code: ERROR_CODES.NOT_FOUND,
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new Error('Room not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
     }
 
     // Check if the user is already a participant
@@ -91,7 +106,10 @@ export const getRoom = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in to get a room');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to get a room',
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
@@ -166,16 +184,25 @@ export const startVoting = mutation({
   async handler(ctx, args) {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to start voting',
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new Error('Room not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
     }
 
     if (room.createdBy !== userId) {
-      throw new Error('Only room creator can start voting');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Only room creator can start voting',
+      });
     }
 
     // Clear previous votes
@@ -203,16 +230,25 @@ export const revealVotes = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to reveal voting',
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new Error('Room not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
     }
 
     if (room.createdBy !== userId) {
-      throw new Error('Only room creator can reveal votes');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Only room creator can reveal votes',
+      });
     }
 
     await ctx.db.patch(args.roomId, {
@@ -228,16 +264,25 @@ export const resetVoting = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in',
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new Error('Room not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
     }
 
     if (room.createdBy !== userId) {
-      throw new Error('Only room creator can reset voting');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Only room creator can reset voting',
+      });
     }
 
     // Clear votes

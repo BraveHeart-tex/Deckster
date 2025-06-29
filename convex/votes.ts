@@ -1,5 +1,6 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
+import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { mutation, query } from './_generated/server';
 
 export const castVote = mutation({
@@ -10,21 +11,33 @@ export const castVote = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new Error('Must be logged in to vote');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: "'Must be logged in to vote'",
+      });
     }
 
     const user = await ctx.db.get(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'User not found',
+      });
     }
 
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new Error('Room not found');
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
     }
 
     if (!room.isVotingActive) {
-      throw new Error('Voting is not active');
+      throw new ApplicationError({
+        code: ERROR_CODES.RESOURCE_INACTIVE,
+        message: 'Voting is not active',
+      });
     }
 
     // Check if user is a participant
@@ -36,7 +49,10 @@ export const castVote = mutation({
       .unique();
 
     if (!participant) {
-      throw new Error('Must be a room participant to vote');
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be a room participant to vote',
+      });
     }
 
     // Check if user already voted

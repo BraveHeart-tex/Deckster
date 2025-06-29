@@ -11,8 +11,10 @@ const HomePage = async () => {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col items-center justify-center space-y-4">
-      <RoomList />
+    <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <RoomList />
+      </div>
     </div>
   );
 };

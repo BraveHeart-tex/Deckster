@@ -1,11 +1,21 @@
 'use client';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { Doc, Id } from '@/convex/_generated/dataModel';
 import CreateRoomFormDialog from '@/src/components/room/CreateRoomFormDialog';
+import JoinRoomDialog from '@/src/components/room/JoinRoomDialog';
+import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/src/components/ui/card';
 import { ROUTES } from '@/src/constants/routes';
 import { useQuery } from 'convex/react';
+
 import { useRouter } from 'next/navigation';
 
 const RoomList = () => {
@@ -21,50 +31,54 @@ const RoomList = () => {
         </p>
         <div className="grid w-full max-w-sm grid-cols-1 gap-4 sm:grid-cols-2">
           <CreateRoomFormDialog />
-          <Button variant="secondary" className="w-full">
-            Join Room
-          </Button>
+          <JoinRoomDialog />
         </div>
       </div>
     );
   }
 
   const onJoinRoom = (roomId: Id<'rooms'>) => {
+    router.refresh();
     router.push(ROUTES.ROOM(roomId));
   };
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div>
       <h2 className="mb-4 text-2xl font-semibold">Your Rooms</h2>
       <div className="space-y-3">
         {rooms.map((room) => (
-          <div
-            key={room._id}
-            className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <div>
-              <h3 className="text-lg font-semibold">{room.name}</h3>
-              <p className="text-secondary text-sm">
-                {room.isVotingActive ? (
-                  <span className="text-green-600">• Voting Active</span>
-                ) : (
-                  <span className="text-gray-500">• Waiting</span>
-                )}
-                {room.currentStory && (
-                  <span className="ml-2">Story: {room.currentStory}</span>
-                )}
-              </p>
-            </div>
-            <button
-              onClick={() => onJoinRoom(room._id)}
-              className="bg-primary hover:bg-primary-hover rounded px-4 py-2 text-white transition-colors"
-            >
-              Enter Room
-            </button>
-          </div>
+          <RoomCard room={room} onJoinRoom={onJoinRoom} key={room._id} />
         ))}
       </div>
     </div>
+  );
+};
+
+interface RoomCardProps {
+  room: Doc<'rooms'>;
+  onJoinRoom: (roomId: Id<'rooms'>) => void;
+}
+
+export const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
+  return (
+    <Card className="flex flex-col justify-between transition-shadow hover:shadow-lg">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl">{room.name}</CardTitle>
+          <Badge variant={room.isVotingActive ? 'default' : 'secondary'}>
+            {room.isVotingActive ? 'Voting Active' : 'Waiting'}
+          </Badge>
+        </div>
+        {room.currentStory && (
+          <CardDescription className="text-muted-foreground mt-2">
+            Story: {room.currentStory}
+          </CardDescription>
+        )}
+      </CardHeader>
+      <CardFooter className="justify-end">
+        <Button onClick={() => onJoinRoom(room._id)}>Enter Room</Button>
+      </CardFooter>
+    </Card>
   );
 };
 
