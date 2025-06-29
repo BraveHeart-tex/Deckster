@@ -1,4 +1,5 @@
 import Header from '@/components/common/Header';
+import { ConvexClientProvider } from '@/components/ConvexClientProvider';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
-          {children}
-        </ThemeProvider>
+        <ConvexClientProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Header />
+            {children}
+          </ThemeProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );
