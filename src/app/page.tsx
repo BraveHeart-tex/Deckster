@@ -1,8 +1,17 @@
 import UserVotesTable from '@/components/vote/UserVotesTable';
 import VoteCards from '@/components/vote/VoteCards';
 import VoteControls from '@/components/vote/VoteControls';
+import { ROUTES } from '@/constants/routes';
+import { isAuthenticatedNextjs } from '@convex-dev/auth/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+const HomePage = async () => {
+  const isAuthed = await isAuthenticatedNextjs();
+
+  if (!isAuthed) {
+    redirect(ROUTES.AUTH);
+  }
+
   return (
     <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col items-center justify-center space-y-4">
       <div className="space-y-2 text-center">
@@ -19,4 +28,6 @@ export default function Home() {
       <UserVotesTable />
     </div>
   );
-}
+};
+
+export default HomePage;

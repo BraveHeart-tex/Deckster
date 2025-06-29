@@ -10,16 +10,18 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { generateAvatarUrl } from '@/lib/avatar.utils';
 import { useRoomStore } from '@/store/room';
+import { useAuthActions } from '@convex-dev/auth/react';
 import { LogOutIcon } from 'lucide-react';
 import { useShallow } from 'zustand/shallow';
 
 const UserMenu = () => {
+  const { signOut } = useAuthActions();
   const user = useRoomStore(
     useShallow((state) => state.users[state.currentUserId])
   );
 
   const handleLogout = () => {
-    useRoomStore.getState().resetState();
+    void signOut();
   };
 
   return (

@@ -1,8 +1,13 @@
 import Header from '@/components/common/Header';
 import { ConvexClientProvider } from '@/components/ConvexClientProvider';
+import {
+  ConvexAuthNextjsServerProvider,
+  isAuthenticatedNextjs,
+} from '@convex-dev/auth/nextjs/server';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const inter = Inter({
@@ -16,21 +21,26 @@ export const metadata: Metadata = {
     'A simple easy to use scrum poker app. Create a room, invite your team, and start estimating your user stories.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isAuthed = await isAuthenticatedNextjs();
+
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>
+    <ConvexAuthNextjsServerProvider>
+      <html lang="en" suppressHydrationWarning>
         <ConvexClientProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Header />
-            {children}
-          </ThemeProvider>
+          <body className={`${inter.className} antialiased`}>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <Toaster />
+              {isAuthed ? <Header /> : null}
+              {children}
+            </ThemeProvider>
+          </body>
         </ConvexClientProvider>
-      </body>
-    </html>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }
