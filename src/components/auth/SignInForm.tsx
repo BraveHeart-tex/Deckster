@@ -105,13 +105,6 @@ const SignInForm = () => {
           </svg>
           Continue with Google
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => void signIn('anonymous')}
-        >
-          Sign in anonymously
-        </Button>
       </div>
     </div>
   );
