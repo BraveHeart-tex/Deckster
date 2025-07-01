@@ -3,6 +3,7 @@ import { v } from 'convex/values';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
+import { getUserNameFromIdentity } from './helpers';
 
 // TODO: Refactor these with relation helpers
 export const createRoom = mutation({
@@ -10,34 +11,26 @@ export const createRoom = mutation({
     name: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: "'Must be logged in to create a room'",
       });
     }
 
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'User not found',
-      });
-    }
-
     const roomId = await ctx.db.insert('rooms', {
       name: args.name,
-      createdBy: userId,
+      createdBy: userIdentity.userId as string,
       isVotingActive: false,
       votesRevealed: false,
     });
 
     // add the user as the participant of the room
     await ctx.db.insert('participants', {
-      userId,
+      userId: userIdentity.userId as string,
       isActive: true,
-      userName: user.name || user.email || 'Anonymous',
+      userName: getUserNameFromIdentity(userIdentity),
       roomId,
     });
 
@@ -50,19 +43,12 @@ export const joinRoom = mutation({
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+
+    if (userIdentity === null) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Must be logged in to join a room',
-      });
-    }
-
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      throw new ApplicationError({
-        message: 'User not found',
-        code: ERROR_CODES.NOT_FOUND,
       });
     }
 
@@ -78,7 +64,9 @@ export const joinRoom = mutation({
     const existingParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (query) =>
-        query.eq('roomId', args.roomId).eq('userId', userId)
+        query
+          .eq('roomId', args.roomId)
+          .eq('userId', userIdentity.userId as string)
       )
       .unique();
 
@@ -89,9 +77,9 @@ export const joinRoom = mutation({
       // If not, create a new participant entry
       await ctx.db.insert('participants', {
         roomId: args.roomId,
-        userId,
+        userId: userIdentity.userId as string,
         isActive: true,
-        userName: user.name || user.email || 'Anonymous',
+        userName: getUserNameFromIdentity(userIdentity),
       });
     }
 
@@ -104,8 +92,8 @@ export const getRoom = query({
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Must be logged in to get a room',
@@ -120,7 +108,7 @@ export const getRoom = query({
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
+        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
       )
       .unique();
 

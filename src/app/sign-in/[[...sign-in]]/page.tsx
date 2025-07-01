@@ -1,13 +1,13 @@
-import RoomList from '@/src/components/room/RoomList';
+import { SignIn } from '@clerk/nextjs';
 
-const HomePage = () => {
+const SignInPage = () => {
   return (
     <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <RoomList />
+        <SignIn />
       </div>
     </div>
   );
 };
 
-export default HomePage;
+export default SignInPage;

@@ -1,7 +1,7 @@
-import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { mutation, query } from './_generated/server';
+import { getUserNameFromIdentity } from './helpers';
 
 export const castVote = mutation({
   args: {
@@ -9,19 +9,11 @@ export const castVote = mutation({
     value: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: "'Must be logged in to vote'",
-      });
-    }
-
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'User not found',
       });
     }
 
@@ -44,7 +36,7 @@ export const castVote = mutation({
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
+        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
       )
       .unique();
 
@@ -59,7 +51,7 @@ export const castVote = mutation({
     const existingVote = await ctx.db
       .query('votes')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
+        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
       )
       .unique();
 
@@ -72,8 +64,8 @@ export const castVote = mutation({
       // Create new vote
       await ctx.db.insert('votes', {
         roomId: args.roomId,
-        userId,
-        userName: user.name || user.email || 'Anonymous',
+        userId: userIdentity.userId as string,
+        userName: getUserNameFromIdentity(userIdentity),
         value: args.value,
         storyTitle: room.currentStory,
       });
@@ -86,8 +78,8 @@ export const getRoomVotes = query({
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
       return [];
     }
 
@@ -95,7 +87,7 @@ export const getRoomVotes = query({
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
+        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
       )
       .unique();
 
@@ -115,15 +107,15 @@ export const getUserVote = query({
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
       return null;
     }
 
     return await ctx.db
       .query('votes')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
+        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
       )
       .unique();
   },

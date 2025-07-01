@@ -1,13 +1,13 @@
-import SignInForm from '@/src/components/auth/SignInForm';
+import { SignUp } from '@clerk/nextjs';
 
-const SignInPage = () => {
+const SignUpPage = () => {
   return (
     <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="w-full max-w-sm">
-        <SignInForm />
+        <SignUp />
       </div>
     </div>
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

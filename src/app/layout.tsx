@@ -1,9 +1,7 @@
 import Header from '@/src/components/common/Header';
 import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
-import {
-  ConvexAuthNextjsServerProvider,
-  isAuthenticatedNextjs,
-} from '@convex-dev/auth/nextjs/server';
+import { ClerkProvider } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
@@ -26,21 +24,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isAuthed = await isAuthenticatedNextjs();
+  const authResult = await auth();
 
   return (
-    <ConvexAuthNextjsServerProvider>
-      <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <ClerkProvider>
         <ConvexClientProvider>
           <body className={`${inter.className} antialiased`}>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <Toaster />
-              {isAuthed ? <Header /> : null}
+              {authResult.isAuthenticated ? <Header /> : null}
               {children}
             </ThemeProvider>
           </body>
         </ConvexClientProvider>
-      </html>
-    </ConvexAuthNextjsServerProvider>
+      </ClerkProvider>
+    </html>
   );
 }

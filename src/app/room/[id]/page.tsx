@@ -1,18 +1,9 @@
 import UserVotesTable from '@/src/components/vote/UserVotesTable';
 import VoteCards from '@/src/components/vote/VoteCards';
 import VoteControls from '@/src/components/vote/VoteControls';
-import { ROUTES } from '@/src/constants/routes';
-import { isAuthenticatedNextjs } from '@convex-dev/auth/nextjs/server';
-import { redirect } from 'next/navigation';
 
-const RoomPage = async () => {
-  // TODO: Check if the user has access to room
-  const isAuthed = await isAuthenticatedNextjs();
-
-  if (!isAuthed) {
-    redirect(ROUTES.AUTH);
-  }
-
+// TODO: Check if the user has access to room
+const RoomPage = () => {
   return (
     <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col items-center justify-center space-y-4">
       <div className="space-y-2 text-center">
