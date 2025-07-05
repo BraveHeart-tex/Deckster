@@ -1,9 +1,9 @@
+import { Id } from '@/convex/_generated/dataModel';
 import UserVotesTable from '@/src/components/vote/UserVotesTable';
 import VoteCards from '@/src/components/vote/VoteCards';
 import VoteControls from '@/src/components/vote/VoteControls';
 
-// TODO: Check if the user has access to room
-const RoomPage = () => {
+const RoomPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col items-center justify-center space-y-4">
       <div className="space-y-2 text-center">
@@ -17,7 +17,7 @@ const RoomPage = () => {
       </div>
       <VoteCards />
       <VoteControls />
-      <UserVotesTable />
+      <UserVotesTable roomId={(await params).id as Id<'rooms'>} />
     </div>
   );
 };

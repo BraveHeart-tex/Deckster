@@ -28,7 +28,7 @@ const RoomList = ({ preloadedRooms }: RoomListProps) => {
 
   if (rooms.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-6 py-16 text-center">
+      <div className="box-border flex min-h-svh flex-col items-center justify-center space-y-6 text-center">
         <p className="text-muted-foreground max-w-md text-sm">
           No rooms yet. Create a new room or join an existing one to get
           started.

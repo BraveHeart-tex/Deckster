@@ -8,7 +8,8 @@ import { getUserNameFromIdentity } from './helpers';
 // TODO: Refactor these with relation helpers
 export const createRoom = mutation({
   args: {
-    name: v.string(),
+    roomName: v.string(),
+    userDisplayName: v.string(),
   },
   handler: async (ctx, args) => {
     const userIdentity = await ctx.auth.getUserIdentity();
@@ -20,7 +21,7 @@ export const createRoom = mutation({
     }
 
     const roomId = await ctx.db.insert('rooms', {
-      name: args.name,
+      name: args.roomName,
       createdBy: userIdentity.userId as string,
       isVotingActive: false,
       votesRevealed: false,
@@ -30,7 +31,7 @@ export const createRoom = mutation({
     await ctx.db.insert('participants', {
       userId: userIdentity.userId as string,
       isActive: true,
-      userName: getUserNameFromIdentity(userIdentity),
+      userName: args.userDisplayName || getUserNameFromIdentity(userIdentity),
       roomId,
     });
 
@@ -167,7 +168,6 @@ export const getUserRooms = query({
 export const startVoting = mutation({
   args: {
     roomId: v.id('rooms'),
-    storyTitle: v.string(),
   },
   async handler(ctx, args) {
     const userId = await getAuthUserId(ctx);
@@ -204,7 +204,6 @@ export const startVoting = mutation({
     }
 
     await ctx.db.patch(args.roomId, {
-      currentStory: args.storyTitle,
       isVotingActive: true,
       votesRevealed: false,
     });
@@ -286,7 +285,6 @@ export const resetVoting = mutation({
     await ctx.db.patch(args.roomId, {
       isVotingActive: false,
       votesRevealed: false,
-      currentStory: undefined,
     });
   },
 });
