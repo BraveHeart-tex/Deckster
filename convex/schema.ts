@@ -5,7 +5,6 @@ export default defineSchema({
   rooms: defineTable({
     name: v.string(),
     createdBy: v.string(),
-    currentStory: v.optional(v.string()),
     isVotingActive: v.boolean(),
     votesRevealed: v.boolean(),
   }).index('by_created_by', ['createdBy']),
@@ -14,7 +13,6 @@ export default defineSchema({
     userId: v.string(),
     userName: v.string(),
     value: v.union(v.string(), v.null()),
-    storyTitle: v.optional(v.string()),
   })
     .index('by_room', ['roomId'])
     .index('by_room_and_user', ['roomId', 'userId']),

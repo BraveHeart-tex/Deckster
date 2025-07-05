@@ -1,5 +1,4 @@
 'use client';
-import UserAvatar from '@/src/components/common/UserAvatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
-import { generateAvatarUrl } from '@/src/lib/avatar.utils';
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import { LogOutIcon } from 'lucide-react';
 
@@ -21,10 +19,10 @@ const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <UserAvatar
+        {/* <UserAvatar
           src={generateAvatarUrl(user.id)}
           username={user?.username || ''}
-        />
+        /> */}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{user.username}</DropdownMenuLabel>

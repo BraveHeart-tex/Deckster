@@ -1,63 +1,55 @@
 'use client';
+import { Doc } from '@/convex/_generated/dataModel';
 import { TableCell, TableRow } from '@/src/components/ui/table';
-import { generateAvatarUrl } from '@/src/lib/avatar.utils';
 import { cn } from '@/src/lib/utils';
 import { useRoomStore } from '@/src/store/room';
-import { User } from '@/src/types/user';
+import { useUser } from '@clerk/nextjs';
 import { CheckIcon } from 'lucide-react';
-import Image from 'next/image';
 import { memo, useMemo } from 'react';
-import { useShallow } from 'zustand/shallow';
 
 interface UserVotesTableRowProps {
-  user: User;
-  isSelf: boolean;
+  vote: Doc<'votes'> | null;
+  userName: string;
+  participantUserId: string;
 }
 
-const UserVotesTableRow = memo(({ isSelf, user }: UserVotesTableRowProps) => {
-  const vote = useRoomStore(useShallow((state) => state.votes[user.id]));
-  const votesRevealed = useRoomStore((state) => state.votesRevealed);
+const UserVotesTableRow = memo(
+  ({ vote, userName, participantUserId }: UserVotesTableRowProps) => {
+    const votesRevealed = useRoomStore((state) => state.votesRevealed);
+    const { user } = useUser();
 
-  const avatarUrl = useMemo(() => {
-    return generateAvatarUrl(user.id);
-  }, [user.id]);
+    const isSelf = useMemo(() => {
+      return user?.id && participantUserId && user.id === participantUserId;
+    }, [user?.id, participantUserId]);
 
-  return (
-    <TableRow>
-      <TableCell className={cn(isSelf && 'font-semibold')}>
-        <div className="flex items-center gap-2">
-          <Image
-            src={avatarUrl}
-            alt={`${user.name} avatar`}
-            width={32}
-            height={32}
-            className="rounded-full object-cover"
+    return (
+      <TableRow>
+        <TableCell className={cn(isSelf && 'font-semibold')}>
+          <div className="flex items-center gap-2">
+            <span className="truncate">
+              {vote?.userName || userName} {isSelf && '(You)'}
+            </span>
+          </div>
+        </TableCell>
+        <TableCell className="flex items-center justify-center text-center">
+          <UserVoteCard
+            vote={vote?.value || ''}
+            votesRevealed={votesRevealed}
           />
-          <span className="truncate">
-            {user.name} {isSelf && '(You)'}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell className="flex items-center justify-center text-center">
-        <UserVoteCard
-          hasVoted={!!vote}
-          vote={vote}
-          votesRevealed={votesRevealed}
-        />
-      </TableCell>
-    </TableRow>
-  );
-});
+        </TableCell>
+      </TableRow>
+    );
+  }
+);
 
 UserVotesTableRow.displayName = 'UserVotesTableRow';
 
 interface UserVoteCardProps {
   vote: string | null;
   votesRevealed: boolean;
-  hasVoted: boolean;
 }
 
-const UserVoteCard = ({ hasVoted, vote, votesRevealed }: UserVoteCardProps) => {
+const UserVoteCard = ({ vote, votesRevealed }: UserVoteCardProps) => {
   return (
     <div className="h-12 w-8 [perspective:800px]">
       <div
@@ -68,7 +60,7 @@ const UserVoteCard = ({ hasVoted, vote, votesRevealed }: UserVoteCardProps) => {
       >
         {/* Front face */}
         <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center rounded-md text-sm font-medium [backface-visibility:hidden]">
-          {hasVoted ? <CheckIcon className="text-muted-foreground" /> : '?'}
+          {vote ? <CheckIcon className="text-muted-foreground" /> : '?'}
         </div>
 
         {/* Back face */}

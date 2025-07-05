@@ -1,4 +1,6 @@
 'use client';
+import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 import {
   Table,
   TableBody,
@@ -7,17 +9,17 @@ import {
   TableRow,
 } from '@/src/components/ui/table';
 import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
-import { useRoomStore } from '@/src/store/room';
-import { useMemo } from 'react';
-import { useShallow } from 'zustand/shallow';
+import { useQuery } from 'convex/react';
 
-const UserVotesTable = () => {
-  const usersRecord = useRoomStore(useShallow((state) => state.users));
-  const currentUserId = useRoomStore((state) => state.currentUserId);
+interface UserVotesTable {
+  roomId: Id<'rooms'>;
+}
 
-  const users = useMemo(() => {
-    return Object.values(usersRecord);
-  }, [usersRecord]);
+const UserVotesTable = ({ roomId }: UserVotesTable) => {
+  const participantsWithVotes = useQuery(
+    api.participants.getParticipantsWithVotes,
+    { roomId }
+  );
 
   return (
     <Table>
@@ -28,18 +30,25 @@ const UserVotesTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.length === 0 ? (
+        {!participantsWithVotes ? (
+          <TableRow>
+            <TableHead colSpan={2} className="text-center">
+              Loading...
+            </TableHead>
+          </TableRow>
+        ) : participantsWithVotes.length === 0 ? (
           <TableRow>
             <TableHead colSpan={2} className="text-center">
               No users found
             </TableHead>
           </TableRow>
         ) : (
-          users.map((user) => (
+          participantsWithVotes.map((participant) => (
             <UserVotesTableRow
-              key={user.id}
-              user={user}
-              isSelf={user.id === currentUserId}
+              key={participant._id}
+              vote={participant.vote}
+              userName={participant.userName}
+              participantUserId={participant.userId}
             />
           ))
         )}

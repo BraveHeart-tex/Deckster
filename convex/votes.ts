@@ -67,7 +67,6 @@ export const castVote = mutation({
         userId: userIdentity.userId as string,
         userName: getUserNameFromIdentity(userIdentity),
         value: args.value,
-        storyTitle: room.currentStory,
       });
     }
   },
