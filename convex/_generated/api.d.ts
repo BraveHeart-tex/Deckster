@@ -15,7 +15,7 @@ import type {
 } from "convex/server";
 import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
-import type * as room from "../room.js";
+import type * as rooms from "../rooms.js";
 import type * as router from "../router.js";
 import type * as votes from "../votes.js";
 
@@ -30,7 +30,7 @@ import type * as votes from "../votes.js";
 declare const fullApi: ApiFromModules<{
   helpers: typeof helpers;
   http: typeof http;
-  room: typeof room;
+  rooms: typeof rooms;
   router: typeof router;
   votes: typeof votes;
 }>;

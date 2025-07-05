@@ -14,12 +14,16 @@ import {
   CardTitle,
 } from '@/src/components/ui/card';
 import { ROUTES } from '@/src/constants/routes';
-import { useQuery } from 'convex/react';
+import { type Preloaded, usePreloadedQuery } from 'convex/react';
 
 import { useRouter } from 'next/navigation';
 
-const RoomList = () => {
-  const rooms = useQuery(api.room.getUserRooms) || [];
+interface RoomListProps {
+  preloadedRooms: Preloaded<typeof api.rooms.getUserRooms>;
+}
+
+const RoomList = ({ preloadedRooms }: RoomListProps) => {
+  const rooms = usePreloadedQuery(preloadedRooms);
   const router = useRouter();
 
   if (rooms.length === 0) {
