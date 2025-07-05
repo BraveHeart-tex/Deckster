@@ -1,18 +1,13 @@
-import { CONVEX_JWT_TEMPLATE_NAME } from '@/constants';
 import { api } from '@/convex/_generated/api';
 import RoomList from '@/src/components/room/RoomList';
-import { auth } from '@clerk/nextjs/server';
+import { getConvexJwtToken } from '@/src/helpers/auth';
 import { preloadQuery } from 'convex/nextjs';
 
 const HomePage = async () => {
-  const token =
-    (await (await auth()).getToken({ template: CONVEX_JWT_TEMPLATE_NAME })) ||
-    '';
-
   const preloadedRooms = await preloadQuery(
     api.rooms.getUserRooms,
     {},
-    { token }
+    { token: await getConvexJwtToken() }
   );
 
   return (

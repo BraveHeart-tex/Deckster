@@ -288,3 +288,24 @@ export const resetVoting = mutation({
     });
   },
 });
+
+export const getUserHasAccessToRoom = query({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return false;
+    }
+
+    const participant = await ctx.db
+      .query('participants')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', args.roomId).eq('userId', userId)
+      )
+      .unique();
+
+    return !!participant;
+  },
+});
