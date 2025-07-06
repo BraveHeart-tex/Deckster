@@ -12,6 +12,7 @@ import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
 import type * as participants from "../participants.js";
 import type * as presence from "../presence.js";
+import type * as roomSettings from "../roomSettings.js";
 import type * as rooms from "../rooms.js";
 import type * as router from "../router.js";
 import type * as votes from "../votes.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   participants: typeof participants;
   presence: typeof presence;
+  roomSettings: typeof roomSettings;
   rooms: typeof rooms;
   router: typeof router;
   votes: typeof votes;
