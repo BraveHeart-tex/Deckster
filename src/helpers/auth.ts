@@ -1,6 +1,7 @@
 'use server';
-import { CONVEX_JWT_TEMPLATE_NAME } from '@/constants';
 import { auth } from '@clerk/nextjs/server';
+
+import { CONVEX_JWT_TEMPLATE_NAME } from '@/constants';
 
 export const getConvexJwtToken = async (): Promise<string> => {
   return (

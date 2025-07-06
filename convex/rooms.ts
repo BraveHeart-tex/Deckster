@@ -1,6 +1,8 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
+
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
+import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 import { getUserNameFromIdentity } from './helpers';
@@ -20,11 +22,23 @@ export const createRoom = mutation({
       });
     }
 
+    let roomCode: string;
+    let exists;
+
+    do {
+      roomCode = generateRoomCode();
+      exists = await ctx.db
+        .query('rooms')
+        .withIndex('by_code', (q) => q.eq('code', roomCode))
+        .unique();
+    } while (exists);
+
     const roomId = await ctx.db.insert('rooms', {
       name: args.roomName,
       createdBy: userIdentity.userId as string,
       isVotingActive: false,
       votesRevealed: false,
+      code: roomCode,
     });
 
     // add the user as the participant of the room
@@ -35,13 +49,17 @@ export const createRoom = mutation({
       roomId,
     });
 
-    return roomId;
+    return {
+      roomId,
+      roomCode,
+    };
   },
 });
 
 export const joinRoom = mutation({
   args: {
-    roomId: v.id('rooms'),
+    roomCode: v.string(),
+    userDisplayName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userIdentity = await ctx.auth.getUserIdentity();
@@ -53,7 +71,17 @@ export const joinRoom = mutation({
       });
     }
 
-    const room = await ctx.db.get(args.roomId);
+    if (!isValidRoomCode(args.roomCode)) {
+      throw new ApplicationError({
+        code: ERROR_CODES.VALIDATION_ERROR,
+        message: 'Invalid room code',
+      });
+    }
+
+    const room = await ctx.db
+      .query('rooms')
+      .withIndex('by_code', (q) => q.eq('code', args.roomCode))
+      .unique();
     if (!room) {
       throw new ApplicationError({
         code: ERROR_CODES.NOT_FOUND,
@@ -65,9 +93,7 @@ export const joinRoom = mutation({
     const existingParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (query) =>
-        query
-          .eq('roomId', args.roomId)
-          .eq('userId', userIdentity.userId as string)
+        query.eq('roomId', room._id).eq('userId', userIdentity.userId as string)
       )
       .unique();
 
@@ -77,47 +103,17 @@ export const joinRoom = mutation({
     } else {
       // If not, create a new participant entry
       await ctx.db.insert('participants', {
-        roomId: args.roomId,
+        roomId: room._id,
         userId: userIdentity.userId as string,
         isActive: true,
-        userName: getUserNameFromIdentity(userIdentity),
+        userName: args.userDisplayName || getUserNameFromIdentity(userIdentity),
       });
     }
 
-    return args.roomId;
-  },
-});
-
-export const getRoom = query({
-  args: {
-    roomId: v.id('rooms'),
-  },
-  handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to get a room',
-      });
-    }
-
-    const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      return null;
-    }
-
-    const participant = await ctx.db
-      .query('participants')
-      .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
-      )
-      .unique();
-
-    if (!participant) {
-      return null;
-    }
-
-    return room;
+    return {
+      roomId: room._id,
+      roomCode: room.code,
+    };
   },
 });
 
@@ -286,26 +282,5 @@ export const resetVoting = mutation({
       isVotingActive: false,
       votesRevealed: false,
     });
-  },
-});
-
-export const getUserHasAccessToRoom = query({
-  args: {
-    roomId: v.id('rooms'),
-  },
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return false;
-    }
-
-    const participant = await ctx.db
-      .query('participants')
-      .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userId)
-      )
-      .unique();
-
-    return !!participant;
   },
 });

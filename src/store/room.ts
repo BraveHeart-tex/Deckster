@@ -1,7 +1,7 @@
 'use client';
-import { MOCK_ROOM_CODE } from '@/src/constants/room.constants';
-import type { RoomData, RoomSettings, RoomState } from '@/src/types/room';
 import { create } from 'zustand';
+
+import type { RoomData, RoomSettings, RoomState } from '@/src/types/room';
 
 const defaultSettings: RoomSettings = {
   allowOthersToRevealVotes: false,
@@ -20,6 +20,8 @@ const MOCK_USERS = {
   user7: { id: 'user7', name: 'Grace', isOwner: false },
   user8: { id: 'user8', name: 'Heidi', isOwner: false },
 };
+
+const MOCK_ROOM_CODE = 'AEBC123';
 
 const defaultRoomState: RoomData = {
   roomCode: MOCK_ROOM_CODE,

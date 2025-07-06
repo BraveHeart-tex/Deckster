@@ -1,22 +1,14 @@
 'use client';
 
+import { type Preloaded, usePreloadedQuery } from 'convex/react';
+import { PlusCircleIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
 import { api } from '@/convex/_generated/api';
-import { Doc, Id } from '@/convex/_generated/dataModel';
 import CreateRoomFormDialog from '@/src/components/room/CreateRoomFormDialog';
 import JoinRoomDialog from '@/src/components/room/JoinRoomDialog';
-import { Badge } from '@/src/components/ui/badge';
-import { Button } from '@/src/components/ui/button';
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/src/components/ui/card';
-import { ROUTES } from '@/src/constants/routes';
-import { type Preloaded, usePreloadedQuery } from 'convex/react';
-
-import { useRouter } from 'next/navigation';
+import RoomCard from '@/src/components/room/RoomCard';
+import { ROUTES } from '@/src/lib/routes';
 
 interface RoomListProps {
   preloadedRooms: Preloaded<typeof api.rooms.getUserRooms>;
@@ -28,61 +20,42 @@ const RoomList = ({ preloadedRooms }: RoomListProps) => {
 
   if (rooms.length === 0) {
     return (
-      <div className="box-border flex min-h-svh flex-col items-center justify-center space-y-6 text-center">
-        <p className="text-muted-foreground max-w-md text-sm">
-          No rooms yet. Create a new room or join an existing one to get
-          started.
-        </p>
-        <div className="grid w-full max-w-sm grid-cols-1 gap-4 sm:grid-cols-2">
-          <CreateRoomFormDialog />
-          <JoinRoomDialog />
+      <div className="flex min-h-svh flex-col items-center justify-center p-6 text-center">
+        <div className="flex max-w-md flex-col items-center space-y-6">
+          <PlusCircleIcon className="text-muted-foreground h-16 w-16" />
+          <p className="text-muted-foreground text-sm">
+            You don’t have any rooms yet. Create one and invite others!
+          </p>
+          <div className="flex items-center space-x-2">
+            <CreateRoomFormDialog />
+            <JoinRoomDialog />
+          </div>
         </div>
       </div>
     );
   }
 
-  const onJoinRoom = (roomId: Id<'rooms'>) => {
+  const onJoinRoom = (roomCode: string) => {
     router.refresh();
-    router.push(ROUTES.ROOM(roomId));
+    router.push(ROUTES.ROOM(roomCode));
   };
 
   return (
-    <div>
-      <h2 className="mb-4 text-2xl font-semibold">Your Rooms</h2>
-      <div className="space-y-3">
+    <div className="flex flex-col space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Your Rooms</h2>
+        <div className="flex items-center space-x-2">
+          <CreateRoomFormDialog />
+          <JoinRoomDialog />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {rooms.map((room) => (
-          <RoomCard room={room} onJoinRoom={onJoinRoom} key={room._id} />
+          <RoomCard key={room._id} room={room} onJoinRoom={onJoinRoom} />
         ))}
       </div>
     </div>
-  );
-};
-
-interface RoomCardProps {
-  room: Doc<'rooms'>;
-  onJoinRoom: (roomId: Id<'rooms'>) => void;
-}
-
-export const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
-  return (
-    <Card className="flex flex-col justify-between transition-shadow hover:shadow-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">{room.name}</CardTitle>
-          <Badge variant={room.isVotingActive ? 'default' : 'secondary'}>
-            {room.isVotingActive ? 'Voting Active' : 'Waiting'}
-          </Badge>
-        </div>
-        {room.currentStory && (
-          <CardDescription className="text-muted-foreground mt-2">
-            Story: {room.currentStory}
-          </CardDescription>
-        )}
-      </CardHeader>
-      <CardFooter className="justify-end">
-        <Button onClick={() => onJoinRoom(room._id)}>Enter Room</Button>
-      </CardFooter>
-    </Card>
   );
 };
 

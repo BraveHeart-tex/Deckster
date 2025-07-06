@@ -1,21 +1,25 @@
 import { z } from 'zod';
 
+import { userDisplayNameSchema } from '@/src/validation/common.validation';
+
+const ROOM_NAME_MIN_LENGTH = 2;
+const ROOM_NAME_MAX_LENGTH = 50;
+
 export const createRoomSchema = z.object({
   roomName: z
     .string()
-    .min(2, 'Room name must be at least 2 characters')
-    .refine((value) => value.trim().length >= 2, {
-      message:
-        'Room name cannot be only whitespace and must be at least 2 characters',
+    .min(
+      ROOM_NAME_MIN_LENGTH,
+      `Room name must be at least ${ROOM_NAME_MIN_LENGTH} characters`
+    )
+    .max(
+      ROOM_NAME_MAX_LENGTH,
+      `Room name must be no longer than ${ROOM_NAME_MAX_LENGTH} characters`
+    )
+    .refine((value) => value.trim().length >= ROOM_NAME_MIN_LENGTH, {
+      message: `Room name cannot be only whitespace and must be at least ${ROOM_NAME_MIN_LENGTH} characters`,
     }),
-
-  userDisplayName: z
-    .string()
-    .min(2, 'Your display must be at least 2 characters')
-    .refine((value) => value.trim().length >= 2, {
-      message:
-        'Your display name cannot be only whitespace and must be at least 2 characters',
-    }),
+  userDisplayName: userDisplayNameSchema,
 });
 
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;

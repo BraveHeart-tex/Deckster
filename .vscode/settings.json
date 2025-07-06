@@ -9,9 +9,9 @@
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "always",
     "source.removeUnusedImports": "always",
-    "source.sortImports": "always"
+    "source.fixAll.eslint": "explicit",
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
 }

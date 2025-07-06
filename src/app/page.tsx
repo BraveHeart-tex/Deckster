@@ -1,7 +1,8 @@
+import { preloadQuery } from 'convex/nextjs';
+
 import { api } from '@/convex/_generated/api';
 import RoomList from '@/src/components/room/RoomList';
 import { getConvexJwtToken } from '@/src/helpers/auth';
-import { preloadQuery } from 'convex/nextjs';
 
 const HomePage = async () => {
   const preloadedRooms = await preloadQuery(
@@ -11,8 +12,8 @@ const HomePage = async () => {
   );
 
   return (
-    <div className="bg-background box-border flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
+    <div className="bg-background min-h-svh px-4 py-10 md:px-8">
+      <div className="mx-auto w-full max-w-screen-xl">
         <RoomList preloadedRooms={preloadedRooms} />
       </div>
     </div>

@@ -1,98 +1,135 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from 'convex/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
-import FormField from '@/src/components/common/FormField';
+import { ROOM_CODE_DEFAULT_SIZE } from '@/shared/generateRoomCode';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/src/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
-import { Label } from '@/src/components/ui/label';
-import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
-import { ROOM_ID_INPUT_ID } from '@/src/constants/room.constants';
-import { ROUTES } from '@/src/constants/routes';
-import { useMutation } from 'convex/react';
-import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { showErrorToast } from '@/src/components/ui/sonner';
+import { ROUTES } from '@/src/lib/routes';
+import {
+  JoinRoomInput,
+  joinRoomSchema,
+} from '@/src/validation/join-room.schema';
 
 const JoinRoomDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  const inputReference = useRef<HTMLInputElement | null>(null);
-  const joinRoom = useMutation(api.room.joinRoom);
+
+  const joinRoom = useMutation(api.rooms.joinRoom);
+  const form = useForm<JoinRoomInput>({
+    defaultValues: {
+      roomCode: '',
+      userDisplayName: '',
+    },
+    resolver: zodResolver(joinRoomSchema),
+  });
   const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const roomId = formData.get(ROOM_ID_INPUT_ID) as string;
-    const trimmedId = roomId.trim();
-
-    if (!trimmedId) {
-      inputReference.current?.focus();
-      return;
-    }
-
+  const onSubmit = async (data: JoinRoomInput) => {
     setIsJoining(true);
 
     try {
-      const joinedRoomId = await joinRoom({ roomId: trimmedId as Id<'rooms'> });
-      showSuccessToast('Joined room successfully!');
-      router.refresh();
-      router.push(ROUTES.ROOM(joinedRoomId));
+      const result = await joinRoom(data);
+      router.push(ROUTES.ROOM(result.roomCode));
     } catch (error) {
+      // TODO: Handle mutation errors here
       console.error('Failed to join room:', error);
       showErrorToast(
-        'Unexpected error occurred while joining the room. Please try again later.'
+        'Unexpected error occurred while joining your room. Please try again later.'
       );
     } finally {
       setIsJoining(false);
     }
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      form.reset();
+    }
+
+    setIsOpen(isOpen);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="secondary">Join Room</Button>
       </DialogTrigger>
-
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Join Room</DialogTitle>
+          <DialogTitle>Join a Room</DialogTitle>
           <DialogDescription>
-            Enter the Room ID to join the room
+            Enter your room code to get started. Add your name if you’d like
+            others to see it.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <FormField>
-            <Label htmlFor={ROOM_ID_INPUT_ID}>Room ID</Label>
-            <Input
-              id={ROOM_ID_INPUT_ID}
-              name={ROOM_ID_INPUT_ID}
-              ref={inputReference}
-              type="text"
-              required
-              autoFocus
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="roomCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Room Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={`${ROOM_CODE_DEFAULT_SIZE} character code`}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    If you don&apos;t know the room code, please ask the room
+                    owner.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </FormField>
-          <div className="flex justify-end space-x-2">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary" disabled={isJoining}>
-                Cancel
+            <FormField
+              control={form.control}
+              name="userDisplayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Your Display Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Optional: Change your name in the room
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isJoining}>
+                {isJoining ? 'Joining...' : 'Join Room'}
               </Button>
-            </DialogClose>
-            <Button type="submit" disabled={isJoining}>
-              {isJoining ? 'Joining' : 'Join'} Room
-            </Button>
-          </div>
-        </form>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

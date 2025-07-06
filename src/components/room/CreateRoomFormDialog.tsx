@@ -1,4 +1,10 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from 'convex/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { api } from '@/convex/_generated/api';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -13,6 +19,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,18 +27,17 @@ import {
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
-import { ROUTES } from '@/src/constants/routes';
+import { ROUTES } from '@/src/lib/routes';
 import {
   CreateRoomInput,
   createRoomSchema,
 } from '@/src/validation/create-room.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from 'convex/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 
-const CreateRoomFormDialog = () => {
+type CreateRoomFormDialogProps = {
+  trigger?: React.ReactNode;
+};
+
+const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
   const form = useForm<CreateRoomInput>({
     defaultValues: {
       roomName: '',
@@ -49,13 +55,14 @@ const CreateRoomFormDialog = () => {
     setIsCreating(true);
 
     try {
-      const roomId = await createRoom(input);
+      const createRoomResult = await createRoom(input);
       showSuccessToast('Room created successfully!');
       setIsOpen(false);
 
       router.refresh();
-      router.push(ROUTES.ROOM(roomId));
+      router.push(ROUTES.ROOM(createRoomResult.roomCode));
     } catch (error) {
+      // TODO: Handle mutation errors here
       console.error('Failed to create room:', error);
       showErrorToast(
         'Unexpected error occurred while creating your room. Please try again later.'
@@ -75,15 +82,13 @@ const CreateRoomFormDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button>Create Room</Button>
+        {trigger || <Button>Create Room</Button>}
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Your Room Instantly</DialogTitle>
-          <DialogDescription>
-            Just enter a room name and start your room.
-          </DialogDescription>
+          <DialogTitle>Create a Room</DialogTitle>
+          <DialogDescription>Enter a name to get started.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -106,13 +111,13 @@ const CreateRoomFormDialog = () => {
               name="userDisplayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Display Name (Optional)</FormLabel>
+                  <FormLabel>Your Display Name</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Change your display name in the room"
-                    />
+                    <Input {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Optional: Change your name in the room
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

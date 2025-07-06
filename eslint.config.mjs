@@ -1,11 +1,12 @@
 import { FlatCompat } from '@eslint/eslintrc';
+import { defineConfig } from 'eslint/config';
 import importPlugin from 'eslint-plugin-import';
 import prettierPlugin from 'eslint-plugin-prettier';
 import promisePlugin from 'eslint-plugin-promise';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
-import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import { dirname } from 'path';
 import tseslint from 'typescript-eslint';
@@ -46,6 +47,7 @@ export default defineConfig([
       promise: promisePlugin,
       unicorn: unicornPlugin,
       sonarjs: sonarjsPlugin,
+      'simple-import-sort': simpleImportSort,
     },
     extends: [...compat.extends('prettier')],
     settings: {
@@ -56,6 +58,11 @@ export default defineConfig([
       },
     },
     rules: {
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+
+      curly: ['error', 'all'],
+
       // prettier
       'prettier/prettier': ['error', {}, { usePrettierrc: true }],
 

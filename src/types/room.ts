@@ -27,3 +27,8 @@ export interface RoomActions {
 }
 
 export type RoomState = RoomData & RoomActions;
+
+export interface RoomPageParameters {
+  code: string;
+  [key: string]: string;
+}

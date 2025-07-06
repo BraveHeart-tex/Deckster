@@ -1,4 +1,8 @@
 'use client';
+import { CogIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useShallow } from 'zustand/shallow';
+
 import CustomVoteOptionsInput from '@/src/components/settings/CustomVoteOptionsInput';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -19,9 +23,6 @@ import {
 } from '@/src/components/ui/tooltip';
 import { useRoomStore } from '@/src/store/room';
 import { RoomSettings } from '@/src/types/room';
-import { CogIcon } from 'lucide-react';
-import { useState } from 'react';
-import { useShallow } from 'zustand/shallow';
 
 const roomSettingToggles: { label: string; settingKey: keyof RoomSettings }[] =
   [
