@@ -1,25 +1,30 @@
-'use client';
+import { useMemo } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/src/components/ui/avatar';
-import { getAvatarFallback } from '@/src/lib/avatar.utils';
-import { useMemo } from 'react';
+import { generateAvatarUrl, getAvatarFallback } from '@/src/lib/avatar.utils';
 
 interface UserAvatarProps {
-  src: string;
+  userId: string;
   username: string;
 }
 
-const UserAvatar = ({ src, username }: UserAvatarProps) => {
-  const fallback = useMemo(() => {
-    return getAvatarFallback(username);
-  }, [username]);
+const UserAvatar = ({ userId, username }: UserAvatarProps) => {
+  const avatarUrl = useMemo(() => {
+    if (!userId) {
+      return '';
+    }
+
+    return generateAvatarUrl(userId);
+  }, [userId]);
+
   return (
     <Avatar>
-      <AvatarImage src={src} />
-      <AvatarFallback>{fallback}</AvatarFallback>
+      <AvatarImage src={avatarUrl} />
+      <AvatarFallback>{getAvatarFallback(username)}</AvatarFallback>
     </Avatar>
   );
 };

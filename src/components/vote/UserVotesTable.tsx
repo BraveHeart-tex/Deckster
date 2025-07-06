@@ -1,4 +1,5 @@
 'use client';
+
 import { useQuery } from 'convex/react';
 
 import { api } from '@/convex/_generated/api';
@@ -18,7 +19,9 @@ interface UserVotesTable {
 const UserVotesTable = ({ roomCode }: UserVotesTable) => {
   const participantsWithVotes = useQuery(
     api.participants.getParticipantsWithVotes,
-    { roomCode }
+    {
+      roomCode,
+    }
   );
 
   return (
@@ -50,6 +53,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
               userName={participant.userName}
               participantUserId={participant.userId}
               participantId={participant._id}
+              isOwner={participant.isOwner}
             />
           ))
         )}

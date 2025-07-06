@@ -25,13 +25,6 @@ export const castVote = mutation({
       });
     }
 
-    if (!room.isVotingActive) {
-      throw new ApplicationError({
-        code: ERROR_CODES.RESOURCE_INACTIVE,
-        message: 'Voting is not active',
-      });
-    }
-
     // Check if user is a participant
     const participant = await ctx.db
       .query('participants')

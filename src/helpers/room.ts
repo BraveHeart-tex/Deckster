@@ -1,15 +1,14 @@
 import { redirect } from 'next/navigation';
 
-import { ApplicationError, ERROR_CODES } from '@/shared/errorCodes';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { ROUTES } from '@/src/lib/routes';
+import { isApplicationError } from '@/src/misc/isApplicationError';
 
 export const handleJoinRoomError = (error: unknown) => {
-  console.error('Failed to join room:', error);
-
-  if (!(error instanceof ApplicationError)) {
+  if (!isApplicationError(error)) {
     showErrorToast('An unexpected error occurred. Please try again later.');
-    return;
+    redirect(ROUTES.HOME);
   }
 
   const code = error.data.code;

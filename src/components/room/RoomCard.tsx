@@ -1,7 +1,6 @@
 'use client';
 
 import { Doc } from '@/convex/_generated/dataModel';
-import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import {
   Card,
@@ -19,12 +18,7 @@ const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
   return (
     <Card className="flex flex-col justify-between transition-shadow hover:shadow-lg">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl">{room.name}</CardTitle>
-          <Badge variant={room.isVotingActive ? 'default' : 'secondary'}>
-            {room.isVotingActive ? 'Voting Active' : 'Waiting'}
-          </Badge>
-        </div>
+        <CardTitle className="text-xl">{room.name}</CardTitle>
       </CardHeader>
       <CardFooter className="justify-end">
         <Button onClick={() => onJoinRoom(room.code)}>Enter Room</Button>
