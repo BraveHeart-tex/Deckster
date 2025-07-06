@@ -1,12 +1,14 @@
-import Header from '@/src/components/common/Header';
-import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
+import './globals.css';
+
 import { ClerkProvider } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
-import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
-import { Toaster } from 'sonner';
-import './globals.css';
+import { ThemeProvider } from 'next-themes';
+
+import Header from '@/src/components/common/Header';
+import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
+import { Toaster } from '@/src/components/ui/sonner';
 
 const inter = Inter({
   variable: '--font-inter',

@@ -15,7 +15,6 @@ export default defineSchema({
   votes: defineTable({
     roomId: v.id('rooms'),
     userId: v.string(),
-    userName: v.string(),
     value: v.union(v.string(), v.null()),
   })
     .index('by_room', ['roomId'])
@@ -27,5 +26,6 @@ export default defineSchema({
     isActive: v.boolean(),
   })
     .index('by_room', ['roomId'])
-    .index('by_room_and_user', ['roomId', 'userId']),
+    .index('by_room_and_user', ['roomId', 'userId'])
+    .index('by_userName', ['userName']),
 });

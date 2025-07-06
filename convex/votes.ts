@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
+
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { mutation, query } from './_generated/server';
-import { getUserNameFromIdentity } from './helpers';
 
 export const castVote = mutation({
   args: {
@@ -65,7 +65,6 @@ export const castVote = mutation({
       await ctx.db.insert('votes', {
         roomId: args.roomId,
         userId: userIdentity.userId as string,
-        userName: getUserNameFromIdentity(userIdentity),
         value: args.value,
       });
     }
