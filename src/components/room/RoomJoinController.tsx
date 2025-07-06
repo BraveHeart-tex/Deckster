@@ -32,9 +32,9 @@ const RoomJoinController = ({
       setIsJoining(true);
       try {
         await joinRoom({ roomCode: parameters.code });
+        setIsJoining(false);
       } catch (error) {
         handleJoinRoomError(error);
-      } finally {
         setIsJoining(false);
       }
     };

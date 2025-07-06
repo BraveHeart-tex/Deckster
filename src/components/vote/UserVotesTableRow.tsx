@@ -3,7 +3,9 @@ import { useUser } from '@clerk/nextjs';
 import { memo, useMemo } from 'react';
 
 import { Doc, Id } from '@/convex/_generated/dataModel';
+import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
+import { Badge } from '@/src/components/ui/badge';
 import { TableCell, TableRow } from '@/src/components/ui/table';
 import UserVoteCard from '@/src/components/vote/UserVoteCard';
 import { cn } from '@/src/lib/utils';
@@ -14,6 +16,7 @@ interface UserVotesTableRowProps {
   participantId: Id<'participants'>;
   userName: string;
   participantUserId: string;
+  isOwner: boolean;
 }
 
 const UserVotesTableRow = memo(
@@ -22,6 +25,7 @@ const UserVotesTableRow = memo(
     userName,
     participantUserId,
     participantId,
+    isOwner,
   }: UserVotesTableRowProps) => {
     const votesRevealed = useRoomStore((state) => state.votesRevealed);
     const { user } = useUser();
@@ -34,15 +38,18 @@ const UserVotesTableRow = memo(
       <TableRow>
         <TableCell className={cn(isSelf && 'group font-semibold')}>
           <div className="flex items-center gap-2">
-            <span className="truncate">
-              {userName} {isSelf && '(You)'}{' '}
-              {isSelf && (
-                <ChangeDisplaynameDialog
-                  defaultValue={userName}
-                  participantId={participantId}
-                />
-              )}
-            </span>
+            <UserAvatar userId={participantUserId} username={userName} />
+            <div>
+              <span className="truncate">{userName}</span>
+              {isSelf && ' (You)'}{' '}
+            </div>
+            {isOwner && <Badge variant="secondary">Owner</Badge>}
+            {isSelf && (
+              <ChangeDisplaynameDialog
+                defaultValue={userName}
+                participantId={participantId}
+              />
+            )}
           </div>
         </TableCell>
         <TableCell className="flex items-center justify-center text-center">

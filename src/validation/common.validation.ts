@@ -10,7 +10,7 @@ export const userDisplayNameSchema = z
   .transform((value) => value.trim())
   .refine(
     (value) =>
-      value.length > 0 ||
+      value.length === 0 ||
       (value.length >= USER_DISPLAY_NAME_MIN_LENGTH &&
         value.length <= USER_DISPLAY_NAME_MAX_LENGTH),
     {

@@ -6,11 +6,10 @@ export default defineSchema({
   rooms: defineTable({
     name: v.string(),
     code: v.string(),
-    createdBy: v.string(),
-    isVotingActive: v.boolean(),
+    ownerId: v.string(),
     votesRevealed: v.boolean(),
   })
-    .index('by_created_by', ['createdBy'])
+    .index('by_owner_id', ['ownerId'])
     .index('by_code', ['code']),
   votes: defineTable({
     roomId: v.id('rooms'),

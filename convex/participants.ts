@@ -46,6 +46,7 @@ export const getParticipantsWithVotes = query({
       return {
         ...participant,
         vote: voteMap.get(participant.userId) ?? null,
+        isOwner: participant.userId === room.ownerId,
       };
     });
 

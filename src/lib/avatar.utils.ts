@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 export const generateAvatarUrl = (userId: string): string => {
   const hmac = crypto
-    .createHmac('sha256', process.env.HMAC_SECRET_KEY!)
+    .createHmac('sha256', process.env.NEXT_PUBLIC_HMAC_SECRET_KEY!)
     .update(userId)
     .digest('hex');
 
@@ -10,11 +10,15 @@ export const generateAvatarUrl = (userId: string): string => {
 };
 
 export const getAvatarFallback = (username: string): string => {
-  if (!username) return '?';
+  if (!username) {
+    return '?';
+  }
 
   const cleaned = username.trim();
 
-  if (!cleaned) return '?';
+  if (!cleaned) {
+    return '?';
+  }
 
   const words = cleaned.split(/\s+/);
 

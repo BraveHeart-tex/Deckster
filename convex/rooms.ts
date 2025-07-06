@@ -7,7 +7,6 @@ import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 import { ensureUniqueDisplayName, getUserNameFromIdentity } from './helpers';
 
-// TODO: Refactor these with relation helpers
 export const createRoom = mutation({
   args: {
     roomName: v.string(),
@@ -35,8 +34,7 @@ export const createRoom = mutation({
 
     const roomId = await ctx.db.insert('rooms', {
       name: args.roomName,
-      createdBy: userIdentity.userId as string,
-      isVotingActive: false,
+      ownerId: userIdentity.userId as string,
       votesRevealed: false,
       code: roomCode,
     });
@@ -184,7 +182,7 @@ export const startVoting = mutation({
       });
     }
 
-    if (room.createdBy !== userId) {
+    if (room.ownerId !== userId) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Only room creator can start voting',
@@ -202,7 +200,6 @@ export const startVoting = mutation({
     }
 
     await ctx.db.patch(args.roomId, {
-      isVotingActive: true,
       votesRevealed: false,
     });
   },
@@ -229,7 +226,7 @@ export const revealVotes = mutation({
       });
     }
 
-    if (room.createdBy !== userId) {
+    if (room.ownerId !== userId) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Only room creator can reveal votes',
@@ -263,7 +260,7 @@ export const resetVoting = mutation({
       });
     }
 
-    if (room.createdBy !== userId) {
+    if (room.ownerId !== userId) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Only room creator can reset voting',
@@ -281,7 +278,6 @@ export const resetVoting = mutation({
     }
 
     await ctx.db.patch(args.roomId, {
-      isVotingActive: false,
       votesRevealed: false,
     });
   },
