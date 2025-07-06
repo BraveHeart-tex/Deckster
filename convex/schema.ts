@@ -11,6 +11,13 @@ export default defineSchema({
   })
     .index('by_owner_id', ['ownerId'])
     .index('by_code', ['code']),
+  roomSettings: defineTable({
+    roomId: v.id('rooms'),
+    allowOthersToRevealVotes: v.boolean(),
+    allowOthersToDeleteVotes: v.boolean(),
+    showUserPresence: v.boolean(),
+    showAverageOfVotes: v.boolean(),
+  }).index('by_room', ['roomId']),
   votes: defineTable({
     roomId: v.id('rooms'),
     userId: v.string(),

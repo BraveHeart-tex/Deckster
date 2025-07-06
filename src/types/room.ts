@@ -1,3 +1,6 @@
+import { WithoutSystemFields } from 'convex/server';
+
+import { Doc } from '@/convex/_generated/dataModel';
 import { User } from '@/src/types/user';
 
 export interface RoomSettings {
@@ -32,3 +35,7 @@ export interface RoomPageParameters {
   code: string;
   [key: string]: string;
 }
+
+export type RoomSettingKey = keyof WithoutSystemFields<
+  Omit<Doc<'roomSettings'>, 'roomId'>
+>;
