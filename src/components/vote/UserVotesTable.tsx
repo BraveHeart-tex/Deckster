@@ -1,5 +1,7 @@
 'use client';
 
+import { useUser } from '@clerk/nextjs';
+import usePresence from '@convex-dev/presence/react';
 import { useQuery } from 'convex/react';
 
 import { api } from '@/convex/_generated/api';
@@ -23,6 +25,9 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
       roomCode,
     }
   );
+  const { user } = useUser();
+
+  const presenceState = usePresence(api.presence, roomCode, user?.id as string);
 
   return (
     <Table>
@@ -54,6 +59,10 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
               participantUserId={participant.userId}
               participantId={participant._id}
               isOwner={participant.isOwner}
+              isOnline={
+                !!presenceState?.find((p) => p.userId === participant.userId)
+                  ?.online
+              }
             />
           ))
         )}

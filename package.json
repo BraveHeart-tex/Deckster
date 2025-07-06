@@ -20,6 +20,7 @@
     "@auth/core": "0.37.0",
     "@clerk/nextjs": "^6.23.2",
     "@convex-dev/auth": "^0.0.87",
+    "@convex-dev/presence": "^0.1.5",
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",

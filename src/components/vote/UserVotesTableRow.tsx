@@ -17,6 +17,7 @@ interface UserVotesTableRowProps {
   userName: string;
   participantUserId: string;
   isOwner: boolean;
+  isOnline: boolean;
 }
 
 const UserVotesTableRow = memo(
@@ -26,6 +27,7 @@ const UserVotesTableRow = memo(
     participantUserId,
     participantId,
     isOwner,
+    isOnline,
   }: UserVotesTableRowProps) => {
     const votesRevealed = useRoomStore((state) => state.votesRevealed);
     const { user } = useUser();
@@ -38,7 +40,11 @@ const UserVotesTableRow = memo(
       <TableRow>
         <TableCell className={cn(isSelf && 'group font-semibold')}>
           <div className="flex items-center gap-2">
-            <UserAvatar userId={participantUserId} username={userName} />
+            <UserAvatar
+              userId={participantUserId}
+              username={userName}
+              presence={isOnline ? 'online' : 'offline'}
+            />
             <div>
               <span className="truncate">{userName}</span>
               {isSelf && ' (You)'}{' '}
