@@ -49,6 +49,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
               vote={participant.vote}
               userName={participant.userName}
               participantUserId={participant.userId}
+              participantId={participant._id}
             />
           ))
         )}

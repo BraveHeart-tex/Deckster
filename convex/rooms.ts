@@ -5,7 +5,7 @@ import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
-import { getUserNameFromIdentity } from './helpers';
+import { ensureUniqueDisplayName, getUserNameFromIdentity } from './helpers';
 
 // TODO: Refactor these with relation helpers
 export const createRoom = mutation({
@@ -40,6 +40,8 @@ export const createRoom = mutation({
       votesRevealed: false,
       code: roomCode,
     });
+
+    await ensureUniqueDisplayName(ctx, args.userDisplayName);
 
     // add the user as the participant of the room
     await ctx.db.insert('participants', {

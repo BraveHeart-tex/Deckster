@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { ExternalToast, Toaster as Sonner, toast, ToasterProps } from 'sonner';
+import { ExternalToast, toast, Toaster as Sonner, ToasterProps } from 'sonner';
 
 const Toaster = ({ ...properties }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
@@ -10,6 +10,9 @@ const Toaster = ({ ...properties }: ToasterProps) => {
     <Sonner
       theme={theme as ToasterProps['theme']}
       className="toaster group"
+      richColors
+      closeButton
+      expand
       style={
         {
           '--normal-bg': 'var(--popover)',
