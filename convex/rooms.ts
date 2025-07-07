@@ -127,6 +127,81 @@ export const joinRoom = mutation({
   },
 });
 
+export const getRoomWithDetailsByCode = query({
+  args: {
+    roomCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const currentUserId = await getAuthUserId(ctx);
+    if (!currentUserId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to perform this action',
+      });
+    }
+
+    if (!isValidRoomCode(args.roomCode)) {
+      throw new ApplicationError({
+        code: ERROR_CODES.VALIDATION_ERROR,
+        message: 'Invalid room code',
+      });
+    }
+
+    const room = await ctx.db
+      .query('rooms')
+      .withIndex('by_code', (q) => q.eq('code', args.roomCode))
+      .unique();
+
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    const isParticipant = await ctx.db
+      .query('participants')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', room._id).eq('userId', currentUserId)
+      )
+      .unique();
+
+    if (!isParticipant) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Must be a room participant to perform this action',
+      });
+    }
+
+    const [participants, roomSettings, votes] = await Promise.all([
+      await ctx.db
+        .query('participants')
+        .withIndex('by_room', (q) => q.eq('roomId', room._id))
+        .collect(),
+      await ctx.db
+        .query('roomSettings')
+        .withIndex('by_room', (q) => q.eq('roomId', room._id))
+        .unique(),
+      await ctx.db
+        .query('votes')
+        .withIndex('by_room', (q) => q.eq('roomId', room._id))
+        .collect(),
+    ]);
+
+    return {
+      room,
+      participants: participants.map((participant) => ({
+        ...participant,
+        isOwner: participant.userId === room.ownerId,
+        vote: votes.find((vote) => vote.userId === participant.userId)?.value,
+      })),
+      roomSettings,
+      currentUserVote: votes.find((vote) => vote.userId === currentUserId)
+        ?.value,
+    };
+  },
+});
+
 export const getRoomByCode = query({
   args: {
     roomCode: v.string(),

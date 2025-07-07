@@ -2,7 +2,7 @@
 import { useUser } from '@clerk/nextjs';
 import { memo, useMemo } from 'react';
 
-import { Doc, Id } from '@/convex/_generated/dataModel';
+import { Id } from '@/convex/_generated/dataModel';
 import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
@@ -12,7 +12,7 @@ import { cn } from '@/src/lib/utils';
 import { useRoomStore } from '@/src/store/room';
 
 interface UserVotesTableRowProps {
-  vote: Doc<'votes'> | null;
+  vote: string;
   participantId: Id<'participants'>;
   userName: string;
   participantUserId: string;
@@ -59,10 +59,7 @@ const UserVotesTableRow = memo(
           </div>
         </TableCell>
         <TableCell className="flex items-center justify-center text-center">
-          <UserVoteCard
-            vote={vote?.value || ''}
-            votesRevealed={votesRevealed}
-          />
+          <UserVoteCard vote={vote} votesRevealed={votesRevealed} />
         </TableCell>
       </TableRow>
     );

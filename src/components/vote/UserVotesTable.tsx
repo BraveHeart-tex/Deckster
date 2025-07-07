@@ -19,12 +19,10 @@ interface UserVotesTable {
 }
 
 const UserVotesTable = ({ roomCode }: UserVotesTable) => {
-  const participantsWithVotes = useQuery(
-    api.participants.getParticipantsWithVotes,
-    {
-      roomCode,
-    }
-  );
+  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
+    roomCode,
+  });
+
   const { user } = useUser();
 
   const presenceState = usePresence(api.presence, roomCode, user?.id as string);
@@ -38,23 +36,23 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {!participantsWithVotes ? (
+        {!roomDetails ? (
           <TableRow>
             <TableHead colSpan={2} className="text-center">
               Loading...
             </TableHead>
           </TableRow>
-        ) : participantsWithVotes.length === 0 ? (
+        ) : roomDetails.participants.length === 0 ? (
           <TableRow>
             <TableHead colSpan={2} className="text-center">
               No users found
             </TableHead>
           </TableRow>
         ) : (
-          participantsWithVotes.map((participant) => (
+          roomDetails.participants.map((participant) => (
             <UserVotesTableRow
               key={participant._id}
-              vote={participant.vote}
+              vote={participant.vote || ''}
               userName={participant.userName}
               participantUserId={participant.userId}
               participantId={participant._id}

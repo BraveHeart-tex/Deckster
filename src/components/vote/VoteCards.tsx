@@ -1,10 +1,10 @@
 'use client';
+import { useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
 import { ERROR_CODES } from '@/shared/errorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import VoteCard from '@/src/components/vote/VoteCard';
@@ -17,35 +17,41 @@ import { VoteOption } from '@/src/types/voteOption';
 const VoteCards = () => {
   const router = useRouter();
   const roomPageParameters = useParams<RoomPageParameters>();
+  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
+    roomCode: roomPageParameters.code,
+  });
+  const { user } = useUser();
   const castVote = useMutation(api.votes.castVote).withOptimisticUpdate(
     (localStore, args) => {
-      const current = localStore.getQuery(api.votes.getUserVote, {
-        roomId: args.roomId,
+      const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
+        roomCode: roomPageParameters.code,
       });
-      if (current) {
+      if (current && user) {
         localStore.setQuery(
-          api.votes.getUserVote,
-          { roomId: args.roomId },
+          api.rooms.getRoomWithDetailsByCode,
+          { roomCode: roomPageParameters.code },
           {
             ...current,
-            ...args,
+            currentUserVote: args.value,
+            participants: current.participants.map((participant) =>
+              participant.userId === user.id
+                ? { ...participant, vote: args.value }
+                : participant
+            ),
           }
         );
       }
     }
   );
-  const room = useQuery(api.rooms.getRoomByCode, {
-    roomCode: roomPageParameters.code,
-  });
 
   const handleVote = useCallback(
     async (option: VoteOption) => {
-      if (!room) {
+      if (!roomDetails?.room) {
         return;
       }
 
       try {
-        await castVote({ roomId: room._id, value: option.value });
+        await castVote({ roomId: roomDetails.room._id, value: option.value });
       } catch (error) {
         handleApplicationError(error, {
           [ERROR_CODES.UNAUTHORIZED]: () => {
@@ -62,38 +68,25 @@ const VoteCards = () => {
         });
       }
     },
-    [castVote, room, router]
+    [castVote, roomDetails?.room, router]
   );
 
-  if (!room) {
+  if (!roomDetails?.room) {
     return null;
   }
 
   return (
     <div className="flex max-w-screen-sm flex-wrap items-center justify-center gap-2">
-      <VoteOptions onVoteClick={handleVote} roomId={room._id} />
+      {VOTE_OPTIONS.map((option) => (
+        <VoteCard
+          key={option.value}
+          option={option}
+          isSelected={option.value === roomDetails.currentUserVote}
+          onClick={handleVote}
+        />
+      ))}
     </div>
   );
-};
-
-interface VoteOptionsProps {
-  onVoteClick: (option: VoteOption) => void;
-  roomId: Id<'rooms'>;
-}
-
-const VoteOptions = ({ onVoteClick, roomId }: VoteOptionsProps) => {
-  const currentUserVote = useQuery(api.votes.getUserVote, {
-    roomId,
-  });
-
-  return VOTE_OPTIONS.map((option) => (
-    <VoteCard
-      key={option.value}
-      option={option}
-      isSelected={option.value === currentUserVote?.value}
-      onClick={onVoteClick}
-    />
-  ));
 };
 
 export default VoteCards;

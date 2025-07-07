@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { mutation, query } from './_generated/server';
+import { mutation } from './_generated/server';
 
 export const castVote = mutation({
   args: {
@@ -61,53 +61,5 @@ export const castVote = mutation({
         value: args.value,
       });
     }
-  },
-});
-
-export const getRoomVotes = query({
-  args: {
-    roomId: v.id('rooms'),
-  },
-  handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      return [];
-    }
-
-    // Check if user is a participant
-    const participant = await ctx.db
-      .query('participants')
-      .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
-      )
-      .unique();
-
-    if (!participant) {
-      return [];
-    }
-
-    return await ctx.db
-      .query('votes')
-      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
-      .collect();
-  },
-});
-
-export const getUserVote = query({
-  args: {
-    roomId: v.id('rooms'),
-  },
-  handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      return null;
-    }
-
-    return await ctx.db
-      .query('votes')
-      .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', args.roomId).eq('userId', userIdentity.userId as string)
-      )
-      .unique();
   },
 });

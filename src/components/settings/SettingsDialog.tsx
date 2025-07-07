@@ -47,14 +47,16 @@ const roomSettingToggles: {
 
 const SettingsDialog = () => {
   const parameters = useParams<RoomPageParameters>();
-  const roomSettings = useQuery(api.roomSettings.getRoomSettings, {
+  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
     roomCode: parameters.code,
   });
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!roomSettings) {
+  if (!roomDetails?.roomSettings) {
     return null;
   }
+
+  const roomSettings = roomDetails.roomSettings;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
