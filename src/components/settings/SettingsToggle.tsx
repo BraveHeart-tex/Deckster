@@ -1,12 +1,16 @@
 'use client';
 
 import { useMutation } from 'convex/react';
+import { useRouter } from 'next/navigation';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { Switch } from '@/src/components/ui/switch';
+import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { ROUTES } from '@/src/lib/routes';
 import { RoomSettingKey } from '@/src/types/room';
 
 interface SettingsToggleProps {
@@ -24,6 +28,7 @@ const SettingsToggle = ({
   roomSettingId,
   roomCode,
 }: SettingsToggleProps) => {
+  const router = useRouter();
   const updateRoomSettings = useMutation(
     api.roomSettings.updateRoomSettings
   ).withOptimisticUpdate((localStore, args) => {
@@ -48,9 +53,21 @@ const SettingsToggle = ({
         [settingKey]: isChecked,
       });
     } catch (error) {
-      // TODO: Handle mutation errors here
-      console.error('Failed to update room settings:', error);
-      showErrorToast('Failed to update room settings. Please try again.');
+      handleApplicationError(error, {
+        [ERROR_CODES.UNAUTHORIZED]: () => {
+          showErrorToast('You are not authorized to perform this action.');
+          router.push(ROUTES.AUTH);
+        },
+        [ERROR_CODES.NOT_FOUND]: () => {
+          showErrorToast('Room not found');
+          router.push(ROUTES.HOME);
+        },
+        [ERROR_CODES.FORBIDDEN]: () => {
+          showErrorToast(
+            'You do not have permission to update the room settings.'
+          );
+        },
+      });
     }
   };
 

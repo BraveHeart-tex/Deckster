@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import { ROOM_CODE_DEFAULT_SIZE } from '@/shared/generateRoomCode';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -27,6 +28,7 @@ import {
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast } from '@/src/components/ui/sonner';
+import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { ROUTES } from '@/src/lib/routes';
 import {
   JoinRoomInput,
@@ -54,11 +56,19 @@ const JoinRoomDialog = () => {
       const result = await joinRoom(data);
       router.push(ROUTES.ROOM(result.roomCode));
     } catch (error) {
-      // TODO: Handle mutation errors here
-      console.error('Failed to join room:', error);
-      showErrorToast(
-        'Unexpected error occurred while joining your room. Please try again later.'
-      );
+      return handleApplicationError(error, {
+        [ERROR_CODES.UNAUTHORIZED]: () => {
+          router.push(ROUTES.AUTH);
+        },
+        [ERROR_CODES.VALIDATION_ERROR]: () => {
+          showErrorToast(
+            'Invalid room code. Make sure the room code is valid.'
+          );
+        },
+        [ERROR_CODES.NOT_FOUND]: () => {
+          showErrorToast('Room not found');
+        },
+      });
     } finally {
       setIsJoining(false);
     }

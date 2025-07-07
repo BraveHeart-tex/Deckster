@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import CustomVoteOptionsInput from '@/src/components/settings/CustomVoteOptionsInput';
 import SettingsToggle from '@/src/components/settings/SettingsToggle';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -81,7 +80,7 @@ const SettingsDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-6">
-          <CustomVoteOptionsInput />
+          {/* TODO: Add voting options */}
           <div className="flex flex-col gap-4">
             {roomSettingToggles.map((setting) => (
               <SettingsToggle

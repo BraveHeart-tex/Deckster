@@ -1,11 +1,12 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -27,6 +28,7 @@ import {
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
+import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { ROUTES } from '@/src/lib/routes';
 import {
   CreateRoomInput,
@@ -62,11 +64,17 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
       router.refresh();
       router.push(ROUTES.ROOM(createRoomResult.roomCode));
     } catch (error) {
-      // TODO: Handle mutation errors here
-      console.error('Failed to create room:', error);
-      showErrorToast(
-        'Unexpected error occurred while creating your room. Please try again later.'
-      );
+      handleApplicationError(error, {
+        [ERROR_CODES.UNAUTHORIZED]: () => {
+          showErrorToast('You are not authorized to perform this action.');
+          redirect(ROUTES.AUTH);
+        },
+        [ERROR_CODES.CONFLICT]: () => {
+          showErrorToast(
+            'Display name already taken. Please try another name.'
+          );
+        },
+      });
     } finally {
       setIsCreating(false);
     }

@@ -2,11 +2,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { PencilIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -31,6 +33,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/tooltip';
+import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { ROUTES } from '@/src/lib/routes';
 import {
   ChangeDisplayNameInput,
   changeDisplayNameSchema,
@@ -58,7 +62,7 @@ const ChangeDisplaynameDialog = ({
   const handleOpenChange = (isOpen: boolean) => {
     setIsOpen(isOpen);
     if (!isOpen) {
-      form.reset();
+      form.reset({ userDisplayName: defaultValue });
     }
   };
 
@@ -72,11 +76,23 @@ const ChangeDisplaynameDialog = ({
       showSuccessToast('Display name changed successfully!');
       setIsOpen(false);
     } catch (error) {
-      // TODO: Handle mutation errors here
-      console.error('Failed to change display name:', error);
-      showErrorToast(
-        'Unexpected error occurred while changing your display name. Please try again later.'
-      );
+      handleApplicationError(error, {
+        [ERROR_CODES.UNAUTHORIZED]: () => {
+          showErrorToast('You are not authorized to perform this action.');
+          redirect(ROUTES.AUTH);
+        },
+        [ERROR_CODES.NOT_FOUND]: () => {
+          redirect(ROUTES.HOME);
+        },
+        [ERROR_CODES.FORBIDDEN]: () => {
+          showErrorToast('You are not to perform this action.');
+        },
+        [ERROR_CODES.CONFLICT]: () => {
+          showErrorToast(
+            'Display name already taken. Please try another name.'
+          );
+        },
+      });
     } finally {
       setIsChanging(false);
     }

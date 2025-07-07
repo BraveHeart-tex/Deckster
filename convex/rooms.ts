@@ -47,7 +47,9 @@ export const createRoom = mutation({
       showUserPresence: false,
     });
 
-    await ensureUniqueDisplayName(ctx, args.userDisplayName);
+    if (args.userDisplayName) {
+      await ensureUniqueDisplayName(ctx, args.userDisplayName);
+    }
 
     // add the user as the participant of the room
     await ctx.db.insert('participants', {
