@@ -127,21 +127,53 @@ export const joinRoom = mutation({
   },
 });
 
-export const getRoomParticipants = query({
+export const getRoomByCode = query({
   args: {
-    roomId: v.id('rooms'),
+    roomCode: v.string(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      return [];
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in to perform this action',
+      });
     }
 
-    return await ctx.db
+    if (!isValidRoomCode(args.roomCode)) {
+      throw new ApplicationError({
+        code: ERROR_CODES.VALIDATION_ERROR,
+        message: 'Invalid room code',
+      });
+    }
+
+    const room = await ctx.db
+      .query('rooms')
+      .withIndex('by_code', (q) => q.eq('code', args.roomCode))
+      .unique();
+
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    const isParticipant = await ctx.db
       .query('participants')
-      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
-      .filter((q) => q.eq(q.field('isActive'), true))
-      .collect();
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', room._id).eq('userId', userId)
+      )
+      .unique();
+
+    if (!isParticipant) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Room not found',
+      });
+    }
+
+    return room;
   },
 });
 

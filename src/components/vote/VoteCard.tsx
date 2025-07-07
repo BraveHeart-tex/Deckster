@@ -9,6 +9,12 @@ interface VoteCardProps {
 }
 
 const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
+  const handleClick = () => {
+    if (!isSelected) {
+      onClick(option);
+    }
+  };
+
   return (
     <Button
       aria-pressed={isSelected}
@@ -16,7 +22,7 @@ const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
       type="button"
       className="flex h-[6.25rem] w-[4.375rem] items-center justify-center text-3xl font-medium"
       variant={isSelected ? 'default' : 'outline'}
-      onClick={() => onClick(option)}
+      onClick={handleClick}
     >
       {option.label}
     </Button>

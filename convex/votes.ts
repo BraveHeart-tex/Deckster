@@ -35,7 +35,7 @@ export const castVote = mutation({
 
     if (!participant) {
       throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
+        code: ERROR_CODES.FORBIDDEN,
         message: 'Must be a room participant to vote',
       });
     }
