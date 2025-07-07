@@ -129,7 +129,11 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isCreating}>
+              <Button
+                type="submit"
+                disabled={isCreating}
+                isLoading={isCreating}
+              >
                 {isCreating ? 'Creating' : 'Create'} Room
               </Button>
             </div>

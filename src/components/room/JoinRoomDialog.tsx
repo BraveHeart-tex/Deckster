@@ -124,7 +124,7 @@ const JoinRoomDialog = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button type="submit" disabled={isJoining}>
+              <Button type="submit" disabled={isJoining} isLoading={isJoining}>
                 {isJoining ? 'Joining...' : 'Join Room'}
               </Button>
             </div>

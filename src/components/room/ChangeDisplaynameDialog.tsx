@@ -128,8 +128,9 @@ const ChangeDisplaynameDialog = ({
                 disabled={
                   isChanging || defaultValue === form.watch('userDisplayName')
                 }
+                isLoading={isChanging}
               >
-                {isChanging ? 'Saving...' : 'Save'} changes
+                {isChanging ? 'Saving' : 'Save'} changes
               </Button>
             </div>
           </form>
