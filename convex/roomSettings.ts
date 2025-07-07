@@ -1,61 +1,7 @@
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { isValidRoomCode } from '../shared/generateRoomCode';
-import { mutation, query } from './_generated/server';
-
-export const getRoomSettings = query({
-  args: {
-    roomCode: v.string(),
-  },
-  handler: async (ctx, args) => {
-    if (!isValidRoomCode(args.roomCode)) {
-      throw new ApplicationError({
-        code: ERROR_CODES.VALIDATION_ERROR,
-        message: 'Invalid room code',
-      });
-    }
-
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to perform this action',
-      });
-    }
-
-    const room = await ctx.db
-      .query('rooms')
-      .withIndex('by_code', (q) => q.eq('code', args.roomCode))
-      .unique();
-
-    if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
-
-    const existingParticipant = await ctx.db
-      .query('participants')
-      .withIndex('by_room_and_user', (query) =>
-        query.eq('roomId', room._id).eq('userId', userIdentity.userId as string)
-      )
-      .unique();
-
-    if (!existingParticipant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
-
-    return await ctx.db
-      .query('roomSettings')
-      .withIndex('by_room', (q) => q.eq('roomId', room._id))
-      .unique();
-  },
-});
+import { mutation } from './_generated/server';
 
 export const updateRoomSettings = mutation({
   args: {

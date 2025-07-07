@@ -32,16 +32,19 @@ const SettingsToggle = ({
   const updateRoomSettings = useMutation(
     api.roomSettings.updateRoomSettings
   ).withOptimisticUpdate((localStore, args) => {
-    const current = localStore.getQuery(api.roomSettings.getRoomSettings, {
+    const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
       roomCode,
     });
-    if (current) {
+    if (current && current.roomSettings) {
       localStore.setQuery(
-        api.roomSettings.getRoomSettings,
+        api.rooms.getRoomWithDetailsByCode,
         { roomCode },
         {
           ...current,
-          ...args,
+          roomSettings: {
+            ...current.roomSettings,
+            [settingKey]: args[settingKey],
+          },
         }
       );
     }

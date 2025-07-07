@@ -202,56 +202,6 @@ export const getRoomWithDetailsByCode = query({
   },
 });
 
-export const getRoomByCode = query({
-  args: {
-    roomCode: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to perform this action',
-      });
-    }
-
-    if (!isValidRoomCode(args.roomCode)) {
-      throw new ApplicationError({
-        code: ERROR_CODES.VALIDATION_ERROR,
-        message: 'Invalid room code',
-      });
-    }
-
-    const room = await ctx.db
-      .query('rooms')
-      .withIndex('by_code', (q) => q.eq('code', args.roomCode))
-      .unique();
-
-    if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
-
-    const isParticipant = await ctx.db
-      .query('participants')
-      .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', room._id).eq('userId', userId)
-      )
-      .unique();
-
-    if (!isParticipant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Room not found',
-      });
-    }
-
-    return room;
-  },
-});
-
 export const getUserRooms = query({
   args: {},
   handler: async (ctx) => {
@@ -275,50 +225,6 @@ export const getUserRooms = query({
     }
 
     return rooms;
-  },
-});
-
-export const startVoting = mutation({
-  args: {
-    roomId: v.id('rooms'),
-  },
-  async handler(ctx, args) {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to start voting',
-      });
-    }
-
-    const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
-
-    if (room.ownerId !== userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Only room creator can start voting',
-      });
-    }
-
-    // Clear previous votes
-    const previousVotes = await ctx.db
-      .query('votes')
-      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
-      .collect();
-
-    for (const vote of previousVotes) {
-      await ctx.db.delete(vote._id);
-    }
-
-    await ctx.db.patch(args.roomId, {
-      votesRevealed: false,
-    });
   },
 });
 
