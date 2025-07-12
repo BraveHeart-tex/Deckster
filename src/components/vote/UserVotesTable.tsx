@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/src/components/ui/table';
+import AverageOfVotesRow from '@/src/components/vote/AverageOfVotesRow';
 import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
@@ -47,20 +48,25 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
             </TableHead>
           </TableRow>
         ) : (
-          roomDetails.participants.map((participant) => (
-            <UserVotesTableRow
-              key={participant._id}
-              vote={participant.vote || ''}
-              userName={participant.userName}
-              participantUserId={participant.userId}
-              participantId={participant._id}
-              isOwner={participant.isOwner}
-              isOnline={
-                !!presenceState?.find((p) => p.userId === participant.userId)
-                  ?.online
-              }
-            />
-          ))
+          <>
+            {roomDetails.participants.map((participant) => (
+              <UserVotesTableRow
+                key={participant._id}
+                vote={participant.vote || ''}
+                userName={participant.userName}
+                participantUserId={participant.userId}
+                participantId={participant._id}
+                isOwner={participant.isOwner}
+                isOnline={
+                  !!presenceState?.find((p) => p.userId === participant.userId)
+                    ?.online
+                }
+              />
+            ))}
+            {roomDetails.roomSettings?.showAverageOfVotes ? (
+              <AverageOfVotesRow />
+            ) : null}
+          </>
         )}
       </TableBody>
     </Table>

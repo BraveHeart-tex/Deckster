@@ -29,7 +29,7 @@ const UserVotesTableRow = memo(
     isOwner,
     isOnline,
   }: UserVotesTableRowProps) => {
-    const votesRevealed = useRoomDetails()?.room.votesRevealed;
+    const roomDetails = useRoomDetails();
     const { user } = useUser();
 
     const isSelf = useMemo(() => {
@@ -43,7 +43,13 @@ const UserVotesTableRow = memo(
             <UserAvatar
               userId={participantUserId}
               username={userName}
-              presence={isOnline ? 'online' : 'offline'}
+              presence={
+                roomDetails?.roomSettings?.showUserPresence
+                  ? isOnline
+                    ? 'online'
+                    : 'offline'
+                  : undefined
+              }
             />
             <div>
               <span className="truncate">{userName}</span>
@@ -59,7 +65,10 @@ const UserVotesTableRow = memo(
           </div>
         </TableCell>
         <TableCell className="flex items-center justify-center text-center">
-          <UserVoteCard vote={vote} votesRevealed={votesRevealed} />
+          <UserVoteCard
+            vote={vote}
+            votesRevealed={roomDetails?.room.votesRevealed}
+          />
         </TableCell>
       </TableRow>
     );
