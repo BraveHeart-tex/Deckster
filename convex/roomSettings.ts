@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { mutation } from './_generated/server';
+import { mutation, query } from './_generated/server';
 
 export const updateRoomSettings = mutation({
   args: {
@@ -45,5 +45,34 @@ export const updateRoomSettings = mutation({
 
     const { roomSettingId: id, ...fieldsToUpdate } = args;
     await ctx.db.patch(id, fieldsToUpdate);
+  },
+});
+
+export const getRoomSettingsByRoomId = query({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'You must be logged in to perform this action',
+      });
+    }
+
+    const setting = await ctx.db
+      .query('roomSettings')
+      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!setting) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room settings not found',
+      });
+    }
+
+    return setting;
   },
 });

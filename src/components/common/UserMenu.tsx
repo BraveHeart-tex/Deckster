@@ -1,4 +1,7 @@
 'use client';
+import { SignOutButton, useUser } from '@clerk/nextjs';
+import { LogOutIcon } from 'lucide-react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,8 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
-import { SignOutButton, useUser } from '@clerk/nextjs';
-import { LogOutIcon } from 'lucide-react';
 
 const UserMenu = () => {
   const { user } = useUser();

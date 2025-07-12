@@ -3,6 +3,7 @@ import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
+import { api } from './_generated/api';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 import { ensureUniqueDisplayName, getUserNameFromIdentity } from './helpers';
@@ -228,7 +229,7 @@ export const getUserRooms = query({
   },
 });
 
-export const revealVotes = mutation({
+export const toggleVotesRevealed = mutation({
   args: {
     roomId: v.id('rooms'),
   },
@@ -249,15 +250,22 @@ export const revealVotes = mutation({
       });
     }
 
-    if (room.ownerId !== userId) {
+    const roomSettings = await ctx.runQuery(
+      api.roomSettings.getRoomSettingsByRoomId,
+      {
+        roomId: args.roomId,
+      }
+    );
+
+    if (!roomSettings.allowOthersToRevealVotes && room.ownerId !== userId) {
       throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Only room creator can reveal votes',
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only the room creator can reveal votes',
       });
     }
 
     await ctx.db.patch(args.roomId, {
-      votesRevealed: true,
+      votesRevealed: !room.votesRevealed,
     });
   },
 });

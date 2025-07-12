@@ -8,8 +8,8 @@ import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDial
 import { Badge } from '@/src/components/ui/badge';
 import { TableCell, TableRow } from '@/src/components/ui/table';
 import UserVoteCard from '@/src/components/vote/UserVoteCard';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { cn } from '@/src/lib/utils';
-import { useRoomStore } from '@/src/store/room';
 
 interface UserVotesTableRowProps {
   vote: string;
@@ -29,7 +29,7 @@ const UserVotesTableRow = memo(
     isOwner,
     isOnline,
   }: UserVotesTableRowProps) => {
-    const votesRevealed = useRoomStore((state) => state.votesRevealed);
+    const votesRevealed = useRoomDetails()?.room.votesRevealed;
     const { user } = useUser();
 
     const isSelf = useMemo(() => {

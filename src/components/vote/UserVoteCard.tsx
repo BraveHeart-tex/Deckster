@@ -4,7 +4,7 @@ import { cn } from '@/src/lib/utils';
 
 interface UserVoteCardProps {
   vote: string | null;
-  votesRevealed: boolean;
+  votesRevealed?: boolean;
 }
 
 const UserVoteCard = ({ vote, votesRevealed }: UserVoteCardProps) => {
