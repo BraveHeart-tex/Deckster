@@ -12,8 +12,8 @@ const HomePage = async () => {
   );
 
   return (
-    <div className="bg-background px-4 md:px-8">
-      <div className="mx-auto w-full max-w-screen-xl">
+    <div className="bg-background h-full px-4 md:px-8">
+      <div className="mx-auto h-full w-full max-w-screen-xl">
         <RoomList preloadedRooms={preloadedRooms} />
       </div>
     </div>
