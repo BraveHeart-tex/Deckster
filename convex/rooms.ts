@@ -341,3 +341,52 @@ export const deleteRoom = mutation({
     await ctx.db.delete(args.roomId);
   },
 });
+
+export const transferRoomOwnership = mutation({
+  args: {
+    roomId: v.id('rooms'),
+    newOwnerId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'You must be logged in to transfer ownership',
+      });
+    }
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only the room creator can transfer ownership',
+      });
+    }
+
+    const isNewOwnerParticipant = await ctx.db
+      .query('participants')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', args.roomId).eq('userId', args.newOwnerId)
+      )
+      .unique();
+
+    if (!isNewOwnerParticipant) {
+      throw new ApplicationError({
+        code: ERROR_CODES.VALIDATION_ERROR,
+        message: 'New owner must be a room participant',
+      });
+    }
+
+    await ctx.db.patch(args.roomId, {
+      ownerId: args.newOwnerId,
+    });
+  },
+});

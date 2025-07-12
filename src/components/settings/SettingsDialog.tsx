@@ -7,6 +7,7 @@ import { useState } from 'react';
 import DangerZoneRow from '@/src/components/settings/DangerZoneRow';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import SettingsToggle from '@/src/components/settings/SettingsToggle';
+import TransferOwnershipDialog from '@/src/components/settings/TransferOwnershipDialog';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -53,6 +54,8 @@ const SettingsDialog = () => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isTransferOwnershipDialogOpen, setIsTransferOwnershipDialogOpen] =
+    useState(false);
 
   if (!roomDetails?.roomSettings) {
     return null;
@@ -60,7 +63,7 @@ const SettingsDialog = () => {
 
   const roomSettings = roomDetails.roomSettings;
   const handleDeleteRoomClick = () => setIsDeleteDialogOpen(true);
-  const handleTransferRoomClick = () => setIsOpen(false);
+  const handleTransferRoomClick = () => setIsTransferOwnershipDialogOpen(true);
 
   return (
     <>
@@ -139,6 +142,10 @@ const SettingsDialog = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <TransferOwnershipDialog
+        isOpen={isTransferOwnershipDialogOpen}
+        onOpenChange={setIsTransferOwnershipDialogOpen}
+      />
       <DeleteRoomDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
