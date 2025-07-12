@@ -106,6 +106,7 @@ const JoinRoomDialog = () => {
                   <FormControl>
                     <Input
                       placeholder={`${ROOM_CODE_DEFAULT_SIZE} character code`}
+                      maxLength={ROOM_CODE_DEFAULT_SIZE}
                       {...field}
                     />
                   </FormControl>
@@ -135,7 +136,7 @@ const JoinRoomDialog = () => {
             />
             <div className="flex justify-end">
               <Button type="submit" disabled={isJoining} isLoading={isJoining}>
-                {isJoining ? 'Joining...' : 'Join Room'}
+                {isJoining ? 'Joining' : 'Join Room'}
               </Button>
             </div>
           </form>
