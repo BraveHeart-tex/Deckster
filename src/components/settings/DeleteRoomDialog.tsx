@@ -1,5 +1,5 @@
 import { useUser } from '@clerk/nextjs';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -18,6 +18,7 @@ import { Button } from '@/src/components/ui/button';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
 
@@ -31,9 +32,7 @@ const DeleteRoomDialog = ({ open, onOpenChange }: DeleteRoomDialogProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const roomCode = useParams<RoomPageParameters>().code;
-  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
-    roomCode,
-  });
+  const roomDetails = useRoomDetails();
   const deleteRoom = useMutation(api.rooms.deleteRoom);
   const router = useRouter();
   const { user } = useUser();
@@ -50,9 +49,9 @@ const DeleteRoomDialog = ({ open, onOpenChange }: DeleteRoomDialogProps) => {
     setIsDeleting(true);
     try {
       await deleteRoom({ roomId: roomDetails.room._id });
+      router.push(ROUTES.HOME);
       showSuccessToast('Room deleted successfully!');
       onOpenChange(false);
-      router.push(ROUTES.HOME);
     } catch (error) {
       handleApplicationError(error, {
         [ERROR_CODES.UNAUTHORIZED]: () => {

@@ -1,11 +1,9 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
 import { CogIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { api } from '@/convex/_generated/api';
 import DangerZoneRow from '@/src/components/settings/DangerZoneRow';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import SettingsToggle from '@/src/components/settings/SettingsToggle';
@@ -24,6 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/tooltip';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { RoomPageParameters, RoomSettingKey } from '@/src/types/room';
 
 const roomSettingToggles: {
@@ -50,9 +49,7 @@ const roomSettingToggles: {
 
 const SettingsDialog = () => {
   const parameters = useParams<RoomPageParameters>();
-  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
-    roomCode: parameters.code,
-  });
+  const roomDetails = useRoomDetails();
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

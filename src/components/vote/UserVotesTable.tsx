@@ -2,7 +2,6 @@
 
 import { useUser } from '@clerk/nextjs';
 import usePresence from '@convex-dev/presence/react';
-import { useQuery } from 'convex/react';
 
 import { api } from '@/convex/_generated/api';
 import {
@@ -13,15 +12,14 @@ import {
   TableRow,
 } from '@/src/components/ui/table';
 import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
 interface UserVotesTable {
   roomCode: string;
 }
 
 const UserVotesTable = ({ roomCode }: UserVotesTable) => {
-  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
-    roomCode,
-  });
+  const roomDetails = useRoomDetails();
 
   const { user } = useUser();
 

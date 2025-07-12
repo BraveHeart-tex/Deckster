@@ -1,6 +1,6 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
@@ -10,6 +10,7 @@ import { showErrorToast } from '@/src/components/ui/sonner';
 import VoteCard from '@/src/components/vote/VoteCard';
 import { VOTE_OPTIONS } from '@/src/constants/vote.constants';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
 import { VoteOption } from '@/src/types/voteOption';
@@ -17,9 +18,7 @@ import { VoteOption } from '@/src/types/voteOption';
 const VoteCards = () => {
   const router = useRouter();
   const roomPageParameters = useParams<RoomPageParameters>();
-  const roomDetails = useQuery(api.rooms.getRoomWithDetailsByCode, {
-    roomCode: roomPageParameters.code,
-  });
+  const roomDetails = useRoomDetails();
   const { user } = useUser();
   const castVote = useMutation(api.votes.castVote).withOptimisticUpdate(
     (localStore, args) => {

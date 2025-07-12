@@ -2,7 +2,7 @@
 
 import { useUser } from '@clerk/nextjs';
 import { useMutation } from 'convex/react';
-import { redirect, useParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { api } from '@/convex/_generated/api';
@@ -13,10 +13,8 @@ import { showErrorToast } from '@/src/components/ui/sonner';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomPageParameters } from '@/src/types/room';
 
 const VoteControls = () => {
-  const roomCode = useParams<RoomPageParameters>().code;
   const roomDetails = useRoomDetails();
   const { user } = useUser();
 
@@ -34,12 +32,12 @@ const VoteControls = () => {
       }
 
       const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
-        roomCode,
+        roomCode: roomDetails.room.code,
       });
       if (current) {
         localStore.setQuery(
           api.rooms.getRoomWithDetailsByCode,
-          { roomCode },
+          { roomCode: roomDetails.room.code },
           {
             ...current,
             room: {
@@ -71,12 +69,12 @@ const VoteControls = () => {
     }
 
     const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
-      roomCode,
+      roomCode: roomDetails.room.code,
     });
     if (current) {
       localStore.setQuery(
         api.rooms.getRoomWithDetailsByCode,
-        { roomCode },
+        { roomCode: roomDetails.room.code },
         {
           ...current,
           room: {
