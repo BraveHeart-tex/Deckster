@@ -1,7 +1,6 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
-// TODO: Might have to re-define this with convex-ents for better relation management
 export default defineSchema({
   rooms: defineTable({
     name: v.string(),

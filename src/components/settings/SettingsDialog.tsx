@@ -59,7 +59,6 @@ const SettingsDialog = () => {
   }
 
   const roomSettings = roomDetails.roomSettings;
-
   const handleDeleteRoomClick = () => setIsDeleteDialogOpen(true);
   const handleTransferRoomClick = () => setIsOpen(false);
 

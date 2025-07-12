@@ -157,7 +157,9 @@ const VoteControls = () => {
       <Button onClick={handleRevealVotes} className="min-w-[110px]">
         {roomDetails && roomDetails.room.votesRevealed ? 'Hide' : 'Show'} Votes
       </Button>
-      <SettingsDialog />
+      {roomDetails && roomDetails.room.ownerId === user?.id && (
+        <SettingsDialog />
+      )}
     </div>
   );
 };
