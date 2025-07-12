@@ -20,7 +20,7 @@ const RoomList = ({ preloadedRooms }: RoomListProps) => {
 
   if (rooms.length === 0) {
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center p-6 text-center">
+      <div className="flex h-full flex-col items-center justify-center p-6 text-center">
         <div className="flex max-w-md flex-col items-center space-y-6">
           <PlusCircleIcon className="text-muted-foreground h-16 w-16" />
           <p className="text-muted-foreground text-sm">

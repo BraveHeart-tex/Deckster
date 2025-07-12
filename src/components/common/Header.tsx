@@ -6,8 +6,8 @@ import ShareRoomDialog from '@/src/components/room/ShareRoomDialog';
 
 const Header = () => {
   return (
-    <header className="bg-background/80 sticky top-0 z-50 w-full border-b">
-      <div className="container mx-auto grid h-14 max-w-screen-xl grid-cols-3 items-center">
+    <header className="bg-background fixed top-0 right-0 left-0 z-50 flex h-14 w-full items-center border-b px-4 shadow-sm md:px-6">
+      <div className="container mx-auto grid max-w-screen-xl grid-cols-3 items-center">
         <div className="flex justify-start">
           <Link className="flex items-center space-x-2" href="/">
             <span className="inline-block font-bold">Simple Scrum Poker</span>

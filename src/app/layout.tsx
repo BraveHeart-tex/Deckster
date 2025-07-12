@@ -34,9 +34,15 @@ export default async function RootLayout({
         <ConvexClientProvider>
           <body className={`${inter.className} antialiased`}>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <div className="flex min-h-screen flex-col">
+                {authResult.isAuthenticated ? <Header /> : null}
+                <main className="flex flex-1 items-center justify-center pt-14">
+                  <div className="container mx-auto px-4 py-8 text-center md:px-6">
+                    {children}
+                  </div>
+                </main>
+              </div>
               <Toaster />
-              {authResult.isAuthenticated ? <Header /> : null}
-              {children}
             </ThemeProvider>
           </body>
         </ConvexClientProvider>
