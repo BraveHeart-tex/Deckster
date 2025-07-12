@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { TableHead, TableRow } from '@/src/components/ui/table';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
+import { cn } from '@/src/lib/utils';
 
 const AverageOfVotesRow = () => {
   const roomDetails = useRoomDetails();
@@ -34,8 +35,25 @@ const AverageOfVotesRow = () => {
   return (
     <TableRow>
       <TableHead className="font-semibold">Average</TableHead>
-      <TableHead className="text-center font-semibold">
-        {roomDetails.room.votesRevealed ? average : '?'}
+      <TableHead className="relative text-center font-semibold">
+        <div className="relative inline-block h-6 w-12">
+          <span
+            className={cn(
+              'absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-500',
+              roomDetails.room.votesRevealed && 'opacity-0'
+            )}
+          >
+            ?
+          </span>
+          <span
+            className={cn(
+              'absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500',
+              roomDetails.room.votesRevealed && 'opacity-100'
+            )}
+          >
+            {average}
+          </span>
+        </div>
       </TableHead>
     </TableRow>
   );
