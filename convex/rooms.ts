@@ -42,10 +42,10 @@ export const createRoom = mutation({
 
     await ctx.db.insert('roomSettings', {
       roomId,
-      allowOthersToRevealVotes: false,
-      allowOthersToDeleteVotes: false,
-      showAverageOfVotes: false,
-      showUserPresence: false,
+      allowOthersToRevealVotes: true,
+      allowOthersToDeleteVotes: true,
+      showAverageOfVotes: true,
+      showUserPresence: true,
     });
 
     // add the user as the participant of the room

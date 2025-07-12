@@ -61,7 +61,6 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
       showSuccessToast('Room created successfully!');
       setIsOpen(false);
 
-      router.refresh();
       router.push(ROUTES.ROOM(createRoomResult.roomCode));
     } catch (error) {
       handleApplicationError(error, {
