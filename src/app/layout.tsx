@@ -36,8 +36,8 @@ export default async function RootLayout({
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
               <div className="flex min-h-screen flex-col">
                 {authResult.isAuthenticated ? <Header /> : null}
-                <main className="flex flex-1 items-center justify-center pt-14">
-                  <div className="container mx-auto px-4 py-8 text-center md:px-6">
+                <main className="flex flex-1 pt-14">
+                  <div className="container mx-auto px-4 py-8 md:px-6">
                     {children}
                   </div>
                 </main>

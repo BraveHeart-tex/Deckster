@@ -71,17 +71,13 @@ const VoteCards = () => {
     [castVote, roomDetails?.room, router]
   );
 
-  if (!roomDetails?.room) {
-    return null;
-  }
-
   return (
     <div className="flex max-w-screen-sm flex-wrap items-center justify-center gap-2">
       {VOTE_OPTIONS.map((option) => (
         <VoteCard
           key={option.value}
           option={option}
-          isSelected={option.value === roomDetails.currentUserVote}
+          isSelected={option.value === roomDetails?.currentUserVote}
           onClick={handleVote}
         />
       ))}

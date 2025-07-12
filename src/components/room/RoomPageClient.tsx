@@ -21,7 +21,7 @@ const RoomPageClient = ({ roomCode }: VoteCardsProps) => {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-screen-md flex-col items-center justify-center space-y-4">
+    <div className="mx-auto flex h-full max-w-screen-md flex-col items-center justify-center space-y-4">
       <div className="space-y-2 text-center">
         <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Estimate the Effort

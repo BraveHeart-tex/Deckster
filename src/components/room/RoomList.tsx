@@ -41,7 +41,7 @@ const RoomList = ({ preloadedRooms }: RoomListProps) => {
   };
 
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="flex h-full flex-col space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Your Rooms</h2>
         <div className="flex items-center space-x-2">

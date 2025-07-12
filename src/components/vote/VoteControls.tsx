@@ -147,10 +147,6 @@ const VoteControls = () => {
     }
   };
 
-  if (!roomDetails) {
-    return null;
-  }
-
   return (
     <div className="flex gap-2">
       <Button
@@ -161,7 +157,7 @@ const VoteControls = () => {
         Delete Estimates
       </Button>
       <Button onClick={handleRevealVotes} className="min-w-[110px]">
-        {roomDetails.room.votesRevealed ? 'Hide' : 'Show'} Votes
+        {roomDetails && roomDetails.room.votesRevealed ? 'Hide' : 'Show'} Votes
       </Button>
       <SettingsDialog />
     </div>

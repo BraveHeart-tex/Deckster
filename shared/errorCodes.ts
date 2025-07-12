@@ -6,7 +6,6 @@ export const ERROR_CODES = {
   FORBIDDEN: 'FORBIDDEN',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   CONFLICT: 'CONFLICT',
-  RESOURCE_INACTIVE: 'RESOURCE_INACTIVE',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
