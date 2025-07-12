@@ -6,7 +6,7 @@ import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api } from './_generated/api';
 import { Doc as Document_ } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
-import { ensureUniqueDisplayName, getUserNameFromIdentity } from './helpers';
+import { getUserNameFromIdentity } from './helpers';
 
 export const createRoom = mutation({
   args: {
@@ -47,10 +47,6 @@ export const createRoom = mutation({
       showAverageOfVotes: false,
       showUserPresence: false,
     });
-
-    if (args.userDisplayName) {
-      await ensureUniqueDisplayName(ctx, args.userDisplayName);
-    }
 
     // add the user as the participant of the room
     await ctx.db.insert('participants', {
@@ -311,5 +307,37 @@ export const resetVoting = mutation({
     await ctx.db.patch(args.roomId, {
       votesRevealed: false,
     });
+  },
+});
+
+export const deleteRoom = mutation({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'Must be logged in',
+      });
+    }
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only room creator can delete room',
+      });
+    }
+
+    await ctx.db.delete(args.roomId);
   },
 });

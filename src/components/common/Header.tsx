@@ -6,7 +6,7 @@ import ShareRoomDialog from '@/src/components/room/ShareRoomDialog';
 
 const Header = () => {
   return (
-    <header className="bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+    <header className="bg-background/80 sticky top-0 z-50 w-full border-b">
       <div className="container mx-auto grid h-14 max-w-screen-xl grid-cols-3 items-center">
         <div className="flex justify-start">
           <Link className="flex items-center space-x-2" href="/">

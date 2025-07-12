@@ -1,0 +1,41 @@
+import { Button } from '@/src/components/ui/button';
+import { cn } from '@/src/lib/utils';
+
+interface DangerZoneRowProps {
+  title: string;
+  description: string;
+  isLast?: boolean;
+  buttonText: string;
+  buttonVariant?: 'destructive' | 'destructiveOutline';
+  onClick: () => void;
+}
+
+const DangerZoneRow = ({
+  title,
+  description,
+  isLast,
+  buttonText,
+  buttonVariant = 'destructive',
+  onClick,
+}: DangerZoneRowProps) => {
+  return (
+    <div className="grid w-full gap-2 not-last:border-b md:flex md:flex-row md:items-center md:justify-between md:gap-4 md:p-3">
+      <div className="grid p-3 md:p-0">
+        <span className="text-sm font-semibold tracking-tight">{title}</span>
+        <p className="text-muted-foreground text-xs">{description}</p>
+      </div>
+      <Button
+        variant={buttonVariant}
+        className={cn(
+          'border-destructive/50 w-full rounded-none border-x-0 border-b md:w-auto md:rounded-md md:border',
+          isLast && 'rounded-b-md border-b-0'
+        )}
+        onClick={onClick}
+      >
+        {buttonText}
+      </Button>
+    </div>
+  );
+};
+
+export default DangerZoneRow;
