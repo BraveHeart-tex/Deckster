@@ -76,6 +76,8 @@ const UserVotesTableRow = memo(
             <UserActionsDropdown
               userName={userName}
               participantId={participantId}
+              roomId={roomDetails.room._id}
+              userId={participantUserId}
             />
           </TableCell>
         )}

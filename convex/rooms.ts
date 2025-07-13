@@ -390,3 +390,63 @@ export const transferRoomOwnership = mutation({
     });
   },
 });
+
+export const banUser = mutation({
+  args: {
+    roomId: v.id('rooms'),
+    userId: v.string(),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'You must be logged in to perform this action',
+      });
+    }
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== userIdentity.userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only the room creator can ban users',
+      });
+    }
+
+    const participant = await ctx.db
+      .query('participants')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', args.roomId).eq('userId', args.userId)
+      )
+      .unique();
+
+    if (!participant) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'User not found in room',
+      });
+    }
+
+    // TODO:We also have to delete votes and other entities
+    // associated with the user, but will probably handle them
+    // in a scheduled function
+    await Promise.all([
+      ctx.db.insert('bannedUsers', {
+        roomId: args.roomId,
+        userId: args.userId,
+        reason: args.reason,
+        bannedAt: Date.now(),
+        bannedBy: userIdentity.userId,
+      }),
+      ctx.db.delete(participant._id),
+    ]);
+  },
+});

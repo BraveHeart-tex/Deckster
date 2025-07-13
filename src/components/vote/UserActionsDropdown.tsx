@@ -16,11 +16,15 @@ import { MODAL_TYPES, useModalStore } from '@/src/store/modal';
 interface UserActionsDropdownProps {
   userName: string;
   participantId: Id<'participants'>;
+  roomId: Id<'rooms'>;
+  userId: string;
 }
 
 const UserActionsDropdown = ({
   participantId,
   userName,
+  roomId,
+  userId,
 }: UserActionsDropdownProps) => {
   const openModal = useModalStore((state) => state.openModal);
 
@@ -28,6 +32,13 @@ const UserActionsDropdown = ({
     openModal({
       type: MODAL_TYPES.REMOVE_PARTICIPANT,
       payload: { participantId, userName },
+    });
+  };
+
+  const onBanUser = () => {
+    openModal({
+      type: MODAL_TYPES.BAN_USER,
+      payload: { roomId, userId, userName },
     });
   };
 
@@ -46,7 +57,9 @@ const UserActionsDropdown = ({
           <DropdownMenuItem onClick={onRemoveFromRoom}>
             Remove from Room
           </DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">Ban</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive" onClick={onBanUser}>
+            Ban
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

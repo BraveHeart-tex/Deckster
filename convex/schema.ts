@@ -33,4 +33,13 @@ export default defineSchema({
     .index('by_room', ['roomId'])
     .index('by_room_and_user', ['roomId', 'userId'])
     .index('by_userName', ['userName']),
+  bannedUsers: defineTable({
+    roomId: v.id('rooms'),
+    userId: v.string(),
+    bannedAt: v.number(),
+    bannedBy: v.string(),
+    reason: v.optional(v.string()),
+  })
+    .index('by_room', ['roomId'])
+    .index('by_room_and_user', ['roomId', 'userId']),
 });
