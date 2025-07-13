@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 
 import Header from '@/src/components/common/Header';
+import ModalHost from '@/src/components/common/ModalHost';
 import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
 import { Toaster } from '@/src/components/ui/sonner';
 
@@ -43,6 +44,7 @@ export default async function RootLayout({
                 </main>
               </div>
               <Toaster />
+              <ModalHost />
             </ThemeProvider>
           </body>
         </ConvexClientProvider>

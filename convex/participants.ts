@@ -47,3 +47,46 @@ export const changeDisplayName = mutation({
     return args.displayName;
   },
 });
+
+export const removeParticipantFromRoom = mutation({
+  args: {
+    participantId: v.id('participants'),
+  },
+
+  handler: async (ctx, args) => {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (!userIdentity) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'You are not authorized to perform this action',
+      });
+    }
+
+    const participant = await ctx.db.get(args.participantId);
+
+    if (!participant) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Participant not found',
+      });
+    }
+
+    const room = await ctx.db.get(participant.roomId);
+
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== userIdentity.userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only the room owner can remove participants',
+      });
+    }
+
+    await ctx.db.delete(args.participantId);
+  },
+});

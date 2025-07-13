@@ -32,6 +32,9 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead className="text-center">Story Points</TableHead>
+          {roomDetails && roomDetails.room.ownerId === user?.id && (
+            <TableHead className="text-center">Actions</TableHead>
+          )}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -39,12 +42,6 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
           <TableRow>
             <TableHead colSpan={2} className="text-center">
               Loading...
-            </TableHead>
-          </TableRow>
-        ) : roomDetails.participants.length === 0 ? (
-          <TableRow>
-            <TableHead colSpan={2} className="text-center">
-              No users found
             </TableHead>
           </TableRow>
         ) : (
@@ -56,7 +53,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
                 userName={participant.userName}
                 participantUserId={participant.userId}
                 participantId={participant._id}
-                isOwner={participant.isOwner}
+                isOwner={roomDetails.room.ownerId === participant.userId}
                 isOnline={
                   !!presenceState?.find((p) => p.userId === participant.userId)
                     ?.online

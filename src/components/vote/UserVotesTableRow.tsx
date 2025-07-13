@@ -7,6 +7,7 @@ import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
 import { TableCell, TableRow } from '@/src/components/ui/table';
+import UserActionsDropdown from '@/src/components/vote/UserActionsDropdown';
 import UserVoteCard from '@/src/components/vote/UserVoteCard';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { cn } from '@/src/lib/utils';
@@ -70,6 +71,14 @@ const UserVotesTableRow = memo(
             votesRevealed={roomDetails?.room.votesRevealed}
           />
         </TableCell>
+        {roomDetails && roomDetails?.room.ownerId === user?.id && !isSelf && (
+          <TableCell className="text-center">
+            <UserActionsDropdown
+              userName={userName}
+              participantId={participantId}
+            />
+          </TableCell>
+        )}
       </TableRow>
     );
   }
