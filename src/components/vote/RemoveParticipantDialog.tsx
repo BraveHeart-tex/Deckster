@@ -1,9 +1,11 @@
 'use client';
 import { useMutation } from 'convex/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { ERROR_CODES } from '@/shared/errorCodes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,8 +16,9 @@ import {
   AlertDialogTitle,
 } from '@/src/components/ui/alert-dialog';
 import { Button } from '@/src/components/ui/button';
-import { showSuccessToast } from '@/src/components/ui/sonner';
+import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { ROUTES } from '@/src/lib/routes';
 import { CommonDialogProps } from '@/src/types/dialog';
 
 interface RemoveParticipantDialogProps extends CommonDialogProps {
@@ -33,6 +36,7 @@ const RemoveParticipantDialog = ({
   const removeParticipant = useMutation(
     api.participants.removeParticipantFromRoom
   );
+  const router = useRouter();
 
   const handleRemoveParticipant = async () => {
     setIsRemoving(true);
@@ -43,8 +47,18 @@ const RemoveParticipantDialog = ({
       showSuccessToast('Participant removed successfully!');
       onOpenChange(false);
     } catch (error) {
-      // TODO: handle error
-      handleApplicationError(error, {});
+      handleApplicationError(error, {
+        [ERROR_CODES.UNAUTHORIZED]: () => {
+          showErrorToast('You are not authorized to perform this action.');
+          router.push(ROUTES.AUTH);
+        },
+        [ERROR_CODES.NOT_FOUND]: () => {
+          showErrorToast('Room or participant not found');
+        },
+        [ERROR_CODES.FORBIDDEN]: () => {
+          showErrorToast('Only the room creator can remove participants.');
+        },
+      });
     } finally {
       setIsRemoving(false);
     }
