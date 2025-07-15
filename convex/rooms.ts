@@ -106,10 +106,15 @@ export const joinRoom = mutation({
       .unique();
 
     if (existingParticipant) {
-      // reactivate the participant if they were inactive
       await ctx.db.patch(existingParticipant._id, { isActive: true });
     } else {
-      // If not, create a new participant entry
+      if (room.locked) {
+        throw new ApplicationError({
+          code: ERROR_CODES.FORBIDDEN,
+          message: 'Room is currently locked. Please try again later.',
+        });
+      }
+
       await ctx.db.insert('participants', {
         roomId: room._id,
         userId: userIdentity.userId as string,

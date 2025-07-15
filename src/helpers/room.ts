@@ -12,6 +12,10 @@ export const handleJoinRoomError = (error: unknown) => {
       showErrorToast('Room not found');
       redirect(ROUTES.HOME);
     },
+    [ERROR_CODES.FORBIDDEN]: () => {
+      showErrorToast('Room is currently locked. Try again later.');
+      redirect(ROUTES.HOME);
+    },
     [ERROR_CODES.VALIDATION_ERROR]: () => {
       showErrorToast('Invalid data while joining room. Please try again.');
       redirect(ROUTES.HOME);
