@@ -4,7 +4,7 @@ import { CogIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import DangerZoneRow from '@/src/components/settings/DangerZoneRow';
+import SettingRow from '@/src/components/settings/SettingRow';
 import SettingsToggle from '@/src/components/settings/SettingsToggle';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -71,6 +71,14 @@ const SettingsDialog = () => {
     });
   };
 
+  const handleChangeDeckClick = () => {};
+
+  const handleLockOrUnlockRoomClick = () => {
+    openModal({
+      type: MODAL_TYPES.LOCK_OR_UNLOCK_ROOM,
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -95,18 +103,46 @@ const SettingsDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-6">
-          {/* TODO: Add voting options */}
-          <div className="flex flex-col gap-4">
-            {roomSettingToggles.map((setting) => (
-              <SettingsToggle
-                key={setting.settingKey}
-                roomSettingId={roomSettings._id}
-                roomCode={parameters.code}
-                checked={!!roomSettings[setting.settingKey]}
-                label={setting.label}
-                settingKey={setting.settingKey}
+          <div className="space-y-2">
+            <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
+              Room Configuration
+            </h3>
+            <div className="flex flex-col gap-4 overflow-hidden rounded-md border p-3">
+              {roomSettingToggles.map((setting) => (
+                <SettingsToggle
+                  key={setting.settingKey}
+                  roomSettingId={roomSettings._id}
+                  roomCode={parameters.code}
+                  checked={!!roomSettings[setting.settingKey]}
+                  label={setting.label}
+                  settingKey={setting.settingKey}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
+              Session Controls
+            </h3>
+            <div className="overflow-hidden rounded-md border">
+              <SettingRow
+                title="Change Deck"
+                description="Change the deck of cards for this room."
+                buttonText="Change Deck"
+                onClick={handleChangeDeckClick}
               />
-            ))}
+              <SettingRow
+                title={`${roomDetails.room.locked ? 'Unlock' : 'Lock'} Room`}
+                description={
+                  roomDetails.room.locked
+                    ? 'Unlock the room and allow others to join.'
+                    : 'Lock the room and prevent others from joining.'
+                }
+                isLast
+                buttonText={`${roomDetails.room.locked ? 'Unlock' : 'Lock'} Room`}
+                onClick={handleLockOrUnlockRoomClick}
+              />
+            </div>
           </div>
           {roomDetails.room.ownerId === user?.id && (
             <div className="space-y-2">
@@ -114,14 +150,15 @@ const SettingsDialog = () => {
                 Danger Zone
               </h3>
               <div className="border-destructive/50 overflow-hidden rounded-md border">
-                <DangerZoneRow
+                <SettingRow
                   title="Delete Room"
                   description="Once you delete a room, there is no going back. Please be certain."
                   buttonText="Delete Room"
+                  buttonVariant="destructive"
                   onClick={handleDeleteRoomClick}
                 />
                 {roomDetails.participants.length > 1 && (
-                  <DangerZoneRow
+                  <SettingRow
                     title="Transfer Ownership"
                     description=" Transfer ownership of this room to another user."
                     isLast

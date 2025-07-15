@@ -7,9 +7,9 @@ export const MODAL_TYPES = {
   BAN_USER: 'BAN_USER',
   TRANSFER_OWNERSHIP: 'TRANSFER_OWNERSHIP',
   DELETE_ROOM: 'DELETE_ROOM',
+  LOCK_OR_UNLOCK_ROOM: 'LOCK_OR_UNLOCK_ROOM',
 } as const;
 
-// TODO: Will add more modal with discriminated union type
 export type Modal =
   | {
       type: typeof MODAL_TYPES.REMOVE_PARTICIPANT;
@@ -24,6 +24,9 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.DELETE_ROOM;
+    }
+  | {
+      type: typeof MODAL_TYPES.LOCK_OR_UNLOCK_ROOM;
     };
 
 interface ModalStore {

@@ -38,6 +38,7 @@ export const createRoom = mutation({
       ownerId: userIdentity.userId as string,
       votesRevealed: false,
       code: roomCode,
+      locked: false,
     });
 
     await ctx.db.insert('roomSettings', {
@@ -448,5 +449,39 @@ export const banUser = mutation({
       }),
       ctx.db.delete(participant._id),
     ]);
+  },
+});
+
+export const toggleRoomLock = mutation({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    const userIdentity = await ctx.auth.getUserIdentity();
+    if (userIdentity === null) {
+      throw new ApplicationError({
+        code: ERROR_CODES.UNAUTHORIZED,
+        message: 'You must be logged in to perform this action',
+      });
+    }
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== userIdentity.userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Only the room owner can toggle the room lock',
+      });
+    }
+
+    await ctx.db.patch(args.roomId, {
+      locked: !room.locked,
+    });
   },
 });

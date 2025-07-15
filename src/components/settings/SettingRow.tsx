@@ -1,4 +1,4 @@
-import { Button } from '@/src/components/ui/button';
+import { Button, ButtonVariants } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 
 interface DangerZoneRowProps {
@@ -6,16 +6,16 @@ interface DangerZoneRowProps {
   description: string;
   isLast?: boolean;
   buttonText: string;
-  buttonVariant?: 'destructive' | 'destructiveOutline';
+  buttonVariant?: ButtonVariants;
   onClick: () => void;
 }
 
-const DangerZoneRow = ({
+const SettingRow = ({
   title,
   description,
   isLast,
   buttonText,
-  buttonVariant = 'destructive',
+  buttonVariant = 'outline',
   onClick,
 }: DangerZoneRowProps) => {
   return (
@@ -27,8 +27,10 @@ const DangerZoneRow = ({
       <Button
         variant={buttonVariant}
         className={cn(
-          'border-destructive/50 w-full rounded-none border-x-0 border-b md:w-auto md:rounded-md md:border',
-          isLast && 'rounded-b-md border-b-0'
+          'w-full rounded-none border-x-0 border-b md:w-auto md:rounded-md md:border',
+          isLast && 'rounded-b-md border-b-0',
+          buttonVariant === 'destructive' ||
+            (buttonVariant === 'destructiveOutline' && 'border-destructive/50')
         )}
         onClick={onClick}
       >
@@ -38,4 +40,4 @@ const DangerZoneRow = ({
   );
 };
 
-export default DangerZoneRow;
+export default SettingRow;

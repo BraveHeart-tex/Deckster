@@ -7,6 +7,7 @@ export default defineSchema({
     code: v.string(),
     ownerId: v.string(),
     votesRevealed: v.boolean(),
+    locked: v.boolean(),
   })
     .index('by_owner_id', ['ownerId'])
     .index('by_code', ['code']),
