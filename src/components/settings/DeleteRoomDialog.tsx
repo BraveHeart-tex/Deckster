@@ -20,14 +20,10 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
+import { CommonDialogProps } from '@/src/types/dialog';
 import { RoomPageParameters } from '@/src/types/room';
 
-interface DeleteRoomDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const DeleteRoomDialog = ({ open, onOpenChange }: DeleteRoomDialogProps) => {
+const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
   const [enteredCode, setEnteredCode] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -85,7 +81,7 @@ const DeleteRoomDialog = ({ open, onOpenChange }: DeleteRoomDialogProps) => {
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

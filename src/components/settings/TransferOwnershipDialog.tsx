@@ -22,16 +22,12 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-
-interface TransferOwnershipDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import { CommonDialogProps } from '@/src/types/dialog';
 
 const TransferOwnershipDialog = ({
   isOpen,
   onOpenChange,
-}: TransferOwnershipDialogProps) => {
+}: CommonDialogProps) => {
   const roomDetails = useRoomDetails();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [isTransferring, setIsTransferring] = useState(false);
