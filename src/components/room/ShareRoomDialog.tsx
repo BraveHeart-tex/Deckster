@@ -1,9 +1,16 @@
 'use client';
-import { CheckIcon, ClipboardCopyIcon, Share2Icon } from 'lucide-react';
+import {
+  AlertCircleIcon,
+  CheckIcon,
+  ClipboardCopyIcon,
+  LockIcon,
+  Share2Icon,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { Badge } from '@/src/components/ui/badge';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -17,12 +24,14 @@ import {
   DialogTrigger,
 } from '@/src/components/ui/dialog';
 import { showErrorToast } from '@/src/components/ui/sonner';
+import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
 
 // TODO: Will refactor this to a server component
 const ShareRoomDialog = () => {
   const parameters = useParams<RoomPageParameters>();
+  const roomDetails = useRoomDetails();
   const [isCopied, setIsCopied] = useState(false);
   const timeoutReference = useRef<NodeJS.Timeout | null>(null);
 
@@ -62,7 +71,7 @@ const ShareRoomDialog = () => {
     }
   };
 
-  if (!parameters.code) {
+  if (!parameters.code || !roomDetails) {
     return null;
   }
 
@@ -70,7 +79,7 @@ const ShareRoomDialog = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost">
-          <Share2Icon />
+          {roomDetails?.room.locked ? <LockIcon /> : <Share2Icon />}
           Room {parameters.code}
         </Button>
       </DialogTrigger>
@@ -82,6 +91,19 @@ const ShareRoomDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
+          {roomDetails.room.locked && (
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>Heads up!</AlertTitle>
+              <AlertDescription>
+                <p>
+                  The room is currently locked. New participants will not be
+                  able to join.
+                </p>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Badge>{parameters.code}</Badge>
           <div className="bg-muted/50 flex flex-col items-center rounded-lg p-4">
             <QRCodeSVG value={roomUrl} size={225} />
@@ -107,7 +129,7 @@ const ShareRoomDialog = () => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Close</Button>
+            <Button variant="outline">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
