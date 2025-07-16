@@ -1,23 +1,75 @@
 'use client';
 
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { CheckIcon, PaletteIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
+import ThemeToggle from '@/src/components/ThemeToggle';
 import { Button } from '@/src/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/dropdown-menu';
+import { cn } from '@/src/lib/utils';
 
-const ModeToggle = () => {
-  const { setTheme } = useTheme();
+const baseThemeOptions = [
+  { label: 'Default', value: 'default' },
+  { label: 'Bubblegum', value: 'bubblegum' },
+];
 
-  const handleChangeTheme = () => {
-    setTheme((previous) => (previous === 'dark' ? 'light' : 'dark'));
+const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
+  const [baseTheme, setBaseTheme] = useState<string>(initialTheme);
+
+  useEffect(() => {
+    const htmlElement = document.documentElement;
+    // Remove all base theme classes first to ensure only one is active
+    baseThemeOptions.forEach((option) => {
+      if (option.value !== 'default') {
+        htmlElement.classList.remove(option.value);
+      }
+    });
+    if (baseTheme !== 'default') {
+      htmlElement.classList.add(baseTheme);
+    }
+    document.cookie = `base-theme=${baseTheme}; path=/`;
+    localStorage.setItem('base-theme', baseTheme);
+  }, [baseTheme]);
+
+  const handleBaseThemeChange = (value: string) => () => {
+    setBaseTheme(value);
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={handleChangeTheme}>
-      <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="icon" variant="outline">
+            <PaletteIcon />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Base App Theme</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {baseThemeOptions.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              onClick={handleBaseThemeChange(option.value)}
+              className={cn(
+                option.value === baseTheme &&
+                  'bg-accent text-accent-foreground font-semibold'
+              )}
+            >
+              {option.label}
+              {option.value === baseTheme && <CheckIcon className="ml-auto" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <ThemeToggle />
+    </>
   );
 };
 

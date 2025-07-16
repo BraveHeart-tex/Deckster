@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { ThemeProvider } from 'next-themes';
 
 import Header from '@/src/components/common/Header';
@@ -28,13 +29,19 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const authResult = await auth();
+  const cookieStore = await cookies();
+  const defaultTheme = cookieStore.get('base-theme')?.value || '';
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={defaultTheme}>
       <ClerkProvider>
         <ConvexClientProvider>
           <body className={`${inter.className} antialiased`}>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ThemeProvider
+              attribute="class"
+              enableSystem
+              defaultTheme={defaultTheme || 'system'}
+            >
               <div className="flex min-h-screen flex-col">
                 {authResult.isAuthenticated ? <Header /> : null}
                 <main className="flex flex-1 pt-14">
