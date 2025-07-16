@@ -1,9 +1,10 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import usePresence from '@convex-dev/presence/react';
+import { PresenceState } from '@convex-dev/presence/react';
+import { useCallback, useState } from 'react';
 
-import { api } from '@/convex/_generated/api';
+import PresenceSubscriber from '@/src/components/common/PresenceSubscriber';
 import {
   Table,
   TableBody,
@@ -20,53 +21,72 @@ interface UserVotesTable {
 }
 
 const UserVotesTable = ({ roomCode }: UserVotesTable) => {
+  const [presenceState, setPresenceState] = useState<
+    PresenceState[] | undefined
+  >(undefined);
   const roomDetails = useRoomDetails();
 
   const { user } = useUser();
 
-  const presenceState = usePresence(api.presence, roomCode, user?.id as string);
+  const onPresenceStateChange = useCallback(
+    (state: PresenceState[] | undefined) => {
+      setPresenceState(state);
+    },
+    []
+  );
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead className="text-center">Story Points</TableHead>
-          {roomDetails && roomDetails.room.ownerId === user?.id && (
-            <TableHead className="text-center">Actions</TableHead>
-          )}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {!roomDetails ? (
+    <>
+      <Table>
+        <TableHeader>
           <TableRow>
-            <TableHead colSpan={2} className="text-center">
-              Loading...
-            </TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead className="text-center">Story Points</TableHead>
+            {roomDetails && roomDetails.room.ownerId === user?.id && (
+              <TableHead className="text-center">Actions</TableHead>
+            )}
           </TableRow>
-        ) : (
-          <>
-            {roomDetails.participants.map((participant) => (
-              <UserVotesTableRow
-                key={participant._id}
-                vote={participant.vote || ''}
-                userName={participant.userName}
-                participantUserId={participant.userId}
-                participantId={participant._id}
-                isOwner={roomDetails.room.ownerId === participant.userId}
-                isOnline={
-                  !!presenceState?.find((p) => p.userId === participant.userId)
-                    ?.online
-                }
-              />
-            ))}
-            {roomDetails.roomSettings?.showAverageOfVotes ? (
-              <AverageOfVotesRow />
-            ) : null}
-          </>
+        </TableHeader>
+        <TableBody>
+          {!roomDetails ? (
+            <TableRow>
+              <TableHead colSpan={2} className="text-center">
+                Loading...
+              </TableHead>
+            </TableRow>
+          ) : (
+            <>
+              {roomDetails.participants.map((participant) => (
+                <UserVotesTableRow
+                  key={participant._id}
+                  vote={participant.vote || ''}
+                  userName={participant.userName}
+                  participantUserId={participant.userId}
+                  participantId={participant._id}
+                  isOwner={roomDetails.room.ownerId === participant.userId}
+                  isOnline={
+                    !!presenceState?.find(
+                      (p) => p.userId === participant.userId
+                    )?.online
+                  }
+                />
+              ))}
+              {roomDetails.roomSettings?.showAverageOfVotes ? (
+                <AverageOfVotesRow />
+              ) : null}
+            </>
+          )}
+        </TableBody>
+      </Table>
+      {user?.id !== undefined &&
+        roomDetails?.roomSettings?.showUserPresence && (
+          <PresenceSubscriber
+            onStateChange={onPresenceStateChange}
+            roomCode={roomCode}
+            userId={user.id}
+          />
         )}
-      </TableBody>
-    </Table>
+    </>
   );
 };
 
