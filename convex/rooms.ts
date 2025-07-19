@@ -1,27 +1,17 @@
-import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api } from './_generated/api';
 import { Doc as Document_ } from './_generated/dataModel';
-import { mutation, query } from './_generated/server';
-import { getUserNameFromIdentity } from './helpers';
+import { authMutation, authQuery, getUserNameFromIdentity } from './helpers';
 
-export const createRoom = mutation({
+export const createRoom = authMutation({
   args: {
     roomName: v.string(),
     userDisplayName: v.string(),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: "'Must be logged in to create a room'",
-      });
-    }
-
     let roomCode: string;
     let exists;
 
@@ -35,7 +25,7 @@ export const createRoom = mutation({
 
     const roomId = await ctx.db.insert('rooms', {
       name: args.roomName,
-      ownerId: userIdentity.userId as string,
+      ownerId: ctx.userIdentity.userId as string,
       votesRevealed: false,
       code: roomCode,
       locked: false,
@@ -51,9 +41,10 @@ export const createRoom = mutation({
 
     // add the user as the participant of the room
     await ctx.db.insert('participants', {
-      userId: userIdentity.userId as string,
+      userId: ctx.userIdentity.userId as string,
       isActive: true,
-      userName: args.userDisplayName || getUserNameFromIdentity(userIdentity),
+      userName:
+        args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
       roomId,
     });
 
@@ -64,21 +55,12 @@ export const createRoom = mutation({
   },
 });
 
-export const joinRoom = mutation({
+export const joinRoom = authMutation({
   args: {
     roomCode: v.string(),
     userDisplayName: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to join a room',
-      });
-    }
-
     if (!isValidRoomCode(args.roomCode)) {
       throw new ApplicationError({
         code: ERROR_CODES.VALIDATION_ERROR,
@@ -101,7 +83,9 @@ export const joinRoom = mutation({
     const existingParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (query) =>
-        query.eq('roomId', room._id).eq('userId', userIdentity.userId as string)
+        query
+          .eq('roomId', room._id)
+          .eq('userId', ctx.userIdentity.userId as string)
       )
       .unique();
 
@@ -117,9 +101,10 @@ export const joinRoom = mutation({
 
       await ctx.db.insert('participants', {
         roomId: room._id,
-        userId: userIdentity.userId as string,
+        userId: ctx.userIdentity.userId as string,
         isActive: true,
-        userName: args.userDisplayName || getUserNameFromIdentity(userIdentity),
+        userName:
+          args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
       });
     }
 
@@ -130,19 +115,11 @@ export const joinRoom = mutation({
   },
 });
 
-export const getRoomWithDetailsByCode = query({
+export const getRoomWithDetailsByCode = authQuery({
   args: {
     roomCode: v.string(),
   },
   handler: async (ctx, args) => {
-    const currentUserId = await getAuthUserId(ctx);
-    if (!currentUserId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to perform this action',
-      });
-    }
-
     if (!isValidRoomCode(args.roomCode)) {
       throw new ApplicationError({
         code: ERROR_CODES.VALIDATION_ERROR,
@@ -165,7 +142,7 @@ export const getRoomWithDetailsByCode = query({
     const isParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', room._id).eq('userId', currentUserId)
+        q.eq('roomId', room._id).eq('userId', ctx.userIdentity.userId as string)
       )
       .unique();
 
@@ -199,23 +176,19 @@ export const getRoomWithDetailsByCode = query({
         vote: votes.find((vote) => vote.userId === participant.userId)?.value,
       })),
       roomSettings,
-      currentUserVote: votes.find((vote) => vote.userId === currentUserId)
-        ?.value,
+      currentUserVote: votes.find(
+        (vote) => vote.userId === ctx.userIdentity.userId
+      )?.value,
     };
   },
 });
 
-export const getUserRooms = query({
+export const getUserRooms = authQuery({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return [];
-    }
-
     const participations = await ctx.db
       .query('participants')
-      .filter((q) => q.eq(q.field('userId'), userId))
+      .filter((q) => q.eq(q.field('userId'), ctx.userIdentity.userId))
       .filter((q) => q.eq(q.field('isActive'), true))
       .collect();
 
@@ -231,19 +204,11 @@ export const getUserRooms = query({
   },
 });
 
-export const toggleVotesRevealed = mutation({
+export const toggleVotesRevealed = authMutation({
   args: {
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in to reveal voting',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -259,7 +224,10 @@ export const toggleVotesRevealed = mutation({
       }
     );
 
-    if (!roomSettings.allowOthersToRevealVotes && room.ownerId !== userId) {
+    if (
+      !roomSettings.allowOthersToRevealVotes &&
+      room.ownerId !== ctx.userIdentity.userId
+    ) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only the room creator can reveal votes',
@@ -272,19 +240,11 @@ export const toggleVotesRevealed = mutation({
   },
 });
 
-export const resetVoting = mutation({
+export const resetVoting = authMutation({
   args: {
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -293,14 +253,13 @@ export const resetVoting = mutation({
       });
     }
 
-    if (room.ownerId !== userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.UNAUTHORIZED,
         message: 'Only room creator can reset voting',
       });
     }
 
-    // Clear votes
     const votes = await ctx.db
       .query('votes')
       .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
@@ -316,19 +275,11 @@ export const resetVoting = mutation({
   },
 });
 
-export const deleteRoom = mutation({
+export const deleteRoom = authMutation({
   args: {
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Must be logged in',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -337,7 +288,7 @@ export const deleteRoom = mutation({
       });
     }
 
-    if (room.ownerId !== userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only room creator can delete room',
@@ -348,20 +299,12 @@ export const deleteRoom = mutation({
   },
 });
 
-export const transferRoomOwnership = mutation({
+export const transferRoomOwnership = authMutation({
   args: {
     roomId: v.id('rooms'),
     newOwnerId: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to transfer ownership',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -370,7 +313,7 @@ export const transferRoomOwnership = mutation({
       });
     }
 
-    if (room.ownerId !== userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only the room creator can transfer ownership',
@@ -397,21 +340,13 @@ export const transferRoomOwnership = mutation({
   },
 });
 
-export const banUser = mutation({
+export const banUser = authMutation({
   args: {
     roomId: v.id('rooms'),
     userId: v.string(),
     reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to perform this action',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -420,7 +355,7 @@ export const banUser = mutation({
       });
     }
 
-    if (room.ownerId !== userIdentity.userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only the room creator can ban users',
@@ -450,26 +385,18 @@ export const banUser = mutation({
         userId: args.userId,
         reason: args.reason,
         bannedAt: Date.now(),
-        bannedBy: userIdentity.userId,
+        bannedBy: ctx.userIdentity.userId,
       }),
       ctx.db.delete(participant._id),
     ]);
   },
 });
 
-export const toggleRoomLock = mutation({
+export const toggleRoomLock = authMutation({
   args: {
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to perform this action',
-      });
-    }
-
     const room = await ctx.db.get(args.roomId);
     if (!room) {
       throw new ApplicationError({
@@ -478,7 +405,7 @@ export const toggleRoomLock = mutation({
       });
     }
 
-    if (room.ownerId !== userIdentity.userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only the room owner can toggle the room lock',

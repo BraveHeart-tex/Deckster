@@ -1,9 +1,9 @@
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { mutation, query } from './_generated/server';
+import { authMutation, authQuery } from './helpers';
 
-export const updateRoomSettings = mutation({
+export const updateRoomSettings = authMutation({
   args: {
     roomSettingId: v.id('roomSettings'),
     allowOthersToRevealVotes: v.optional(v.boolean()),
@@ -12,14 +12,6 @@ export const updateRoomSettings = mutation({
     showAverageOfVotes: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to perform this action',
-      });
-    }
-
     const roomSetting = await ctx.db.get(args.roomSettingId);
     if (!roomSetting) {
       throw new ApplicationError({
@@ -36,7 +28,7 @@ export const updateRoomSettings = mutation({
       });
     }
 
-    if (room.ownerId !== userIdentity.userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'You do not have permission to update the room settings',
@@ -48,19 +40,11 @@ export const updateRoomSettings = mutation({
   },
 });
 
-export const getRoomSettingsByRoomId = query({
+export const getRoomSettingsByRoomId = authQuery({
   args: {
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to perform this action',
-      });
-    }
-
     const setting = await ctx.db
       .query('roomSettings')
       .withIndex('by_room', (q) => q.eq('roomId', args.roomId))

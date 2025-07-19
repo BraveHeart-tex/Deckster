@@ -49,28 +49,27 @@ const ensureAuthenticated = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
       message: 'You must be logged in to perform this action',
     });
   }
+  return identity;
+};
+
+const injectUserIdentity = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
+  const userIdentity = await ensureAuthenticated(ctx);
+  return {
+    userIdentity,
+  };
 };
 
 export const authQuery = customQuery(
   query,
-  customCtx(async (ctx) => {
-    await ensureAuthenticated(ctx);
-    return {};
-  })
+  customCtx(async (ctx) => injectUserIdentity(ctx))
 );
 
 export const authMutation = customMutation(
   mutation,
-  customCtx(async (ctx) => {
-    await ensureAuthenticated(ctx);
-    return {};
-  })
+  customCtx(async (ctx) => injectUserIdentity(ctx))
 );
 
 export const authAction = customAction(
   action,
-  customCtx(async (ctx) => {
-    await ensureAuthenticated(ctx);
-    return {};
-  })
+  customCtx(async (ctx) => injectUserIdentity(ctx))
 );

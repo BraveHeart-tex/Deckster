@@ -1,23 +1,14 @@
 import { v } from 'convex/values';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { mutation } from './_generated/server';
-import { ensureUniqueDisplayName } from './helpers';
+import { authMutation, ensureUniqueDisplayName } from './helpers';
 
-export const changeDisplayName = mutation({
+export const changeDisplayName = authMutation({
   args: {
     displayName: v.string(),
     participantId: v.id('participants'),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You must be logged in to change your display name',
-      });
-    }
-
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
@@ -27,7 +18,7 @@ export const changeDisplayName = mutation({
       });
     }
 
-    if (participant.userId !== userIdentity.userId) {
+    if (participant.userId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Forbidden',
@@ -48,20 +39,12 @@ export const changeDisplayName = mutation({
   },
 });
 
-export const removeParticipantFromRoom = mutation({
+export const removeParticipantFromRoom = authMutation({
   args: {
     participantId: v.id('participants'),
   },
 
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'You are not authorized to perform this action',
-      });
-    }
-
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
@@ -80,7 +63,7 @@ export const removeParticipantFromRoom = mutation({
       });
     }
 
-    if (room.ownerId !== userIdentity.userId) {
+    if (room.ownerId !== ctx.userIdentity.userId) {
       throw new ApplicationError({
         code: ERROR_CODES.FORBIDDEN,
         message: 'Only the room owner can remove participants',

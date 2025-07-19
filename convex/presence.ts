@@ -1,13 +1,12 @@
 import { Presence } from '@convex-dev/presence';
 import { v } from 'convex/values';
 
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { components } from './_generated/api';
-import { mutation, query } from './_generated/server';
+import { authMutation, authQuery } from './helpers';
 
 export const presence = new Presence(components.presence);
 
-export const heartbeat = mutation({
+export const heartbeat = authMutation({
   args: {
     roomId: v.string(),
     userId: v.string(),
@@ -15,27 +14,18 @@ export const heartbeat = mutation({
     interval: v.number(),
   },
   handler: async (ctx, { roomId, userId, sessionId, interval }) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-
-    if (userIdentity === null) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
-        message: 'Unauthorized',
-      });
-    }
-
     return await presence.heartbeat(ctx, roomId, userId, sessionId, interval);
   },
 });
 
-export const list = query({
+export const list = authQuery({
   args: { roomToken: v.string() },
   handler: async (ctx, { roomToken }) => {
     return await presence.list(ctx, roomToken);
   },
 });
 
-export const disconnect = mutation({
+export const disconnect = authMutation({
   args: { sessionToken: v.string() },
   handler: async (ctx, { sessionToken }) => {
     return await presence.disconnect(ctx, sessionToken);
