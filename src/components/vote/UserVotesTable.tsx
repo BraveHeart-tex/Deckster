@@ -2,6 +2,7 @@
 
 import { useUser } from '@clerk/nextjs';
 import { PresenceState } from '@convex-dev/presence/react';
+import { useConvexAuth } from 'convex/react';
 import { useCallback, useState } from 'react';
 
 import PresenceSubscriber from '@/src/components/common/PresenceSubscriber';
@@ -27,6 +28,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
   const roomDetails = useRoomDetails();
 
   const { user } = useUser();
+  const { isAuthenticated } = useConvexAuth();
 
   const onPresenceStateChange = useCallback(
     (state: PresenceState[] | undefined) => {
@@ -78,7 +80,8 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
           )}
         </TableBody>
       </Table>
-      {user?.id !== undefined &&
+      {isAuthenticated &&
+        user?.id !== undefined &&
         roomDetails?.roomSettings?.showUserPresence && (
           <PresenceSubscriber
             onStateChange={onPresenceStateChange}
