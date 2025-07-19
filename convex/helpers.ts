@@ -1,7 +1,20 @@
 import { UserIdentity } from 'convex/server';
+import {
+  customAction,
+  customCtx,
+  customMutation,
+  customQuery,
+} from 'convex-helpers/server/customFunctions';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
-import { type QueryCtx } from './_generated/server';
+import {
+  action,
+  type ActionCtx,
+  mutation,
+  type MutationCtx,
+  query,
+  type QueryCtx,
+} from './_generated/server';
 
 export const getUserNameFromIdentity = (userIdentity: UserIdentity): string => {
   if (userIdentity.name || userIdentity.familyName) {
@@ -27,3 +40,37 @@ export const ensureUniqueDisplayName = async (
     });
   }
 };
+
+const ensureAuthenticated = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (identity === null) {
+    throw new ApplicationError({
+      code: ERROR_CODES.UNAUTHORIZED,
+      message: 'You must be logged in to perform this action',
+    });
+  }
+};
+
+export const authQuery = customQuery(
+  query,
+  customCtx(async (ctx) => {
+    await ensureAuthenticated(ctx);
+    return {};
+  })
+);
+
+export const authMutation = customMutation(
+  mutation,
+  customCtx(async (ctx) => {
+    await ensureAuthenticated(ctx);
+    return {};
+  })
+);
+
+export const authAction = customAction(
+  action,
+  customCtx(async (ctx) => {
+    await ensureAuthenticated(ctx);
+    return {};
+  })
+);
