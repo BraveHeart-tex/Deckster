@@ -29,11 +29,11 @@ export default defineSchema({
     roomId: v.id('rooms'),
     userId: v.string(),
     userName: v.string(),
-    isActive: v.boolean(),
   })
     .index('by_room', ['roomId'])
     .index('by_room_and_user', ['roomId', 'userId'])
-    .index('by_userName', ['userName']),
+    .index('by_userName', ['userName'])
+    .index('by_userId', ['userId']),
   bannedUsers: defineTable({
     roomId: v.id('rooms'),
     userId: v.string(),

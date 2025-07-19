@@ -1,9 +1,9 @@
 import { v } from 'convex/values';
+import { getAll } from 'convex-helpers/server/relationships';
 
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api } from './_generated/api';
-import { Doc as Document_ } from './_generated/dataModel';
 import { authMutation, authQuery, getUserNameFromIdentity } from './helpers';
 
 export const createRoom = authMutation({
@@ -39,10 +39,8 @@ export const createRoom = authMutation({
       showUserPresence: true,
     });
 
-    // add the user as the participant of the room
     await ctx.db.insert('participants', {
       userId: ctx.userIdentity.userId as string,
-      isActive: true,
       userName:
         args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
       roomId,
@@ -89,9 +87,7 @@ export const joinRoom = authMutation({
       )
       .unique();
 
-    if (existingParticipant) {
-      await ctx.db.patch(existingParticipant._id, { isActive: true });
-    } else {
+    if (!existingParticipant) {
       if (room.locked) {
         throw new ApplicationError({
           code: ERROR_CODES.FORBIDDEN,
@@ -102,7 +98,6 @@ export const joinRoom = authMutation({
       await ctx.db.insert('participants', {
         roomId: room._id,
         userId: ctx.userIdentity.userId as string,
-        isActive: true,
         userName:
           args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
       });
@@ -188,19 +183,19 @@ export const getUserRooms = authQuery({
   handler: async (ctx) => {
     const participations = await ctx.db
       .query('participants')
-      .filter((q) => q.eq(q.field('userId'), ctx.userIdentity.userId))
-      .filter((q) => q.eq(q.field('isActive'), true))
+      .withIndex('by_userId', (q) =>
+        q.eq('userId', ctx.userIdentity.userId as string)
+      )
       .collect();
 
-    const rooms: Document_<'rooms'>[] = [];
-    for (const participation of participations) {
-      const room = await ctx.db.get(participation.roomId);
-      if (room) {
-        rooms.push(room);
-      }
+    const roomIds = participations.map((p) => p.roomId);
+    if (roomIds.length === 0) {
+      return [];
     }
 
-    return rooms;
+    const rooms = await getAll(ctx.db, roomIds);
+
+    return rooms.filter((room) => room !== null);
   },
 });
 
