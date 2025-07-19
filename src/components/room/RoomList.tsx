@@ -1,44 +1,35 @@
 'use client';
 
-import { type Preloaded, usePreloadedQuery } from 'convex/react';
-import { PlusCircleIcon } from 'lucide-react';
+import { AlertTriangleIcon, PlusCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { ReactNode } from 'react';
 
-import { api } from '@/convex/_generated/api';
 import CreateRoomFormDialog from '@/src/components/room/CreateRoomFormDialog';
 import JoinRoomDialog from '@/src/components/room/JoinRoomDialog';
 import RoomCard from '@/src/components/room/RoomCard';
+import RoomCardSkeleton from '@/src/components/room/RoomCardSkeleton';
+import { useUserRooms } from '@/src/hooks/useUserRooms';
 import { ROUTES } from '@/src/lib/routes';
 
-interface RoomListProps {
-  preloadedRooms: Preloaded<typeof api.rooms.getUserRooms>;
-}
-
-const RoomList = ({ preloadedRooms }: RoomListProps) => {
-  const rooms = usePreloadedQuery(preloadedRooms);
+const RoomList = () => {
+  const { data: rooms, isPending, isError } = useUserRooms();
   const router = useRouter();
-
-  if (rooms.length === 0) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-        <div className="flex max-w-md flex-col items-center space-y-6">
-          <PlusCircleIcon className="text-muted-foreground h-16 w-16" />
-          <p className="text-muted-foreground text-sm">
-            You don’t have any rooms yet. Create one and invite others!
-          </p>
-          <div className="flex items-center space-x-2">
-            <CreateRoomFormDialog />
-            <JoinRoomDialog />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const onJoinRoom = (roomCode: string) => {
     router.refresh();
     router.push(ROUTES.ROOM(roomCode));
   };
+
+  const renderFallback = (icon: ReactNode, message: string) => (
+    <div className="flex flex-1 flex-col items-center justify-center space-y-4">
+      {icon}
+      <p className="text-muted-foreground text-sm">{message}</p>
+      <div className="flex items-center space-x-2">
+        <CreateRoomFormDialog />
+        <JoinRoomDialog />
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex h-full flex-col space-y-6">
@@ -50,11 +41,29 @@ const RoomList = ({ preloadedRooms }: RoomListProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {rooms.map((room) => (
-          <RoomCard key={room._id} room={room} onJoinRoom={onJoinRoom} />
-        ))}
-      </div>
+      {isPending ? (
+        <div className="grid h-max grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <RoomCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : isError ? (
+        renderFallback(
+          <AlertTriangleIcon className="text-destructive h-12 w-12" />,
+          'Failed to load rooms. Please try again.'
+        )
+      ) : rooms && rooms.length === 0 ? (
+        renderFallback(
+          <PlusCircleIcon className="text-muted-foreground h-12 w-12" />,
+          'You don’t have any rooms yet. Create one and invite others!'
+        )
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {rooms.map((room) => (
+            <RoomCard key={room._id} room={room} onJoinRoom={onJoinRoom} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
 import { PencilIcon } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -58,6 +58,7 @@ const ChangeDisplaynameDialog = ({
     resolver: zodResolver(changeDisplayNameSchema),
   });
   const changeDisplayName = useMutation(api.participants.changeDisplayName);
+  const router = useRouter();
 
   const handleOpenChange = (isOpen: boolean) => {
     setIsOpen(isOpen);
@@ -79,10 +80,10 @@ const ChangeDisplaynameDialog = ({
       handleApplicationError(error, {
         [ERROR_CODES.UNAUTHORIZED]: () => {
           showErrorToast('You are not authorized to perform this action.');
-          redirect(ROUTES.AUTH);
+          router.push(ROUTES.AUTH);
         },
         [ERROR_CODES.NOT_FOUND]: () => {
-          redirect(ROUTES.HOME);
+          router.push(ROUTES.HOME);
         },
         [ERROR_CODES.FORBIDDEN]: () => {
           showErrorToast('You are not to perform this action.');

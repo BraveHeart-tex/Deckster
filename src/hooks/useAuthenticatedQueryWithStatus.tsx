@@ -11,7 +11,5 @@ export const useAuthenticatedQueryWithStatus = <
   args: OptionalRestArgs<Query>[0] | 'skip'
 ) => {
   const { isAuthenticated } = useConvexAuth();
-  console.log('isAuthenticated', isAuthenticated);
-
   return useQueryWithStatus(query, isAuthenticated ? args : 'skip');
 };
