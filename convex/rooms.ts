@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import { getAll } from 'convex-helpers/server/relationships';
 
+import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api } from './_generated/api';
@@ -60,8 +61,8 @@ export const joinRoom = authMutation({
   },
   handler: async (ctx, args) => {
     if (!isValidRoomCode(args.roomCode)) {
-      throw new ApplicationError({
-        code: ERROR_CODES.VALIDATION_ERROR,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.INVALID_CODE,
         message: 'Invalid room code',
       });
     }
@@ -71,13 +72,28 @@ export const joinRoom = authMutation({
       .withIndex('by_code', (q) => q.eq('code', args.roomCode))
       .unique();
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
-    // Check if the user is already a participant
+    const bannedUser = await ctx.db
+      .query('bannedUsers')
+      .withIndex('by_room_and_user', (query) =>
+        query
+          .eq('roomId', room._id)
+          .eq('userId', ctx.userIdentity.userId as string)
+      )
+      .unique();
+
+    if (bannedUser) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.BANNED,
+        message: `You are banned from this entering this room. Reason: ${bannedUser.reason}`,
+      });
+    }
+
     const existingParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (query) =>
@@ -89,8 +105,8 @@ export const joinRoom = authMutation({
 
     if (!existingParticipant) {
       if (room.locked) {
-        throw new ApplicationError({
-          code: ERROR_CODES.FORBIDDEN,
+        throw new DomainError({
+          code: DOMAIN_ERROR_CODES.ROOM.LOCKED,
           message: 'Room is currently locked. Please try again later.',
         });
       }
