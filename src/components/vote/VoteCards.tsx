@@ -8,12 +8,11 @@ import { api } from '@/convex/_generated/api';
 import { ERROR_CODES } from '@/shared/errorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import VoteCard from '@/src/components/vote/VoteCard';
-import { VOTE_OPTIONS } from '@/src/constants/vote.constants';
+import { DEFAULT_DECK } from '@/src/constants/vote.constants';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
-import { VoteOption } from '@/src/types/voteOption';
 
 const VoteCards = () => {
   const router = useRouter();
@@ -44,13 +43,13 @@ const VoteCards = () => {
   );
 
   const handleVote = useCallback(
-    async (option: VoteOption) => {
+    async (option: string) => {
       if (!roomDetails?.room) {
         return;
       }
 
       try {
-        await castVote({ roomId: roomDetails.room._id, value: option.value });
+        await castVote({ roomId: roomDetails.room._id, value: option });
       } catch (error) {
         handleApplicationError(error, {
           [ERROR_CODES.UNAUTHORIZED]: () => {
@@ -72,14 +71,16 @@ const VoteCards = () => {
 
   return (
     <div className="flex max-w-screen-sm flex-wrap items-center justify-center gap-2">
-      {VOTE_OPTIONS.map((option) => (
-        <VoteCard
-          key={option.value}
-          option={option}
-          isSelected={option.value === roomDetails?.currentUserVote}
-          onClick={handleVote}
-        />
-      ))}
+      {(roomDetails?.roomSettings?.deck || DEFAULT_DECK).map(
+        (option, index) => (
+          <VoteCard
+            key={`${index}--${option}`}
+            option={option}
+            isSelected={option === roomDetails?.currentUserVote}
+            onClick={handleVote}
+          />
+        )
+      )}
     </div>
   );
 };

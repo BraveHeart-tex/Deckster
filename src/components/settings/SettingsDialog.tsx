@@ -71,7 +71,11 @@ const SettingsDialog = () => {
     });
   };
 
-  const handleChangeDeckClick = () => {};
+  const handleChangeDeckClick = () => {
+    openModal({
+      type: MODAL_TYPES.CHANGE_DECK,
+    });
+  };
 
   const handleLockOrUnlockRoomClick = () => {
     openModal({

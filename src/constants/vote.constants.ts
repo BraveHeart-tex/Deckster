@@ -15,3 +15,54 @@ export const VOTE_OPTIONS: VoteOption[] = [
   { value: '40', label: '40' },
   { value: '100', label: '100' },
 ];
+
+export const DEFAULT_DECK = [
+  '?',
+  '☕️',
+  '0',
+  '1',
+  '2',
+  '3',
+  '5',
+  '8',
+  '13',
+  '20',
+  '40',
+  '100',
+];
+
+export const VOTE_OPTION_PRESETS = [
+  {
+    label: 'Default Fibonacci',
+    deck: DEFAULT_DECK,
+  },
+  {
+    label: 'Extended Fibonacci',
+    deck: [
+      '?',
+      '☕️',
+      '0',
+      '0.5',
+      '1',
+      '2',
+      '3',
+      '5',
+      '8',
+      '13',
+      '20',
+      '40',
+      '100',
+      '∞',
+    ],
+  },
+  {
+    label: 'T-Shirt Sizes',
+    deck: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+  },
+  {
+    label: 'Binary Options',
+    deck: ['👍', '👎', '🤷‍♂️'],
+  },
+];
+
+export const DECK_MAX_SIZE = 20;

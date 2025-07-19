@@ -1,11 +1,10 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
-import { VoteOption } from '@/src/types/voteOption';
 
 interface VoteCardProps {
-  option: VoteOption;
+  option: string;
   isSelected: boolean;
-  onClick: (option: VoteOption) => void;
+  onClick: (option: string) => void;
 }
 
 const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
@@ -18,13 +17,13 @@ const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
   return (
     <Button
       aria-pressed={isSelected}
-      title={option.description}
+      title={`Vote for ${option}`}
       type="button"
       className="flex h-[6.25rem] w-[4.375rem] items-center justify-center text-3xl font-medium"
       variant={isSelected ? 'default' : 'outline'}
       onClick={handleClick}
     >
-      {option.label}
+      {option}
     </Button>
   );
 };

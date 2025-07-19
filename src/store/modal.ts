@@ -8,6 +8,7 @@ export const MODAL_TYPES = {
   TRANSFER_OWNERSHIP: 'TRANSFER_OWNERSHIP',
   DELETE_ROOM: 'DELETE_ROOM',
   LOCK_OR_UNLOCK_ROOM: 'LOCK_OR_UNLOCK_ROOM',
+  CHANGE_DECK: 'CHANGE_DECK',
 } as const;
 
 export type Modal =
@@ -27,6 +28,9 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.LOCK_OR_UNLOCK_ROOM;
+    }
+  | {
+      type: typeof MODAL_TYPES.CHANGE_DECK;
     };
 
 interface ModalStore {

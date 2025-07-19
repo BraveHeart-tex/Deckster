@@ -1,5 +1,7 @@
 import { v } from 'convex/values';
+import {} from 'convex-helpers/server/relationships';
 
+import { areArraysEqualUnordered } from '../shared/areArraysEqualUnordered';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { authMutation, authQuery } from './helpers';
 
@@ -58,5 +60,56 @@ export const getRoomSettingsByRoomId = authQuery({
     }
 
     return setting;
+  },
+});
+
+export const updateRoomDeck = authMutation({
+  args: {
+    roomId: v.id('rooms'),
+    roomSettingId: v.id('roomSettings'),
+    newDeck: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db.get(args.roomId);
+    if (!room) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room not found',
+      });
+    }
+
+    if (room.ownerId !== ctx.userIdentity.userId) {
+      throw new ApplicationError({
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'You do not have permission to update the room settings',
+      });
+    }
+
+    const roomSetting = await ctx.db.get(args.roomSettingId);
+    if (!roomSetting) {
+      throw new ApplicationError({
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'Room settings not found',
+      });
+    }
+
+    if (
+      roomSetting.deck &&
+      areArraysEqualUnordered(roomSetting.deck, args.newDeck)
+    ) {
+      return;
+    }
+
+    const votes = await ctx.db
+      .query('votes')
+      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
+      .collect();
+
+    await Promise.all([
+      ...votes.map((vote) => ctx.db.delete(vote._id)),
+      ctx.db.patch(roomSetting._id, {
+        deck: args.newDeck,
+      }),
+    ]);
   },
 });

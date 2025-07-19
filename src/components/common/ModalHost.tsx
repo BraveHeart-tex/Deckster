@@ -1,4 +1,5 @@
 'use client';
+import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import LockOrUnlockRoomDialog from '@/src/components/settings/LockOrUnlockRoomDialog';
 import TransferOwnershipDialog from '@/src/components/settings/TransferOwnershipDialog';
@@ -37,6 +38,10 @@ const ModalHost = () => {
 
     case MODAL_TYPES.LOCK_OR_UNLOCK_ROOM: {
       return <LockOrUnlockRoomDialog isOpen onOpenChange={closeModal} />;
+    }
+
+    case MODAL_TYPES.CHANGE_DECK: {
+      return <ChangeDeckDialog isOpen onOpenChange={closeModal} />;
     }
 
     default: {
