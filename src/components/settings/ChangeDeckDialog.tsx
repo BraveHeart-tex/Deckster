@@ -1,7 +1,7 @@
 import { useMutation } from 'convex/react';
 import { AlertCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { areArraysEqualUnordered } from '@/shared/areArraysEqualUnordered';
@@ -29,6 +29,7 @@ import { DECK_MAX_SIZE, DEFAULT_DECK } from '@/src/constants/vote.constants';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
+import { cn } from '@/src/lib/utils';
 import { CommonDialogProps } from '@/src/types/dialog';
 
 const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
@@ -73,7 +74,7 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
   };
 
   const handleSaveDeck = async () => {
-    if (!roomDetails || !roomDetails.roomSettings) {
+    if (!roomDetails || !roomDetails.roomSettings || isSaving) {
       return;
     }
 
@@ -124,9 +125,21 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
     setDraftDeck(newDeck);
   };
 
+  const handleDialogCloseShortcut = useCallback(
+    (event: { preventDefault: () => void }) => {
+      if (isSaving) {
+        event.preventDefault();
+      }
+    },
+    [isSaving]
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        onInteractOutside={handleDialogCloseShortcut}
+        onEscapeKeyDown={handleDialogCloseShortcut}
+      >
         <DialogHeader>
           <DialogTitle>Change Point Deck</DialogTitle>
           <DialogDescription></DialogDescription>
@@ -142,7 +155,12 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
           </AlertDescription>
         </Alert>
         <div className="space-y-4 overflow-auto">
-          <div className="w-full overflow-auto">
+          <div
+            className={cn(
+              'w-full overflow-auto',
+              isSaving && 'pointer-events-none opacity-50'
+            )}
+          >
             <ScrollablePresetButtons onDeckSelect={handleDeckSelect} />
           </div>
           <div className="grid gap-2">
@@ -153,6 +171,7 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
               placeholder="Comma-separated list of options (e.g. '1, 3, 5')"
               value={draftDeck.join(',')}
               onChange={handleDeckChange}
+              disabled={isSaving}
             />
             <p
               className="text-destructive mt-1 min-h-[1rem] text-xs"
@@ -166,10 +185,12 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline" disabled={isSaving}>
+              Close
+            </Button>
           </DialogClose>
           <Button
-            disabled={!!errorMessage}
+            disabled={!!errorMessage || isSaving}
             isLoading={isSaving}
             onClick={handleSaveDeck}
           >
