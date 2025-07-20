@@ -24,12 +24,21 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { CommonDialogProps } from '@/src/types/dialog';
 
+interface TransferOwnershipDialogProps extends CommonDialogProps {
+  selectedUserId?: string;
+  selectedUserName?: string;
+}
+
 const TransferOwnershipDialog = ({
   isOpen,
   onOpenChange,
-}: CommonDialogProps) => {
+  selectedUserId,
+  selectedUserName,
+}: TransferOwnershipDialogProps) => {
   const roomDetails = useRoomDetails();
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(
+    selectedUserId || null
+  );
   const [isTransferring, setIsTransferring] = useState(false);
   const { user } = useUser();
   const transferRoomOwnership = useMutation(api.rooms.transferRoomOwnership);
@@ -94,38 +103,51 @@ const TransferOwnershipDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Transfer Room Ownership</AlertDialogTitle>
           <AlertDialogDescription>
-            Select the user you want to transfer ownership to. This action
-            cannot be undone.
+            {!selectedUserId && !selectedUserName ? (
+              <>
+                Select the user you want to transfer ownership to. This action
+                cannot be undone.
+              </>
+            ) : (
+              <>
+                Are you sure you want to transfer ownership to &quot;
+                {selectedUserName}&quot;?
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex max-h-[300px] flex-col gap-2 overflow-y-auto">
-          {roomDetails.participants.map((participant) =>
-            participant.userId === user?.id ? null : (
-              <button
-                type="button"
-                key={participant._id}
-                className="hover:bg-muted relative flex items-center justify-between gap-2 rounded-md p-2 not-last:border-b"
-                onClick={setSelectedUser.bind(
-                  null,
-                  selectedUser === participant.userId
-                    ? null
-                    : participant.userId
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <UserAvatar
-                    userId={participant.userId}
-                    username={participant.userName}
-                  />
-                  <span className="font-semibold">{participant.userName}</span>
-                </div>
-                {selectedUser === participant.userId && (
-                  <CheckIcon className="h-5 w-5" />
-                )}
-              </button>
-            )
-          )}
-        </div>
+        {!selectedUserId && !selectedUserName && (
+          <div className="flex max-h-[300px] flex-col gap-2 overflow-y-auto">
+            {roomDetails.participants.map((participant) =>
+              participant.userId === user?.id ? null : (
+                <button
+                  type="button"
+                  key={participant._id}
+                  className="hover:bg-muted relative flex items-center justify-between gap-2 rounded-md p-2 not-last:border-b"
+                  onClick={setSelectedUser.bind(
+                    null,
+                    selectedUser === participant.userId
+                      ? null
+                      : participant.userId
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <UserAvatar
+                      userId={participant.userId}
+                      username={participant.userName}
+                    />
+                    <span className="font-semibold">
+                      {participant.userName}
+                    </span>
+                  </div>
+                  {selectedUser === participant.userId && (
+                    <CheckIcon className="h-5 w-5" />
+                  )}
+                </button>
+              )
+            )}
+          </div>
+        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isTransferring}>
             Cancel

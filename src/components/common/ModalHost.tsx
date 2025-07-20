@@ -29,7 +29,13 @@ const ModalHost = () => {
     }
 
     case MODAL_TYPES.TRANSFER_OWNERSHIP: {
-      return <TransferOwnershipDialog isOpen onOpenChange={closeModal} />;
+      return (
+        <TransferOwnershipDialog
+          isOpen
+          onOpenChange={closeModal}
+          {...modal.payload}
+        />
+      );
     }
 
     case MODAL_TYPES.DELETE_ROOM: {

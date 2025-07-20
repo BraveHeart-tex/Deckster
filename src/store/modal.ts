@@ -22,6 +22,7 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.TRANSFER_OWNERSHIP;
+      payload?: { selectedUserId: string; selectedUserName: string };
     }
   | {
       type: typeof MODAL_TYPES.DELETE_ROOM;

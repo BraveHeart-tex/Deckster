@@ -42,6 +42,16 @@ const UserActionsDropdown = ({
     });
   };
 
+  const onTransferOwnership = () => {
+    openModal({
+      type: MODAL_TYPES.TRANSFER_OWNERSHIP,
+      payload: {
+        selectedUserId: userId,
+        selectedUserName: userName,
+      },
+    });
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -52,7 +62,9 @@ const UserActionsDropdown = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem>Transfer Ownership</DropdownMenuItem>
+          <DropdownMenuItem onClick={onTransferOwnership}>
+            Transfer Ownership
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onRemoveFromRoom}>
             Remove from Room
