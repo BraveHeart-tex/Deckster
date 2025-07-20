@@ -19,6 +19,7 @@ const baseThemeOptions = [
   { label: 'Default', value: 'default' },
   { label: 'Bubblegum', value: 'bubblegum' },
   { label: 'Lumenchroma', value: 'lumenchroma' },
+  { label: 'Slack', value: 'slack' },
 ];
 
 const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
