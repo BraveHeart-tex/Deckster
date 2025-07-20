@@ -1,5 +1,4 @@
 import { v } from 'convex/values';
-import {} from 'convex-helpers/server/relationships';
 
 import { areArraysEqualUnordered } from '../shared/areArraysEqualUnordered';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
@@ -12,6 +11,7 @@ export const updateRoomSettings = authMutation({
     allowOthersToDeleteVotes: v.optional(v.boolean()),
     showUserPresence: v.optional(v.boolean()),
     showAverageOfVotes: v.optional(v.boolean()),
+    showVotingIndicator: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const roomSetting = await ctx.db.get(args.roomSettingId);

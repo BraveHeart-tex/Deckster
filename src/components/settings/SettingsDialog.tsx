@@ -45,6 +45,10 @@ const roomSettingToggles: {
     label: 'Show average of votes',
     settingKey: 'showAverageOfVotes',
   },
+  {
+    label: 'Show voting indicator',
+    settingKey: 'showVotingIndicator',
+  },
 ];
 
 const SettingsDialog = () => {

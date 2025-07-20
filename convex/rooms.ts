@@ -38,6 +38,7 @@ export const createRoom = authMutation({
       allowOthersToDeleteVotes: true,
       showAverageOfVotes: true,
       showUserPresence: true,
+      showVotingIndicator: true,
     });
 
     await ctx.db.insert('participants', {
