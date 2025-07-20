@@ -18,6 +18,7 @@ import { cn } from '@/src/lib/utils';
 const baseThemeOptions = [
   { label: 'Default', value: 'default' },
   { label: 'Bubblegum', value: 'bubblegum' },
+  { label: 'Lumenchroma', value: 'lumenchroma' },
 ];
 
 const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
