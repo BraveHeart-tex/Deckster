@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
+import { APP_NAME } from '@/constants';
+import AppLogo from '@/src/components/common/AppLogo';
 import UserMenu from '@/src/components/common/UserMenu';
 import ModeToggle from '@/src/components/ModeToggle';
 import ShareRoomDialog from '@/src/components/room/ShareRoomDialog';
@@ -12,7 +14,8 @@ const Header = async () => {
       <div className="container mx-auto grid max-w-screen-xl grid-cols-3 items-center">
         <div className="flex justify-start">
           <Link className="flex items-center space-x-2" href="/">
-            <span className="inline-block font-bold">Simple Scrum Poker</span>
+            <AppLogo />
+            <span className="inline-block font-bold">{APP_NAME}</span>
           </Link>
         </div>
 

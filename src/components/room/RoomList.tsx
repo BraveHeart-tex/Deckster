@@ -25,8 +25,8 @@ const RoomList = () => {
       {icon}
       <p className="text-muted-foreground text-sm">{message}</p>
       <div className="flex items-center space-x-2">
-        <CreateRoomFormDialog />
         <JoinRoomDialog />
+        <CreateRoomFormDialog />
       </div>
     </div>
   );
@@ -36,8 +36,8 @@ const RoomList = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Your Rooms</h2>
         <div className="flex items-center space-x-2">
-          <CreateRoomFormDialog />
           <JoinRoomDialog />
+          <CreateRoomFormDialog />
         </div>
       </div>
 

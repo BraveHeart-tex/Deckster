@@ -116,10 +116,6 @@ const JoinRoomDialog = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    If you don&apos;t know the room code, please ask the room
-                    owner.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

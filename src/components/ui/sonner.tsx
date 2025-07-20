@@ -19,7 +19,6 @@ const Toaster = ({ ...properties }: ToasterProps) => {
       }}
       richColors
       closeButton
-      expand
       style={
         {
           '--normal-bg': 'var(--popover)',

@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { ThemeProvider } from 'next-themes';
 
+import { APP_NAME } from '@/constants';
 import Header from '@/src/components/common/Header';
 import ModalHost from '@/src/components/common/ModalHost';
 import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
@@ -18,9 +19,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Scrum Poker',
-  description:
-    'A simple easy to use scrum poker app. Create a room, invite your team, and start estimating your user stories.',
+  title: `${APP_NAME} | Agile Scrum Poker Estimation Tool for Efficient Sprint Planning`,
+  description: `${APP_NAME} is a powerful and intuitive Scrum poker app designed to streamline agile sprint planning and improve team collaboration. Estimate story points quickly using virtual cards, foster transparent communication, and accelerate decision-making. Perfect for agile teams seeking a seamless, fun, and efficient way to conduct Scrum poker sessions online. Boost your sprint velocity with ${APP_NAME} today!`,
 };
 
 export default async function RootLayout({
