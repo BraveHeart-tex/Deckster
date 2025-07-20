@@ -27,7 +27,7 @@ const SettingRow = ({
       <Button
         variant={buttonVariant}
         className={cn(
-          'w-full rounded-none border-x-0 border-b md:w-auto md:rounded-md md:border',
+          'w-full rounded-none border-x-0 border-b-0 md:w-auto md:rounded-md md:border md:border-b',
           isLast && 'rounded-b-md border-b-0',
           buttonVariant === 'destructive' ||
             (buttonVariant === 'destructiveOutline' && 'border-destructive/50')
