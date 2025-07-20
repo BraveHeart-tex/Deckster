@@ -19,6 +19,7 @@ interface UserVotesTableRowProps {
   participantUserId: string;
   isOwner: boolean;
   isOnline: boolean;
+  shouldHighlightConsensus: boolean;
 }
 
 const UserVotesTableRow = memo(
@@ -29,6 +30,7 @@ const UserVotesTableRow = memo(
     participantId,
     isOwner,
     isOnline,
+    shouldHighlightConsensus,
   }: UserVotesTableRowProps) => {
     const roomDetails = useRoomDetails();
     const { user } = useUser();
@@ -69,6 +71,7 @@ const UserVotesTableRow = memo(
           <UserVoteCard
             vote={vote}
             votesRevealed={roomDetails?.room.votesRevealed}
+            shouldHighlightConsensus={shouldHighlightConsensus}
           />
         </TableCell>
         {roomDetails && roomDetails?.room.ownerId === user?.id && !isSelf && (

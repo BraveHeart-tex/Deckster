@@ -5,9 +5,14 @@ import { cn } from '@/src/lib/utils';
 interface UserVoteCardProps {
   vote: string | null;
   votesRevealed?: boolean;
+  shouldHighlightConsensus?: boolean;
 }
 
-const UserVoteCard = ({ vote, votesRevealed }: UserVoteCardProps) => {
+const UserVoteCard = ({
+  vote,
+  votesRevealed,
+  shouldHighlightConsensus = false,
+}: UserVoteCardProps) => {
   return (
     <div className="h-12 w-8 [perspective:800px]">
       <div
@@ -26,7 +31,12 @@ const UserVoteCard = ({ vote, votesRevealed }: UserVoteCardProps) => {
         </div>
 
         {/* Back face */}
-        <div className="bg-muted text-muted-foreground absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-md text-base font-semibold [backface-visibility:hidden]">
+        <div
+          className={cn(
+            'bg-muted text-muted-foreground absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-md text-base font-semibold [backface-visibility:hidden]',
+            shouldHighlightConsensus && 'bg-success text-success-foreground'
+          )}
+        >
           {vote || '-'}
         </div>
       </div>

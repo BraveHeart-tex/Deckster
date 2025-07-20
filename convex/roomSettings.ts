@@ -12,6 +12,7 @@ export const updateRoomSettings = authMutation({
     showUserPresence: v.optional(v.boolean()),
     showAverageOfVotes: v.optional(v.boolean()),
     showVotingIndicator: v.optional(v.boolean()),
+    highlightConsensusVotes: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const roomSetting = await ctx.db.get(args.roomSettingId);

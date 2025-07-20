@@ -28,6 +28,7 @@ import { RoomPageParameters, RoomSettingKey } from '@/src/types/room';
 const roomSettingToggles: {
   label: string;
   settingKey: Exclude<RoomSettingKey, 'deck'>;
+  helperText?: string;
 }[] = [
   {
     label: 'Allow others to delete votes',
@@ -48,6 +49,12 @@ const roomSettingToggles: {
   {
     label: 'Show voting indicator',
     settingKey: 'showVotingIndicator',
+  },
+  {
+    label: 'Highlight consensus votes',
+    settingKey: 'highlightConsensusVotes',
+    helperText:
+      'Consensus means every participant voted the same. This setting makes it easier to spot unanimous agreement.',
   },
 ];
 
@@ -124,6 +131,7 @@ const SettingsDialog = () => {
                   checked={!!roomSettings[setting.settingKey]}
                   label={setting.label}
                   settingKey={setting.settingKey}
+                  helperText={setting.helperText}
                 />
               ))}
             </div>

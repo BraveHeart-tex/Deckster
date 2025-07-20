@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { PresenceState } from '@convex-dev/presence/react';
 import { useConvexAuth } from 'convex/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import PresenceSubscriber from '@/src/components/common/PresenceSubscriber';
 import {
@@ -36,6 +36,41 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
     },
     []
   );
+
+  const shouldHighlightConsensus: boolean = useMemo(() => {
+    if (
+      !roomDetails?.roomSettings?.highlightConsensusVotes ||
+      !roomDetails?.room.votesRevealed
+    ) {
+      return false;
+    }
+
+    return (
+      roomDetails.participants.reduce<string | false>(
+        (accumulator, participant) => {
+          if (accumulator === false) {
+            return false;
+          } // already failed
+
+          const vote = participant.vote;
+          if (vote === null || vote === undefined) {
+            return false;
+          } // missing vote
+
+          if (accumulator === '') {
+            return vote;
+          } // first vote encountered
+
+          return accumulator === vote ? accumulator : false; // mismatch => false
+        },
+        ''
+      ) !== false
+    );
+  }, [
+    roomDetails?.participants,
+    roomDetails?.room.votesRevealed,
+    roomDetails?.roomSettings?.highlightConsensusVotes,
+  ]);
 
   return (
     <>
@@ -71,6 +106,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
                       (p) => p.userId === participant.userId
                     )?.online
                   }
+                  shouldHighlightConsensus={shouldHighlightConsensus}
                 />
               ))}
               {roomDetails.roomSettings?.showAverageOfVotes ? (

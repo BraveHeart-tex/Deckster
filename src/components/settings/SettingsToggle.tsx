@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation } from 'convex/react';
+import { CircleQuestionMark } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { api } from '@/convex/_generated/api';
@@ -9,6 +10,11 @@ import { ERROR_CODES } from '@/shared/errorCodes';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { Switch } from '@/src/components/ui/switch';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/src/components/ui/tooltip';
 import { handleApplicationError } from '@/src/helpers/handleApplicationError';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomSettingKey } from '@/src/types/room';
@@ -19,6 +25,7 @@ interface SettingsToggleProps {
   checked: boolean;
   roomSettingId: Id<'roomSettings'>;
   roomCode: string;
+  helperText?: string;
 }
 
 const SettingsToggle = ({
@@ -27,6 +34,7 @@ const SettingsToggle = ({
   label,
   roomSettingId,
   roomCode,
+  helperText,
 }: SettingsToggleProps) => {
   const router = useRouter();
   const updateRoomSettings = useMutation(
@@ -76,7 +84,22 @@ const SettingsToggle = ({
 
   return (
     <div className="flex w-full items-center justify-between">
-      <Label htmlFor={settingKey}>{label}</Label>
+      <div className="flex items-center gap-2">
+        <Label htmlFor={settingKey}>{label}</Label>
+        {helperText && helperText?.length > 0 && (
+          <Tooltip>
+            <TooltipTrigger>
+              <CircleQuestionMark size={16} />
+            </TooltipTrigger>
+            <TooltipContent
+              className="w-max max-w-sm px-4 py-2 text-sm leading-relaxed shadow-lg"
+              side="top"
+            >
+              <p>{helperText}</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
       <Switch
         id={settingKey}
         name={settingKey}

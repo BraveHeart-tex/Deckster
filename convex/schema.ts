@@ -19,6 +19,7 @@ export default defineSchema({
     showAverageOfVotes: v.boolean(),
     deck: v.optional(v.array(v.string())),
     showVotingIndicator: v.optional(v.boolean()),
+    highlightConsensusVotes: v.optional(v.boolean()),
   }).index('by_room', ['roomId']),
   votes: defineTable({
     roomId: v.id('rooms'),
