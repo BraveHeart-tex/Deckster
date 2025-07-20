@@ -4,7 +4,7 @@ import { getAll } from 'convex-helpers/server/relationships';
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
-import { api } from './_generated/api';
+import { api, internal } from './_generated/api';
 import { authMutation, authQuery, getUserNameFromIdentity } from './helpers';
 
 export const createRoom = authMutation({
@@ -323,6 +323,9 @@ export const deleteRoom = authMutation({
     }
 
     await ctx.db.delete(args.roomId);
+    await ctx.scheduler.runAfter(0, internal.cleanUp.deleteRoomEntities, {
+      roomId: args.roomId,
+    });
   },
 });
 

@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as cleanUp from "../cleanUp.js";
 import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
 import type * as participants from "../participants.js";
@@ -32,6 +33,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  cleanUp: typeof cleanUp;
   helpers: typeof helpers;
   http: typeof http;
   participants: typeof participants;
