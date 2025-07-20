@@ -31,11 +31,11 @@ const VoteControls = () => {
 
     return (
       <>
-        {roomDetails.roomSettings?.allowOthersToRevealVotes && (
-          <ToggleVotesButton />
-        )}
         {roomDetails.roomSettings?.allowOthersToDeleteVotes && (
           <DeleteEstimatesButton />
+        )}
+        {roomDetails.roomSettings?.allowOthersToRevealVotes && (
+          <ToggleVotesButton />
         )}
       </>
     );
