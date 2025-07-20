@@ -59,7 +59,7 @@ const JoinRoomDialog = () => {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
           showErrorToast(domainError.data.message);
-          router.push(ROUTES.AUTH);
+          router.push(ROUTES.SIGN_IN);
         },
         [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
           showErrorToast(domainError.data.message);

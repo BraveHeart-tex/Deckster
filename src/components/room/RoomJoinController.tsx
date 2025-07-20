@@ -47,7 +47,7 @@ const RoomJoinController = ({
       } catch (error) {
         handleDomainError(error, {
           [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
-            toastAndRedirect(domainError.data.message, ROUTES.AUTH);
+            toastAndRedirect(domainError.data.message, ROUTES.SIGN_IN);
           },
           [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
             toastAndRedirect(domainError.data.message);
