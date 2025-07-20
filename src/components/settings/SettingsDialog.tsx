@@ -27,7 +27,7 @@ import { RoomPageParameters, RoomSettingKey } from '@/src/types/room';
 
 const roomSettingToggles: {
   label: string;
-  settingKey: RoomSettingKey;
+  settingKey: Exclude<RoomSettingKey, 'deck'>;
 }[] = [
   {
     label: 'Allow others to delete votes',

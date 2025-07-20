@@ -9,10 +9,7 @@ import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import JoiningRoomIndicator from '@/src/components/room/JoiningRoomIndicator';
 import { showErrorToast } from '@/src/components/ui/sonner';
-import {
-  handleDomainError,
-  isDomainError,
-} from '@/src/helpers/handleDomainError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
 
@@ -48,25 +45,21 @@ const RoomJoinController = ({
         await joinRoom({ roomCode: parameters.code });
         setIsJoining(false);
       } catch (error) {
-        // TODO: handle auth.unauthorized error
         handleDomainError(error, {
-          [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: () => {
-            toastAndRedirect(
-              'Invalid room code. Make sure the room code is valid.'
-            );
+          [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
+            toastAndRedirect(domainError.data.message, ROUTES.AUTH);
           },
-          [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: () => {
-            toastAndRedirect('Room not found');
+          [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
+            toastAndRedirect(domainError.data.message);
           },
-          [DOMAIN_ERROR_CODES.ROOM.BANNED]: () => {
-            toastAndRedirect(
-              isDomainError(error)
-                ? error.data.message
-                : 'You are banned from this room'
-            );
+          [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (domainError) => {
+            toastAndRedirect(domainError.data.message);
           },
-          [DOMAIN_ERROR_CODES.ROOM.LOCKED]: () => {
-            toastAndRedirect('Room is currently locked. Try again later.');
+          [DOMAIN_ERROR_CODES.ROOM.BANNED]: (domainError) => {
+            toastAndRedirect(domainError.data.message);
+          },
+          [DOMAIN_ERROR_CODES.ROOM.LOCKED]: (domainError) => {
+            toastAndRedirect(domainError.data.message);
           },
         });
         setIsJoining(false);

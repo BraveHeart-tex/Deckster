@@ -28,10 +28,7 @@ import {
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast } from '@/src/components/ui/sonner';
-import {
-  handleDomainError,
-  isDomainError,
-} from '@/src/helpers/handleDomainError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
   JoinRoomInput,
@@ -59,26 +56,23 @@ const JoinRoomDialog = () => {
       const result = await joinRoom(data);
       router.push(ROUTES.ROOM(result.roomCode));
     } catch (error) {
-      // TODO: handle auth.unauthorized error
       handleDomainError(error, {
-        [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: () => {
-          showErrorToast(
-            'Invalid room code. Make sure the room code is valid.'
-          );
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
+          showErrorToast(domainError.data.message);
+          router.push(ROUTES.AUTH);
         },
-        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: () => {
-          showErrorToast('Room not found');
+        [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
+          showErrorToast(domainError.data.message);
         },
-        [DOMAIN_ERROR_CODES.ROOM.BANNED]: () => {
-          showErrorToast(
-            isDomainError(error)
-              ? error.data.message
-              : 'You are banned from this room'
-          );
+        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (domainError) => {
+          showErrorToast(domainError.data.message);
+        },
+        [DOMAIN_ERROR_CODES.ROOM.BANNED]: (domainError) => {
+          showErrorToast(domainError.data.message);
           router.push(ROUTES.HOME);
         },
-        [DOMAIN_ERROR_CODES.ROOM.LOCKED]: () => {
-          showErrorToast('Room is currently locked. Try again later.');
+        [DOMAIN_ERROR_CODES.ROOM.LOCKED]: (domainError) => {
+          showErrorToast(domainError.data.message);
         },
       });
     } finally {

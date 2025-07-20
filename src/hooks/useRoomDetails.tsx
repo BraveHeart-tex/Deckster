@@ -2,9 +2,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useAuthenticatedQueryWithStatus } from '@/src/hooks/useAuthenticatedQueryWithStatus';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
@@ -26,24 +26,29 @@ export const useRoomDetails = () => {
 
   useEffect(() => {
     if (error && isError && !handledError) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
+          showErrorToast(domainError.data.message);
           router.push(ROUTES.AUTH);
           handledError = true;
         },
-        [ERROR_CODES.VALIDATION_ERROR]: () => {
-          showErrorToast('Invalid room code');
+        [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
+          showErrorToast(domainError.data.message);
           router.push(ROUTES.HOME);
           handledError = true;
         },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          showErrorToast('Room not found');
+        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (domainError) => {
+          showErrorToast(domainError.data.message);
           router.push(ROUTES.HOME);
           handledError = true;
         },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast('You are not a participant of this room');
+        [DOMAIN_ERROR_CODES.ROOM.BANNED]: (domainError) => {
+          showErrorToast(domainError.data.message);
+          router.push(ROUTES.HOME);
+          handledError = true;
+        },
+        [DOMAIN_ERROR_CODES.ROOM.NOT_PARTICIPANT]: (domainError) => {
+          showErrorToast(domainError.data.message);
           router.push(ROUTES.HOME);
           handledError = true;
         },

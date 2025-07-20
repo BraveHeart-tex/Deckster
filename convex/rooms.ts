@@ -132,8 +132,8 @@ export const getRoomWithDetailsByCode = authQuery({
   },
   handler: async (ctx, args) => {
     if (!isValidRoomCode(args.roomCode)) {
-      throw new ApplicationError({
-        code: ERROR_CODES.VALIDATION_ERROR,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.INVALID_CODE,
         message: 'Invalid room code',
       });
     }
@@ -144,9 +144,23 @@ export const getRoomWithDetailsByCode = authQuery({
       .unique();
 
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
+      });
+    }
+
+    const isBanned = await ctx.db
+      .query('bannedUsers')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', room._id).eq('userId', ctx.userIdentity.userId as string)
+      )
+      .unique();
+
+    if (isBanned) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.BANNED,
+        message: `You are banned from this entering this room. Reason: ${isBanned.reason}`,
       });
     }
 
@@ -158,8 +172,8 @@ export const getRoomWithDetailsByCode = authQuery({
       .unique();
 
     if (!isParticipant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_PARTICIPANT,
         message: 'Must be a room participant to perform this action',
       });
     }

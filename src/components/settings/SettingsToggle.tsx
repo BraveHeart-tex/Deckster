@@ -15,7 +15,7 @@ import { RoomSettingKey } from '@/src/types/room';
 
 interface SettingsToggleProps {
   label: string;
-  settingKey: RoomSettingKey;
+  settingKey: Exclude<RoomSettingKey, 'deck'>;
   checked: boolean;
   roomSettingId: Id<'roomSettings'>;
   roomCode: string;
