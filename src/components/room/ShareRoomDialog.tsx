@@ -28,7 +28,6 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
 
-// TODO: Will refactor this to a server component
 const ShareRoomDialog = () => {
   const parameters = useParams<RoomPageParameters>();
   const roomDetails = useRoomDetails();

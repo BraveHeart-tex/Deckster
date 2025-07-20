@@ -51,3 +51,23 @@ export const deleteRoomEntities = internalMutation({
     await Promise.all(deletions);
   },
 });
+
+export const deleteParticipantEntities = internalMutation({
+  args: {
+    participantId: v.id('participants'),
+    roomId: v.id('rooms'),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const vote = await ctx.db
+      .query('votes')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', args.roomId).eq('userId', args.userId)
+      )
+      .unique();
+
+    if (vote) {
+      await ctx.db.delete(vote._id);
+    }
+  },
+});

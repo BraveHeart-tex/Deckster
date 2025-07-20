@@ -406,9 +406,6 @@ export const banUser = authMutation({
       });
     }
 
-    // TODO:We also have to delete votes and other entities
-    // associated with the user, but will probably handle them
-    // in a scheduled function
     await Promise.all([
       ctx.db.insert('bannedUsers', {
         roomId: args.roomId,
@@ -419,6 +416,15 @@ export const banUser = authMutation({
       }),
       ctx.db.delete(participant._id),
     ]);
+    await ctx.scheduler.runAfter(
+      0,
+      internal.cleanUp.deleteParticipantEntities,
+      {
+        participantId: participant._id,
+        roomId: args.roomId,
+        userId: args.userId,
+      }
+    );
   },
 });
 
