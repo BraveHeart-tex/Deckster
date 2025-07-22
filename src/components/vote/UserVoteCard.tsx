@@ -33,7 +33,7 @@ const UserVoteCard = ({
         {/* Back face */}
         <div
           className={cn(
-            'bg-muted text-muted-foreground absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-md text-base font-semibold [backface-visibility:hidden]',
+            'bg-muted text-muted-foreground transition-color absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-md text-base font-semibold duration-500 [backface-visibility:hidden]',
             shouldHighlightConsensus && 'bg-success text-success-foreground'
           )}
         >
