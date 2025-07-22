@@ -1,12 +1,8 @@
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 
 export const generateAvatarUrl = (userId: string): string => {
-  const hmac = crypto
-    .createHmac('sha256', process.env.NEXT_PUBLIC_HMAC_SECRET_KEY!)
-    .update(userId)
-    .digest('hex');
-
-  return `https://robohash.org/${hmac}?size=40x40&set=set2&bgset=bg1`;
+  const hash = createHash('sha256').update(userId).digest('hex');
+  return `https://robohash.org/${hash}?size=40x40&set=set2&bgset=bg1`;
 };
 
 export const getAvatarFallback = (username: string): string => {
