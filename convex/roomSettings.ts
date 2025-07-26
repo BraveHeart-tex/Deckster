@@ -2,7 +2,7 @@ import { v } from 'convex/values';
 
 import { areArraysEqualUnordered } from '../shared/areArraysEqualUnordered';
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
-import { authMutation, authQuery } from './helpers';
+import { assertRoomExists, authMutation, authQuery } from './helpers';
 
 export const updateRoomSettings = authMutation({
   args: {
@@ -24,12 +24,7 @@ export const updateRoomSettings = authMutation({
     }
 
     const room = await ctx.db.get(roomSetting.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({
@@ -72,12 +67,7 @@ export const updateRoomDeck = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({

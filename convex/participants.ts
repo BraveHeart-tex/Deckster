@@ -1,7 +1,11 @@
 import { v } from 'convex/values';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
-import { authMutation, ensureUniqueDisplayName } from './helpers';
+import {
+  assertRoomExists,
+  authMutation,
+  ensureUniqueDisplayName,
+} from './helpers';
 
 export const changeDisplayName = authMutation({
   args: {
@@ -56,12 +60,7 @@ export const removeParticipantFromRoom = authMutation({
 
     const room = await ctx.db.get(participant.roomId);
 
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({

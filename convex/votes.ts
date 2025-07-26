@@ -2,7 +2,7 @@ import { v } from 'convex/values';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { api } from './_generated/api';
-import { authMutation } from './helpers';
+import { assertRoomExists, authMutation } from './helpers';
 
 export const castVote = authMutation({
   args: {
@@ -11,12 +11,7 @@ export const castVote = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     const participant = await ctx.db
       .query('participants')
@@ -63,12 +58,7 @@ export const deleteVotes = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     const roomSettings = await ctx.runQuery(
       api.roomSettings.getRoomSettingsByRoomId,

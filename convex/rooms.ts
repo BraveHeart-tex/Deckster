@@ -4,7 +4,12 @@ import { getAll } from 'convex-helpers/server/relationships';
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api, internal } from './_generated/api';
-import { authMutation, authQuery, getUserNameFromIdentity } from './helpers';
+import {
+  assertRoomExists,
+  authMutation,
+  authQuery,
+  getUserNameFromIdentity,
+} from './helpers';
 
 export const createRoom = authMutation({
   args: {
@@ -72,12 +77,8 @@ export const joinRoom = authMutation({
       .query('rooms')
       .withIndex('by_code', (q) => q.eq('code', args.roomCode))
       .unique();
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+
+    assertRoomExists(room);
 
     const bannedUser = await ctx.db
       .query('bannedUsers')
@@ -144,12 +145,7 @@ export const getRoomWithDetailsByCode = authQuery({
       .withIndex('by_code', (q) => q.eq('code', args.roomCode))
       .unique();
 
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     const isBanned = await ctx.db
       .query('bannedUsers')
@@ -236,12 +232,7 @@ export const toggleVotesRevealed = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     const roomSettings = await ctx.runQuery(
       api.roomSettings.getRoomSettingsByRoomId,
@@ -272,12 +263,7 @@ export const resetVoting = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({
@@ -307,12 +293,7 @@ export const deleteRoom = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({
@@ -335,12 +316,7 @@ export const transferRoomOwnership = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({
@@ -377,12 +353,7 @@ export const banUser = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({
@@ -433,12 +404,7 @@ export const toggleRoomLock = authMutation({
   },
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
-    if (!room) {
-      throw new DomainError({
-        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
-        message: 'Room not found',
-      });
-    }
+    assertRoomExists(room);
 
     if (room.ownerId !== ctx.userIdentity.userId) {
       throw new DomainError({

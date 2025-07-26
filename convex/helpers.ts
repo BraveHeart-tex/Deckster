@@ -7,6 +7,7 @@ import {
 } from 'convex-helpers/server/customFunctions';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
+import { Doc as Document_ } from './_generated/dataModel';
 import {
   action,
   type ActionCtx,
@@ -73,3 +74,14 @@ export const authAction = customAction(
   action,
   customCtx(async (ctx) => injectUserIdentity(ctx))
 );
+
+export function assertRoomExists(
+  room: Document_<'rooms'> | null
+): asserts room is Document_<'rooms'> {
+  if (!room) {
+    throw new DomainError({
+      code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
+      message: 'Room not found',
+    });
+  }
+}
