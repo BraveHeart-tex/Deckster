@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { areArraysEqualUnordered } from '../shared/areArraysEqualUnordered';
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
+import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { authMutation, authQuery } from './helpers';
 
 export const updateRoomSettings = authMutation({
@@ -17,23 +17,23 @@ export const updateRoomSettings = authMutation({
   handler: async (ctx, args) => {
     const roomSetting = await ctx.db.get(args.roomSettingId);
     if (!roomSetting) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM_SETTINGS.NOT_FOUND,
         message: 'Room settings not found',
       });
     }
 
     const room = await ctx.db.get(roomSetting.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'You do not have permission to update the room settings',
       });
     }
@@ -54,8 +54,8 @@ export const getRoomSettingsByRoomId = authQuery({
       .unique();
 
     if (!setting) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM_SETTINGS.NOT_FOUND,
         message: 'Room settings not found',
       });
     }
@@ -73,23 +73,23 @@ export const updateRoomDeck = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'You do not have permission to update the room settings',
       });
     }
 
     const roomSetting = await ctx.db.get(args.roomSettingId);
     if (!roomSetting) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM_SETTINGS.NOT_FOUND,
         message: 'Room settings not found',
       });
     }

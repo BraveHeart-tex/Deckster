@@ -2,7 +2,6 @@ import { v } from 'convex/values';
 import { getAll } from 'convex-helpers/server/relationships';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
 import { api, internal } from './_generated/api';
 import { authMutation, authQuery, getUserNameFromIdentity } from './helpers';
@@ -238,8 +237,8 @@ export const toggleVotesRevealed = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
@@ -255,8 +254,8 @@ export const toggleVotesRevealed = authMutation({
       !roomSettings.allowOthersToRevealVotes &&
       room.ownerId !== ctx.userIdentity.userId
     ) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room creator can reveal votes',
       });
     }
@@ -274,15 +273,15 @@ export const resetVoting = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.UNAUTHORIZED,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED,
         message: 'Only room creator can reset voting',
       });
     }
@@ -309,15 +308,15 @@ export const deleteRoom = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only room creator can delete room',
       });
     }
@@ -337,15 +336,15 @@ export const transferRoomOwnership = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room creator can transfer ownership',
       });
     }
@@ -358,8 +357,8 @@ export const transferRoomOwnership = authMutation({
       .unique();
 
     if (!isNewOwnerParticipant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.VALIDATION_ERROR,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.PARTICIPANT.NOT_FOUND,
         message: 'New owner must be a room participant',
       });
     }
@@ -379,15 +378,15 @@ export const banUser = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room creator can ban users',
       });
     }
@@ -400,8 +399,8 @@ export const banUser = authMutation({
       .unique();
 
     if (!participant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.PARTICIPANT.NOT_FOUND,
         message: 'User not found in room',
       });
     }
@@ -435,15 +434,15 @@ export const toggleRoomLock = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can toggle the room lock',
       });
     }

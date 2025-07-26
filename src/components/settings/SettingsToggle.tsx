@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { Switch } from '@/src/components/ui/switch';
@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/tooltip';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomSettingKey } from '@/src/types/room';
 
@@ -64,19 +64,14 @@ const SettingsToggle = ({
         [settingKey]: isChecked,
       });
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.SIGN_IN);
         },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          showErrorToast('Room not found');
+        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.HOME);
-        },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast(
-            'You do not have permission to update the room settings.'
-          );
         },
       });
     }

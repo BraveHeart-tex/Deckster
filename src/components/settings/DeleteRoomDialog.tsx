@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,7 +17,7 @@ import {
 import { Button } from '@/src/components/ui/button';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { CommonDialogProps } from '@/src/types/dialog';
@@ -49,17 +49,14 @@ const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
       showSuccessToast('Room deleted successfully!');
       onOpenChange(false);
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.SIGN_IN);
         },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          showErrorToast('Room not found');
+        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.HOME);
-        },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast('Only the room creator can delete the room.');
         },
       });
     } finally {

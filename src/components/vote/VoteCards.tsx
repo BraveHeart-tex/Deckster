@@ -5,11 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import VoteCard from '@/src/components/vote/VoteCard';
 import { DEFAULT_DECK } from '@/src/constants/vote.constants';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { RoomPageParameters } from '@/src/types/room';
@@ -51,17 +51,14 @@ const VoteCards = () => {
       try {
         await castVote({ roomId: roomDetails.room._id, value: option });
       } catch (error) {
-        handleApplicationError(error, {
-          [ERROR_CODES.UNAUTHORIZED]: () => {
-            showErrorToast('You are not authorized to perform this action.');
+        handleDomainError(error, {
+          [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+            showErrorToast(error.data.message);
             router.push(ROUTES.SIGN_IN);
           },
-          [ERROR_CODES.NOT_FOUND]: () => {
-            showErrorToast('Room not found');
+          [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
+            showErrorToast(error.data.message);
             router.push(ROUTES.HOME);
-          },
-          [ERROR_CODES.FORBIDDEN]: () => {
-            showErrorToast('You must be a room participant to vote.');
           },
         });
       }

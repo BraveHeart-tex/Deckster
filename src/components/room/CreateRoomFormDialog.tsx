@@ -1,12 +1,12 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from 'convex/react';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -28,7 +28,7 @@ import {
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
   CreateRoomInput,
@@ -63,15 +63,10 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
 
       router.push(ROUTES.ROOM(createRoomResult.roomCode));
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
-          redirect(ROUTES.SIGN_IN);
-        },
-        [ERROR_CODES.CONFLICT]: () => {
-          showErrorToast(
-            'Display name already taken. Please try another name.'
-          );
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+          showErrorToast(error.data.message);
+          router.push(ROUTES.SIGN_IN);
         },
       });
     } finally {

@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
+import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { api } from './_generated/api';
 import { authMutation } from './helpers';
 
@@ -12,8 +12,8 @@ export const castVote = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
@@ -28,8 +28,8 @@ export const castVote = authMutation({
       .unique();
 
     if (!participant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Must be a room participant to vote',
       });
     }
@@ -64,8 +64,8 @@ export const deleteVotes = authMutation({
   handler: async (ctx, args) => {
     const room = await ctx.db.get(args.roomId);
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
@@ -81,8 +81,8 @@ export const deleteVotes = authMutation({
       !roomSettings.allowOthersToDeleteVotes &&
       room.ownerId !== ctx.userIdentity.userId
     ) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'You do not have permission to delete votes',
       });
     }

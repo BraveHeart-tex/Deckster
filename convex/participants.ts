@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
+import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { authMutation, ensureUniqueDisplayName } from './helpers';
 
 export const changeDisplayName = authMutation({
@@ -12,15 +12,15 @@ export const changeDisplayName = authMutation({
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.PARTICIPANT.NOT_FOUND,
         message: 'Participant not found',
       });
     }
 
     if (participant.userId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Forbidden',
       });
     }
@@ -48,8 +48,8 @@ export const removeParticipantFromRoom = authMutation({
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.PARTICIPANT.NOT_FOUND,
         message: 'Participant not found',
       });
     }
@@ -57,15 +57,15 @@ export const removeParticipantFromRoom = authMutation({
     const room = await ctx.db.get(participant.roomId);
 
     if (!room) {
-      throw new ApplicationError({
-        code: ERROR_CODES.NOT_FOUND,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.ROOM.NOT_FOUND,
         message: 'Room not found',
       });
     }
 
     if (room.ownerId !== ctx.userIdentity.userId) {
-      throw new ApplicationError({
-        code: ERROR_CODES.FORBIDDEN,
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can remove participants',
       });
     }

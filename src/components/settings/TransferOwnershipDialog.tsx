@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import UserAvatar from '@/src/components/common/UserAvatar';
 import {
   AlertDialog,
@@ -19,7 +19,7 @@ import {
 } from '@/src/components/ui/alert-dialog';
 import { Button } from '@/src/components/ui/button';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { CommonDialogProps } from '@/src/types/dialog';
@@ -63,22 +63,17 @@ const TransferOwnershipDialog = ({
       showSuccessToast('Ownership transferred successfully!');
       onOpenChange(false);
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: () => {
           router.push(ROUTES.SIGN_IN);
         },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          showErrorToast('Room not found');
+        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.HOME);
         },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast(
-            'Only the room creator can transfer ownership to another user.'
-          );
+        [DOMAIN_ERROR_CODES.AUTH.FORBIDDEN]: (error) => {
+          showErrorToast(error.data.message);
           onOpenChange(false);
-        },
-        [ERROR_CODES.VALIDATION_ERROR]: () => {
-          showErrorToast('Invalid user. Please select a valid user.');
         },
       });
     } finally {

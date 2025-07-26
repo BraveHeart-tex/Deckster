@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -33,7 +33,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/src/components/ui/tooltip';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
   ChangeDisplayNameInput,
@@ -77,21 +77,10 @@ const ChangeDisplaynameDialog = ({
       showSuccessToast('Display name changed successfully!');
       setIsOpen(false);
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+          showErrorToast(error.message);
           router.push(ROUTES.SIGN_IN);
-        },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          router.push(ROUTES.HOME);
-        },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast('You are not to perform this action.');
-        },
-        [ERROR_CODES.CONFLICT]: () => {
-          showErrorToast(
-            'Display name already taken. Please try another name.'
-          );
         },
       });
     } finally {

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { ERROR_CODES } from '@/shared/errorCodes';
+import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,7 +20,7 @@ import { Button } from '@/src/components/ui/button';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { Textarea } from '@/src/components/ui/textarea';
-import { handleApplicationError } from '@/src/helpers/handleApplicationError';
+import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import { CommonDialogProps } from '@/src/types/dialog';
 
@@ -51,16 +51,10 @@ const BanUserDialog = ({
       showSuccessToast('User banned successfully!');
       onOpenChange(false);
     } catch (error) {
-      handleApplicationError(error, {
-        [ERROR_CODES.UNAUTHORIZED]: () => {
-          showErrorToast('You are not authorized to perform this action.');
+      handleDomainError(error, {
+        [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
+          showErrorToast(error.data.message);
           router.push(ROUTES.SIGN_IN);
-        },
-        [ERROR_CODES.NOT_FOUND]: () => {
-          showErrorToast('Room or user not found');
-        },
-        [ERROR_CODES.FORBIDDEN]: () => {
-          showErrorToast('Only the room creator can ban users.');
         },
       });
     } finally {

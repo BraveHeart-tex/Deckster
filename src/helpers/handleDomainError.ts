@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation';
-
 import { DomainError, DomainErrorCode } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 
@@ -8,7 +6,6 @@ export type DomainErrorHandlerMap = Partial<
   Record<DomainErrorCode, DomainErrorHandlingAction>
 >;
 
-// Type guard for DomainError
 export function isDomainError(error: unknown): error is DomainError {
   return (
     typeof error === 'object' &&
@@ -19,7 +16,6 @@ export function isDomainError(error: unknown): error is DomainError {
   );
 }
 
-// Main handler
 export function handleDomainError(
   error: unknown,
   handlers: DomainErrorHandlerMap = {},
@@ -43,6 +39,10 @@ export function defaultDomainErrorHandler(error: unknown) {
   if (process.env.NODE_ENV === 'development') {
     console.error(error);
   }
-  showErrorToast('An unexpected error occurred. Please try again later.');
-  redirect('/');
+
+  if (isDomainError(error)) {
+    showErrorToast(error.data.message);
+  } else {
+    showErrorToast('An unexpected error occurred. Please try again later.');
+  }
 }

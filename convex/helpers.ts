@@ -6,7 +6,7 @@ import {
   customQuery,
 } from 'convex-helpers/server/customFunctions';
 
-import { ApplicationError, ERROR_CODES } from '../shared/errorCodes';
+import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import {
   action,
   type ActionCtx,
@@ -34,8 +34,8 @@ export const ensureUniqueDisplayName = async (
     .first();
 
   if (existing !== null) {
-    throw new ApplicationError({
-      code: ERROR_CODES.CONFLICT,
+    throw new DomainError({
+      code: DOMAIN_ERROR_CODES.PARTICIPANT.DISPLAY_NAME_TAKEN,
       message: 'Display name already taken',
     });
   }
@@ -44,8 +44,8 @@ export const ensureUniqueDisplayName = async (
 const ensureAuthenticated = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
   const identity = await ctx.auth.getUserIdentity();
   if (identity === null) {
-    throw new ApplicationError({
-      code: ERROR_CODES.UNAUTHORIZED,
+    throw new DomainError({
+      code: DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED,
       message: 'You must be logged in to perform this action',
     });
   }
