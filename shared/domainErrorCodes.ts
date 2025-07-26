@@ -14,6 +14,9 @@ export const DOMAIN_ERROR_CODES = {
     DISPLAY_NAME_TAKEN: 'PARTICIPANT.CONFLICT.DISPLAY_NAME_TAKEN',
     NOT_FOUND: 'PARTICIPANT.NOT_FOUND',
   },
+  BANNED_USER: {
+    NOT_FOUND: 'BANNED_USER.NOT_FOUND',
+  },
   USER: {
     INVALID_NAME: 'USER.VALIDATION.INVALID_NAME',
   },
@@ -30,7 +33,8 @@ export type DomainErrorCode =
   | ValueOf<(typeof DOMAIN_ERROR_CODES)['PARTICIPANT']>
   | ValueOf<(typeof DOMAIN_ERROR_CODES)['USER']>
   | ValueOf<(typeof DOMAIN_ERROR_CODES)['AUTH']>
-  | ValueOf<(typeof DOMAIN_ERROR_CODES)['ROOM_SETTINGS']>;
+  | ValueOf<(typeof DOMAIN_ERROR_CODES)['ROOM_SETTINGS']>
+  | ValueOf<(typeof DOMAIN_ERROR_CODES)['BANNED_USER']>;
 
 // Domain error shape
 export type DomainErrorData = {

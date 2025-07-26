@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import BannedUserItem from '@/src/components/settings/BannedUserItem';
 import {
   Dialog,
   DialogContent,
@@ -23,12 +24,14 @@ const BannedUsersDialog = ({
   isOpen,
   onOpenChange,
 }: BannedUsersDialogProps) => {
-  const { data, isPending, isError, error } = useAuthenticatedQueryWithStatus(
-    api.rooms.getBannedUsers,
-    {
-      roomId,
-    }
-  );
+  const {
+    data: bannedUsers,
+    isPending,
+    isError,
+    error,
+  } = useAuthenticatedQueryWithStatus(api.rooms.getBannedUsers, {
+    roomId,
+  });
 
   const renderContent = useCallback(() => {
     if (isPending) {
@@ -55,16 +58,24 @@ const BannedUsersDialog = ({
       );
     }
 
-    return data.length === 0 ? (
+    return bannedUsers.length === 0 ? (
       <div className="h-[2.5rem] w-full">
         <h3 className="scroll-m-20 text-center text-lg font-semibold tracking-tight">
           No banned users were found
         </h3>
       </div>
     ) : (
-      <></>
+      <div>
+        {bannedUsers.map((bannedUser) => (
+          <BannedUserItem
+            user={bannedUser}
+            key={bannedUser._id}
+            roomId={roomId}
+          />
+        ))}
+      </div>
     );
-  }, [data?.length, error, isError, isPending]);
+  }, [bannedUsers, error, isError, isPending, roomId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

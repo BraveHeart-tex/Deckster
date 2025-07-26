@@ -424,9 +424,79 @@ export const getBannedUsers = authQuery({
     roomId: v.id('rooms'),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const bannedUsers = await ctx.db
       .query('bannedUsers')
       .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
       .collect();
+
+    const userInfos = await Promise.all(
+      bannedUsers.map((bannedUser) =>
+        ctx.db
+          .query('users')
+          .withIndex('byExternalId', (q) =>
+            q.eq('externalId', bannedUser.userId)
+          )
+          .unique()
+      )
+    );
+
+    const userInfoMap = userInfos.reduce((map, user) => {
+      if (user !== null) {
+        map.set(user.externalId, user);
+      }
+      return map;
+    }, new Map<string, (typeof userInfos)[number]>());
+
+    return bannedUsers.reduce(
+      (accumulator, bannedUser) => {
+        const userInfo = userInfoMap.get(bannedUser.userId);
+        if (!userInfo) {
+          return accumulator;
+        }
+        accumulator.push({
+          ...bannedUser,
+          email: userInfo.email,
+          name: userInfo.name,
+        });
+        return accumulator;
+      },
+      [] as Array<
+        (typeof bannedUsers)[number] & { email?: string; name: string }
+      >
+    );
+  },
+});
+
+export const revokeBan = authMutation({
+  args: {
+    roomId: v.id('rooms'),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db.get(args.roomId);
+    assertRoomExists(room);
+
+    if (room.ownerId !== ctx.userIdentity.userId) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
+        message: 'Only the room owner can revoke bans',
+      });
+    }
+
+    const bannedUser = await ctx.db
+      .query('bannedUsers')
+      .withIndex('by_room_and_user', (q) =>
+        q.eq('roomId', args.roomId).eq('userId', args.userId)
+      )
+      .unique();
+
+    if (!bannedUser) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.BANNED_USER.NOT_FOUND,
+        message: 'Ban not found',
+      });
+    }
+
+    await ctx.db.delete(bannedUser._id);
   },
 });

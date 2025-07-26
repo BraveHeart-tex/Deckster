@@ -16,6 +16,7 @@ import type * as presence from "../presence.js";
 import type * as roomSettings from "../roomSettings.js";
 import type * as rooms from "../rooms.js";
 import type * as router from "../router.js";
+import type * as users from "../users.js";
 import type * as votes from "../votes.js";
 
 import type {
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   roomSettings: typeof roomSettings;
   rooms: typeof rooms;
   router: typeof router;
+  users: typeof users;
   votes: typeof votes;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

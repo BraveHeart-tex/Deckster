@@ -46,4 +46,10 @@ export default defineSchema({
   })
     .index('by_room', ['roomId'])
     .index('by_room_and_user', ['roomId', 'userId']),
+  users: defineTable({
+    name: v.string(),
+    externalId: v.string(),
+    email: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+  }).index('byExternalId', ['externalId']),
 });
