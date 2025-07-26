@@ -418,3 +418,15 @@ export const toggleRoomLock = authMutation({
     });
   },
 });
+
+export const getBannedUsers = authQuery({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('bannedUsers')
+      .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
+      .collect();
+  },
+});

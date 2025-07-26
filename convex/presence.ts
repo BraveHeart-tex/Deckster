@@ -2,6 +2,7 @@ import { Presence } from '@convex-dev/presence';
 import { v } from 'convex/values';
 
 import { components } from './_generated/api';
+import { mutation } from './_generated/server';
 import { authMutation, authQuery } from './helpers';
 
 export const presence = new Presence(components.presence);
@@ -25,7 +26,7 @@ export const list = authQuery({
   },
 });
 
-export const disconnect = authMutation({
+export const disconnect = mutation({
   args: { sessionToken: v.string() },
   handler: async (ctx, { sessionToken }) => {
     return await presence.disconnect(ctx, sessionToken);

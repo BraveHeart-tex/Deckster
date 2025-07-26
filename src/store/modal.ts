@@ -9,6 +9,7 @@ export const MODAL_TYPES = {
   DELETE_ROOM: 'DELETE_ROOM',
   LOCK_OR_UNLOCK_ROOM: 'LOCK_OR_UNLOCK_ROOM',
   CHANGE_DECK: 'CHANGE_DECK',
+  BANNED_USERS: 'BANNED_USERS',
 } as const;
 
 export type Modal =
@@ -32,6 +33,10 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.CHANGE_DECK;
+    }
+  | {
+      type: typeof MODAL_TYPES.BANNED_USERS;
+      payload: { roomId: Id<'rooms'> };
     };
 
 interface ModalStore {

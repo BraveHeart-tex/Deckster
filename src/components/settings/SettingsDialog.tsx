@@ -94,6 +94,13 @@ const SettingsDialog = () => {
     });
   };
 
+  const handleBannedUsers = () => {
+    openModal({
+      type: MODAL_TYPES.BANNED_USERS,
+      payload: { roomId: roomDetails.room._id },
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -108,7 +115,7 @@ const SettingsDialog = () => {
           </TooltipContent>
         </Tooltip>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[98%] w-full overflow-hidden">
         <DialogHeader>
           <DialogTitle>Room Settings</DialogTitle>
           <DialogDescription>
@@ -117,7 +124,7 @@ const SettingsDialog = () => {
             options.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6 overflow-y-auto">
           <div className="space-y-2">
             <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
               Room Configuration
@@ -157,6 +164,15 @@ const SettingsDialog = () => {
                 isLast
                 buttonText={`${roomDetails.room.locked ? 'Unlock' : 'Lock'} Room`}
                 onClick={handleLockOrUnlockRoomClick}
+              />
+              <SettingRow
+                title="Banned Users"
+                description={
+                  'Review ban details and revoke bans to restore access.'
+                }
+                isLast
+                buttonText="Manage Banned Users"
+                onClick={handleBannedUsers}
               />
             </div>
           </div>

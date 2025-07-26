@@ -1,4 +1,5 @@
 'use client';
+import BannedUsersDialog from '@/src/components/settings/BannedUsersDialog';
 import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import LockOrUnlockRoomDialog from '@/src/components/settings/LockOrUnlockRoomDialog';
@@ -48,6 +49,16 @@ const ModalHost = () => {
 
     case MODAL_TYPES.CHANGE_DECK: {
       return <ChangeDeckDialog isOpen onOpenChange={closeModal} />;
+    }
+
+    case MODAL_TYPES.BANNED_USERS: {
+      return (
+        <BannedUsersDialog
+          isOpen
+          onOpenChange={closeModal}
+          {...modal.payload}
+        />
+      );
     }
 
     default: {
