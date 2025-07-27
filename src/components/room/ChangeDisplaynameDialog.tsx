@@ -7,11 +7,12 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -36,7 +37,7 @@ import {
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
-  ChangeDisplayNameInput,
+  type ChangeDisplayNameInput,
   changeDisplayNameSchema,
 } from '@/src/validation/change-display-name.schema';
 
@@ -94,9 +95,9 @@ const ChangeDisplaynameDialog = ({
         <Tooltip>
           <TooltipTrigger asChild onClick={() => setIsOpen(true)}>
             <Button
-              size="icon"
-              variant="outline"
-              className="ml-2 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100"
+              size='icon'
+              variant='outline'
+              className='ml-2 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100'
             >
               <PencilIcon />
             </Button>
@@ -114,10 +115,10 @@ const ChangeDisplaynameDialog = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="userDisplayName"
+              name='userDisplayName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Display Name</FormLabel>
@@ -128,9 +129,14 @@ const ChangeDisplaynameDialog = ({
                 </FormItem>
               )}
             />
-            <div className="flex justify-end">
+            <div className='flex items-center gap-2 justify-end'>
+              <DialogClose asChild>
+                <Button type='button' variant='outline' disabled={isChanging}>
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button
-                type="submit"
+                type='submit'
                 disabled={
                   isChanging || defaultValue === form.watch('userDisplayName')
                 }
