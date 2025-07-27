@@ -1,12 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { APP_NAME } from '@/constants';
 import { isValidRoomCode } from '@/shared/generateRoomCode';
 import RoomPageClient from '@/src/components/room/RoomPageClient';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomPageParameters } from '@/src/types/room';
+import type { RoomPageParameters } from '@/src/types/room';
 
 interface RoomPageProps {
   params: Promise<RoomPageParameters>;

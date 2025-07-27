@@ -7,7 +7,7 @@ import { showErrorToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useAuthenticatedQueryWithStatus } from '@/src/hooks/useAuthenticatedQueryWithStatus';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomPageParameters } from '@/src/types/room';
+import type { RoomPageParameters } from '@/src/types/room';
 
 let handledError = false;
 

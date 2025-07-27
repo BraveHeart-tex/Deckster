@@ -1,4 +1,4 @@
-import { DomainError, DomainErrorCode } from '@/shared/domainErrorCodes';
+import type { DomainError, DomainErrorCode } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
 
 export type DomainErrorHandlingAction = (error: DomainError) => void;

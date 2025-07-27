@@ -4,8 +4,7 @@
   "private": true,
   "lint-staged": {
     "*.{js,ts,json,cjs,mjs,md,css,tsx,jsx,json}": [
-      "prettier --write",
-      "eslint --fix"
+      "biome check --write --no-errors-on-unmatched"
     ]
   },
   "scripts": {
@@ -20,10 +19,8 @@
     "@auth/core": "0.37.0",
     "@clerk/backend": "^2.6.0",
     "@clerk/nextjs": "^6.23.2",
-    "@convex-dev/auth": "^0.0.87",
     "@convex-dev/presence": "^0.1.5",
     "@hookform/resolvers": "^5.1.1",
-    "@node-rs/argon2": "^2.0.2",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
@@ -52,34 +49,18 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.1.2",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/eslintrc": "^3",
-    "@next/eslint-plugin-next": "^15.3.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.4",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.0",
-    "eslint-plugin-promise": "^7.2.1",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-sonarjs": "^3.0.3",
-    "eslint-plugin-unicorn": "^59.0.1",
-    "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.2.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.13",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
-    "typescript": "^5",
-    "typescript-eslint": "^8.34.1"
+    "typescript": "^5"
   }
 }

@@ -6,7 +6,10 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
-import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import {
+  DOMAIN_ERROR_CODES,
+  type DomainError,
+} from '@/shared/domainErrorCodes';
 import { ROOM_CODE_DEFAULT_SIZE } from '@/shared/generateRoomCode';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -31,7 +34,7 @@ import { showErrorToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
-  JoinRoomInput,
+  type JoinRoomInput,
   joinRoomSchema,
 } from '@/src/validation/join-room.schema';
 
@@ -44,6 +47,7 @@ const JoinRoomDialog = () => {
     defaultValues: {
       roomCode: '',
       userDisplayName: '',
+      roomPassword: '',
     },
     resolver: zodResolver(joinRoomSchema),
   });
@@ -56,24 +60,24 @@ const JoinRoomDialog = () => {
       const result = await joinRoom(data);
       router.push(ROUTES.ROOM(result.roomCode));
     } catch (error) {
+      const handlePasswordError = (domainError: DomainError) => {
+        const message = domainError.data.message;
+        showErrorToast(message);
+        form.setError('roomPassword', { message });
+        form.setFocus('roomPassword');
+      };
+
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
           showErrorToast(domainError.data.message);
           router.push(ROUTES.SIGN_IN);
         },
-        [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {
-          showErrorToast(domainError.data.message);
-        },
-        [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (domainError) => {
-          showErrorToast(domainError.data.message);
-        },
         [DOMAIN_ERROR_CODES.ROOM.BANNED]: (domainError) => {
           showErrorToast(domainError.data.message);
           router.push(ROUTES.HOME);
         },
-        [DOMAIN_ERROR_CODES.ROOM.LOCKED]: (domainError) => {
-          showErrorToast(domainError.data.message);
-        },
+        [DOMAIN_ERROR_CODES.ROOM.PASSWORD_REQUIRED]: handlePasswordError,
+        [DOMAIN_ERROR_CODES.ROOM.INVALID_PASSWORD]: handlePasswordError,
       });
     } finally {
       setIsJoining(false);
@@ -91,7 +95,7 @@ const JoinRoomDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="secondary">Join Room</Button>
+        <Button variant='secondary'>Join Room</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -102,10 +106,10 @@ const JoinRoomDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="roomCode"
+              name='roomCode'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Code</FormLabel>
@@ -122,7 +126,7 @@ const JoinRoomDialog = () => {
             />
             <FormField
               control={form.control}
-              name="userDisplayName"
+              name='userDisplayName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Your Display Name</FormLabel>
@@ -136,8 +140,21 @@ const JoinRoomDialog = () => {
                 </FormItem>
               )}
             />
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isJoining} isLoading={isJoining}>
+            <FormField
+              control={form.control}
+              name='roomPassword'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Room Password</FormLabel>
+                  <FormControl>
+                    <Input type='password' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex justify-end'>
+              <Button type='submit' disabled={isJoining} isLoading={isJoining}>
                 {isJoining ? 'Joining' : 'Join Room'}
               </Button>
             </div>

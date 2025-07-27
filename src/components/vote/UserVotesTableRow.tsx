@@ -2,7 +2,7 @@
 import { useUser } from '@clerk/nextjs';
 import { memo, useMemo } from 'react';
 
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
@@ -41,8 +41,10 @@ const UserVotesTableRow = memo(
 
     return (
       <TableRow>
-        <TableCell className={cn(isSelf && 'group font-semibold')}>
-          <div className="flex items-center gap-2">
+        <TableCell
+          className={cn('font-medium', isSelf && 'group font-semibold')}
+        >
+          <div className='flex items-center gap-2'>
             <UserAvatar
               userId={participantUserId}
               username={userName}
@@ -55,10 +57,10 @@ const UserVotesTableRow = memo(
               }
             />
             <div>
-              <span className="truncate">{userName}</span>
+              <span className='truncate'>{userName}</span>
               {isSelf && ' (You)'}{' '}
             </div>
-            {isOwner && <Badge variant="secondary">Owner</Badge>}
+            {isOwner && <Badge variant='secondary'>Owner</Badge>}
             {isSelf && (
               <ChangeDisplaynameDialog
                 defaultValue={userName}
@@ -67,7 +69,7 @@ const UserVotesTableRow = memo(
             )}
           </div>
         </TableCell>
-        <TableCell className="flex items-center justify-center text-center">
+        <TableCell className='flex items-center justify-center text-center'>
           <UserVoteCard
             vote={vote}
             votesRevealed={roomDetails?.room.votesRevealed}
@@ -75,7 +77,7 @@ const UserVotesTableRow = memo(
           />
         </TableCell>
         {roomDetails && roomDetails?.room.ownerId === user?.id && !isSelf && (
-          <TableCell className="text-center">
+          <TableCell className='text-center'>
             <UserActionsDropdown
               userName={userName}
               participantId={participantId}

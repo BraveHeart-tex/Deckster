@@ -1,5 +1,5 @@
 import { useConvexAuth, useQueries } from 'convex/react';
-import { FunctionReference, OptionalRestArgs } from 'convex/server';
+import type { FunctionReference, OptionalRestArgs } from 'convex/server';
 import { makeUseQueryWithStatus } from 'convex-helpers/react';
 
 export const useQueryWithStatus = makeUseQueryWithStatus(useQueries);

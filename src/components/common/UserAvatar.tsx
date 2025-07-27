@@ -24,7 +24,7 @@ const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
   }, [userId]);
 
   return (
-    <div className="relative inline-block">
+    <div className='relative inline-block'>
       <Avatar>
         <AvatarImage src={avatarUrl} />
         <AvatarFallback>{getAvatarFallback(username)}</AvatarFallback>
@@ -36,7 +36,9 @@ const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
             presence === 'online' && 'bg-green-500',
             presence === 'offline' && 'bg-gray-500'
           )}
+          role='status'
           aria-label={presence === 'online' ? 'Online' : 'Offline'}
+          title={presence === 'online' ? 'Online' : 'Offline'}
         />
       ) : null}
     </div>

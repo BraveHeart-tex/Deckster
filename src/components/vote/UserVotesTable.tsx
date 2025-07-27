@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { PresenceState } from '@convex-dev/presence/react';
+import type { PresenceState } from '@convex-dev/presence/react';
 import { useConvexAuth } from 'convex/react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/src/components/ui/table';
 import AverageOfVotesRow from '@/src/components/vote/AverageOfVotesRow';
+import UserRowSkeleton from '@/src/components/vote/UserRowSkeleton';
 import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
@@ -78,19 +79,18 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead className="text-center">Story Points</TableHead>
+            <TableHead className='text-center'>Story Points</TableHead>
             {roomDetails && roomDetails.room.ownerId === user?.id && (
-              <TableHead className="text-center">Actions</TableHead>
+              <TableHead className='text-center'>Actions</TableHead>
             )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {!roomDetails ? (
-            <TableRow>
-              <TableHead colSpan={2} className="text-center">
-                Loading...
-              </TableHead>
-            </TableRow>
+            Array.from({ length: 2 }).map((_, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: this is a false positive
+              <UserRowSkeleton key={index} />
+            ))
           ) : (
             <>
               {roomDetails.participants.map((participant) => (

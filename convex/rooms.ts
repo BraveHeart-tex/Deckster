@@ -3,7 +3,9 @@ import { getAll } from 'convex-helpers/server/relationships';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { generateRoomCode, isValidRoomCode } from '../shared/generateRoomCode';
+import { hashPassword, verifyPassword } from '../shared/password';
 import { api, internal } from './_generated/api';
+import type { Doc } from './_generated/dataModel';
 import {
   assertRoomExists,
   authMutation,
@@ -18,7 +20,7 @@ export const createRoom = authMutation({
   },
   handler: async (ctx, args) => {
     let roomCode: string;
-    let exists;
+    let exists: Doc<'rooms'> | null;
 
     do {
       roomCode = generateRoomCode();
@@ -60,10 +62,12 @@ export const createRoom = authMutation({
   },
 });
 
+// TODO: Rate limit this
 export const joinRoom = authMutation({
   args: {
     roomCode: v.string(),
     userDisplayName: v.optional(v.string()),
+    roomPassword: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     if (!isValidRoomCode(args.roomCode)) {
@@ -111,6 +115,27 @@ export const joinRoom = authMutation({
           code: DOMAIN_ERROR_CODES.ROOM.LOCKED,
           message: 'Room is currently locked. Please try again later.',
         });
+      }
+
+      if (room.password && !args.roomPassword) {
+        throw new DomainError({
+          code: DOMAIN_ERROR_CODES.ROOM.PASSWORD_REQUIRED,
+          message: 'Room password is required',
+        });
+      }
+
+      if (room.password && args.roomPassword) {
+        const isValidPassword = await verifyPassword(
+          args.roomPassword,
+          room.password
+        );
+
+        if (!isValidPassword) {
+          throw new DomainError({
+            code: DOMAIN_ERROR_CODES.ROOM.INVALID_PASSWORD,
+            message: 'Invalid room password',
+          });
+        }
       }
 
       await ctx.db.insert('participants', {
@@ -513,9 +538,11 @@ export const revokeBan = authMutation({
 export const setRoomPassword = authMutation({
   args: {
     roomId: v.id('rooms'),
-    passwordHash: v.string(),
+    password: v.string(),
   },
   handler: async (ctx, args) => {
+    const hash = await hashPassword(args.password);
+
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
@@ -527,7 +554,7 @@ export const setRoomPassword = authMutation({
     }
 
     await ctx.db.patch(args.roomId, {
-      password: args.passwordHash,
+      password: hash,
     });
   },
 });

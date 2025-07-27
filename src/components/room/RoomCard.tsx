@@ -1,6 +1,6 @@
 'use client';
 
-import { Doc } from '@/convex/_generated/dataModel';
+import type { Doc } from '@/convex/_generated/dataModel';
 import { Button } from '@/src/components/ui/button';
 import {
   Card,
@@ -16,11 +16,11 @@ interface RoomCardProps {
 
 const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
   return (
-    <Card className="flex flex-col justify-between transition-shadow hover:shadow-lg">
+    <Card className='flex flex-col justify-between transition-shadow hover:shadow-lg'>
       <CardHeader>
-        <CardTitle className="text-xl">{room.name}</CardTitle>
+        <CardTitle className='text-xl'>{room.name}</CardTitle>
       </CardHeader>
-      <CardFooter className="justify-end">
+      <CardFooter className='justify-end'>
         <Button onClick={() => onJoinRoom(room.code)}>Enter Room</Button>
       </CardFooter>
     </Card>

@@ -26,7 +26,7 @@ import {
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomPageParameters } from '@/src/types/room';
+import type { RoomPageParameters } from '@/src/types/room';
 
 const ShareRoomDialog = () => {
   const parameters = useParams<RoomPageParameters>();
@@ -77,7 +77,7 @@ const ShareRoomDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant='ghost'>
           {roomDetails?.room.locked ? <LockIcon /> : <Share2Icon />}
           Room {parameters.code}
         </Button>
@@ -89,9 +89,9 @@ const ShareRoomDialog = () => {
             Share this room code or let teammates scan the QR to join instantly.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-4">
+        <div className='flex flex-col items-center gap-4'>
           {roomDetails.room.locked && (
-            <Alert variant="destructive">
+            <Alert variant='destructive'>
               <AlertCircleIcon />
               <AlertTitle>Heads up!</AlertTitle>
               <AlertDescription>
@@ -104,31 +104,31 @@ const ShareRoomDialog = () => {
           )}
 
           <Badge>{parameters.code}</Badge>
-          <div className="bg-muted/50 flex flex-col items-center rounded-lg p-4">
+          <div className='bg-muted/50 flex flex-col items-center rounded-lg p-4'>
             <QRCodeSVG value={roomUrl} size={225} />
-            <p className="text-muted-foreground mt-2 text-sm">
+            <p className='text-muted-foreground mt-2 text-sm'>
               Scan to join this room
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <Button
-              variant="outline"
-              size="sm"
-              className="w-full max-w-xs justify-between font-mono"
+              variant='outline'
+              size='sm'
+              className='w-full max-w-xs justify-between font-mono'
               onClick={handleCopyUrl}
             >
-              <span className="truncate">{roomUrl}</span>
+              <span className='truncate'>{roomUrl}</span>
               {isCopied ? (
-                <CheckIcon className="ml-2 h-4 w-4 stroke-green-600" />
+                <CheckIcon className='ml-2 h-4 w-4 stroke-green-600' />
               ) : (
-                <ClipboardCopyIcon className="ml-2 h-4 w-4" />
+                <ClipboardCopyIcon className='ml-2 h-4 w-4' />
               )}
             </Button>
           </div>
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant='outline'>Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

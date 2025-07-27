@@ -7,9 +7,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
-import { hashPassword } from '@/src/actions/hashPassword';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -31,9 +30,9 @@ import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 import {
-  SetRoomPasswordInput,
+  type SetRoomPasswordInput,
   setRoomPasswordSchema,
 } from '@/src/validation/set-room-password.schema';
 
@@ -61,8 +60,7 @@ const RoomPasswordDialog = ({
   const onSubmit = async (values: SetRoomPasswordInput) => {
     setIsLoading(true);
     try {
-      const passwordHash = await hashPassword(values.roomPassword);
-      await setRoomPassword({ roomId, passwordHash });
+      await setRoomPassword({ roomId, password: values.roomPassword });
       showSuccessToast('Room password set successfully!');
       onOpenChange(false);
     } catch (error) {
@@ -88,15 +86,15 @@ const RoomPasswordDialog = ({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <FormField
               control={form.control}
-              name="roomPassword"
+              name='roomPassword'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type='password' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,12 +102,12 @@ const RoomPasswordDialog = ({
             />
             <FormField
               control={form.control}
-              name="roomPasswordAgain"
+              name='roomPasswordAgain'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input type='password' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,11 +116,11 @@ const RoomPasswordDialog = ({
           </div>
         </Form>
         <DialogFooter>
-          <Button type="button" variant="outline" disabled={isLoading}>
+          <Button type='button' variant='outline' disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            type="button"
+            type='button'
             disabled={
               (form.formState.isSubmitted && !form.formState.isValid) ||
               isLoading
