@@ -558,3 +558,24 @@ export const setRoomPassword = authMutation({
     });
   },
 });
+
+export const resetRoomPassword = authMutation({
+  args: {
+    roomId: v.id('rooms'),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db.get(args.roomId);
+    assertRoomExists(room);
+
+    if (room.ownerId !== ctx.userIdentity.userId) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
+        message: 'Only the room owner can reset the password',
+      });
+    }
+
+    await ctx.db.patch(args.roomId, {
+      password: '',
+    });
+  },
+});

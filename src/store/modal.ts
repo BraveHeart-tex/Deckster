@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 
 export const MODAL_TYPES = {
   REMOVE_PARTICIPANT: 'REMOVE_PARTICIPANT',
@@ -11,6 +11,7 @@ export const MODAL_TYPES = {
   CHANGE_DECK: 'CHANGE_DECK',
   BANNED_USERS: 'BANNED_USERS',
   SET_ROOM_PASSWORD: 'SET_ROOM_PASSWORD',
+  RESET_ROOM_PASSWORD: 'RESET_ROOM_PASSWORD',
 } as const;
 
 export type Modal =
@@ -41,6 +42,10 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.SET_ROOM_PASSWORD;
+      payload: { roomId: Id<'rooms'> };
+    }
+  | {
+      type: typeof MODAL_TYPES.RESET_ROOM_PASSWORD;
       payload: { roomId: Id<'rooms'> };
     };
 

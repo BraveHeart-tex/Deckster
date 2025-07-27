@@ -12,6 +12,7 @@ import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -116,9 +117,11 @@ const RoomPasswordDialog = ({
           </div>
         </Form>
         <DialogFooter>
-          <Button type='button' variant='outline' disabled={isLoading}>
-            Cancel
-          </Button>
+          <DialogClose asChild>
+            <Button type='button' variant='outline' disabled={isLoading}>
+              Cancel
+            </Button>
+          </DialogClose>
           <Button
             type='button'
             disabled={

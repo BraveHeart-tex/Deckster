@@ -1,4 +1,5 @@
 'use client';
+import ResetRoomPasswordDialog from '@/src/components/room/ResetRoomPasswordDialog';
 import BannedUsersDialog from '@/src/components/settings/BannedUsersDialog';
 import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
@@ -65,6 +66,16 @@ const ModalHost = () => {
     case MODAL_TYPES.SET_ROOM_PASSWORD: {
       return (
         <RoomPasswordDialog
+          isOpen
+          onOpenChange={closeModal}
+          {...modal.payload}
+        />
+      );
+    }
+
+    case MODAL_TYPES.RESET_ROOM_PASSWORD: {
+      return (
+        <ResetRoomPasswordDialog
           isOpen
           onOpenChange={closeModal}
           {...modal.payload}

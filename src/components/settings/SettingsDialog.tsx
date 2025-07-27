@@ -23,7 +23,7 @@ import {
 } from '@/src/components/ui/tooltip';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { MODAL_TYPES, useModalStore } from '@/src/store/modal';
-import { RoomPageParameters, RoomSettingKey } from '@/src/types/room';
+import type { RoomPageParameters, RoomSettingKey } from '@/src/types/room';
 
 const roomSettingToggles: {
   label: string;
@@ -108,12 +108,19 @@ const SettingsDialog = () => {
     });
   };
 
+  const handleResetPasswordClick = () => {
+    openModal({
+      type: MODAL_TYPES.RESET_ROOM_PASSWORD,
+      payload: { roomId: roomDetails.room._id },
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)}>
+            <Button variant='ghost' size='icon' onClick={() => setIsOpen(true)}>
               <CogIcon />
             </Button>
           </TooltipTrigger>
@@ -122,7 +129,7 @@ const SettingsDialog = () => {
           </TooltipContent>
         </Tooltip>
       </DialogTrigger>
-      <DialogContent className="max-h-[98%] w-full overflow-hidden">
+      <DialogContent className='max-h-[98%] w-full overflow-hidden'>
         <DialogHeader>
           <DialogTitle>Room Settings</DialogTitle>
           <DialogDescription>
@@ -131,12 +138,12 @@ const SettingsDialog = () => {
             options.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-1 flex-col gap-6 overflow-y-auto">
-          <div className="space-y-2">
-            <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
+        <div className='flex flex-1 flex-col gap-6 overflow-y-auto'>
+          <div className='space-y-2'>
+            <h3 className='scroll-m-20 text-lg font-semibold tracking-tight'>
               Room Configuration
             </h3>
-            <div className="flex flex-col gap-4 overflow-hidden rounded-md border p-3">
+            <div className='flex flex-col gap-4 overflow-hidden rounded-md border p-3'>
               {roomSettingToggles.map((setting) => (
                 <SettingsToggle
                   key={setting.settingKey}
@@ -150,15 +157,15 @@ const SettingsDialog = () => {
               ))}
             </div>
           </div>
-          <div className="space-y-2">
-            <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">
+          <div className='space-y-2'>
+            <h3 className='scroll-m-20 text-lg font-semibold tracking-tight'>
               Session Controls
             </h3>
-            <div className="overflow-hidden rounded-md border">
+            <div className='overflow-hidden rounded-md border'>
               <SettingRow
-                title="Change Deck"
-                description="Change the deck of cards for this room."
-                buttonText="Change Deck"
+                title='Change Deck'
+                description='Change the deck of cards for this room.'
+                buttonText='Change Deck'
                 onClick={handleChangeDeckClick}
               />
               <SettingRow
@@ -172,56 +179,65 @@ const SettingsDialog = () => {
                 onClick={handleLockOrUnlockRoomClick}
               />
               <SettingRow
-                title="Set Room Password"
+                title='Set Room Password'
                 description={
                   'Set a password to make this room private. Participants must enter it to join'
                 }
-                buttonText="Set Room Password"
+                buttonText='Set Room Password'
                 onClick={handleSetRoomPassword}
               />
               <SettingRow
-                title="Banned Users"
+                title='Banned Users'
                 description={
                   'Review ban details and revoke bans to restore access.'
                 }
                 isLast
-                buttonText="Manage Banned Users"
+                buttonText='Manage Banned Users'
                 onClick={handleBannedUsers}
               />
             </div>
           </div>
           {roomDetails.room.ownerId === user?.id && (
-            <div className="space-y-2">
-              <h3 className="text-destructive scroll-m-20 text-lg font-semibold tracking-tight">
+            <div className='space-y-2'>
+              <h3 className='text-destructive scroll-m-20 text-lg font-semibold tracking-tight'>
                 Danger Zone
               </h3>
-              <div className="border-destructive/50 overflow-hidden rounded-md border">
-                <SettingRow
-                  title="Delete Room"
-                  description="Once you delete a room, there is no going back. Please be certain."
-                  buttonText="Delete Room"
-                  buttonVariant="destructive"
-                  onClick={handleDeleteRoomClick}
-                />
+              <div className='border-destructive/50 overflow-hidden rounded-md border'>
+                {roomDetails.room.hasPassword && (
+                  <SettingRow
+                    title='Reset Password'
+                    description='Reset the password for this room.'
+                    buttonText='Reset Password'
+                    buttonVariant='destructiveOutline'
+                    onClick={handleResetPasswordClick}
+                  />
+                )}
                 {roomDetails.participants.length > 1 && (
                   <SettingRow
-                    title="Transfer Ownership"
-                    description=" Transfer ownership of this room to another user."
+                    title='Transfer Ownership'
+                    description=' Transfer ownership of this room to another user.'
                     isLast
-                    buttonVariant="destructiveOutline"
-                    buttonText="Transfer Ownership"
+                    buttonVariant='destructiveOutline'
+                    buttonText='Transfer Ownership'
                     onClick={handleTransferRoomClick}
                   />
                 )}
+                <SettingRow
+                  title='Delete Room'
+                  description='Once you delete a room, there is no going back. Please be certain.'
+                  buttonText='Delete Room'
+                  buttonVariant='destructive'
+                  onClick={handleDeleteRoomClick}
+                />
               </div>
             </div>
           )}
         </div>
         <DialogFooter>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={() => setIsOpen(false)}
-            className="w-full"
+            className='w-full'
           >
             Close
           </Button>
