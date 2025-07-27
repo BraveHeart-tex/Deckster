@@ -101,6 +101,13 @@ const SettingsDialog = () => {
     });
   };
 
+  const handleSetRoomPassword = () => {
+    openModal({
+      type: MODAL_TYPES.SET_ROOM_PASSWORD,
+      payload: { roomId: roomDetails.room._id },
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -161,9 +168,16 @@ const SettingsDialog = () => {
                     ? 'Unlock the room and allow others to join.'
                     : 'Lock the room and prevent others from joining.'
                 }
-                isLast
                 buttonText={`${roomDetails.room.locked ? 'Unlock' : 'Lock'} Room`}
                 onClick={handleLockOrUnlockRoomClick}
+              />
+              <SettingRow
+                title="Set Room Password"
+                description={
+                  'Set a password to make this room private. Participants must enter it to join'
+                }
+                buttonText="Set Room Password"
+                onClick={handleSetRoomPassword}
               />
               <SettingRow
                 title="Banned Users"

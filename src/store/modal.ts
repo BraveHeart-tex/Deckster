@@ -10,6 +10,7 @@ export const MODAL_TYPES = {
   LOCK_OR_UNLOCK_ROOM: 'LOCK_OR_UNLOCK_ROOM',
   CHANGE_DECK: 'CHANGE_DECK',
   BANNED_USERS: 'BANNED_USERS',
+  SET_ROOM_PASSWORD: 'SET_ROOM_PASSWORD',
 } as const;
 
 export type Modal =
@@ -36,6 +37,10 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.BANNED_USERS;
+      payload: { roomId: Id<'rooms'> };
+    }
+  | {
+      type: typeof MODAL_TYPES.SET_ROOM_PASSWORD;
       payload: { roomId: Id<'rooms'> };
     };
 

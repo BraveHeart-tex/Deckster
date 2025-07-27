@@ -191,7 +191,16 @@ export const getRoomWithDetailsByCode = authQuery({
     ]);
 
     return {
-      room,
+      room: {
+        _id: room._id,
+        _creationTime: room._creationTime,
+        hasPassword: !!room.password,
+        name: room.name,
+        code: room.code,
+        ownerId: room.ownerId,
+        votesRevealed: room.votesRevealed,
+        locked: room.locked,
+      },
       participants: participants.map((participant) => ({
         ...participant,
         isOwner: participant.userId === room.ownerId,
@@ -498,5 +507,27 @@ export const revokeBan = authMutation({
     }
 
     await ctx.db.delete(bannedUser._id);
+  },
+});
+
+export const setRoomPassword = authMutation({
+  args: {
+    roomId: v.id('rooms'),
+    passwordHash: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db.get(args.roomId);
+    assertRoomExists(room);
+
+    if (room.ownerId !== ctx.userIdentity.userId) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
+        message: 'Only the room owner can set a password',
+      });
+    }
+
+    await ctx.db.patch(args.roomId, {
+      password: args.passwordHash,
+    });
   },
 });

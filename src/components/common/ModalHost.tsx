@@ -3,6 +3,7 @@ import BannedUsersDialog from '@/src/components/settings/BannedUsersDialog';
 import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import LockOrUnlockRoomDialog from '@/src/components/settings/LockOrUnlockRoomDialog';
+import RoomPasswordDialog from '@/src/components/settings/RoomPasswordDialog';
 import TransferOwnershipDialog from '@/src/components/settings/TransferOwnershipDialog';
 import BanUserDialog from '@/src/components/vote/BanUserDialog';
 import RemoveParticipantDialog from '@/src/components/vote/RemoveParticipantDialog';
@@ -54,6 +55,16 @@ const ModalHost = () => {
     case MODAL_TYPES.BANNED_USERS: {
       return (
         <BannedUsersDialog
+          isOpen
+          onOpenChange={closeModal}
+          {...modal.payload}
+        />
+      );
+    }
+
+    case MODAL_TYPES.SET_ROOM_PASSWORD: {
+      return (
+        <RoomPasswordDialog
           isOpen
           onOpenChange={closeModal}
           {...modal.payload}
