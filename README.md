@@ -22,13 +22,13 @@ It was also the perfect opportunity to experiment with Convex, a cutting-edge ba
 
 ---
 
-## **🧭 Overview**
+## **Overview**
 
 Deckster helps agile teams run virtual Scrum Poker sessions to estimate user stories collaboratively. Whether you're co-located or distributed, Deckster offers a fluid, interactive experience to align team understanding and reduce planning friction.
 
 ---
 
-## **✨ Features**
+## **Features**
 
 * 🔢 **Interactive Scrum Poker** – Run real-time, virtual planning poker sessions.
 * 📊 **Story Point Estimation** – Vote and track estimates collaboratively.
@@ -38,7 +38,7 @@ Deckster helps agile teams run virtual Scrum Poker sessions to estimate user sto
 
 ---
 
-## **🚀 Getting Started**
+## **Getting Started**
 
 Follow these steps to set up and run **Deckster** locally:
 
@@ -114,7 +114,7 @@ Your local Deckster instance should now be running.
 
 ---
 
-## **🧱 Technology Stack**
+## **Technology Stack**
 
 * **Frontend:** [Next.js](https://nextjs.org/), [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
 * **Backend:** [Convex](https://convex.dev/), [Node.js](https://nodejs.org/)
