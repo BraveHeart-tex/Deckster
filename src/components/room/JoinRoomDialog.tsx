@@ -131,7 +131,7 @@ const JoinRoomDialog = () => {
                 <FormItem>
                   <FormLabel>Your Display Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} autoComplete='off' />
                   </FormControl>
                   <FormDescription>
                     Optional: Change your name in the room
@@ -147,7 +147,7 @@ const JoinRoomDialog = () => {
                 <FormItem>
                   <FormLabel>Room Password</FormLabel>
                   <FormControl>
-                    <Input type='password' {...field} />
+                    <Input type='password' {...field} autoComplete='off' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

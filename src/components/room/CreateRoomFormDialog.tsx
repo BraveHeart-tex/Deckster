@@ -31,7 +31,7 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
 import {
-  CreateRoomInput,
+  type CreateRoomInput,
   createRoomSchema,
 } from '@/src/validation/create-room.schema';
 
@@ -94,10 +94,10 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="roomName"
+              name='roomName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Name</FormLabel>
@@ -110,7 +110,7 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
             />
             <FormField
               control={form.control}
-              name="userDisplayName"
+              name='userDisplayName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Your Display Name</FormLabel>
@@ -125,14 +125,14 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
               )}
             />
 
-            <div className="flex justify-end space-x-2">
+            <div className='flex justify-end space-x-2'>
               <DialogClose asChild>
-                <Button type="button" variant="secondary" disabled={isCreating}>
+                <Button type='button' variant='secondary' disabled={isCreating}>
                   Cancel
                 </Button>
               </DialogClose>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isCreating}
                 isLoading={isCreating}
               >

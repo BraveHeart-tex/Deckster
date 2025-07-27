@@ -94,7 +94,7 @@ const RoomPasswordDialog = ({
                 <FormItem>
                   <FormLabel>Room Password</FormLabel>
                   <FormControl>
-                    <Input type='password' {...field} />
+                    <Input type='password' {...field} autoComplete='off' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,7 +107,7 @@ const RoomPasswordDialog = ({
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type='password' {...field} />
+                    <Input type='password' {...field} autoComplete='off' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

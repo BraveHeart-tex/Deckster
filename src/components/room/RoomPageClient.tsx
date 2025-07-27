@@ -14,24 +14,26 @@ interface VoteCardsProps {
 const RoomPageClient = ({ roomCode }: VoteCardsProps) => {
   const [isJoining] = useStateBus('isJoiningRoom');
 
-  if (isJoining) {
-    return <RoomJoinController />;
-  }
-
   return (
     <div className='mx-auto flex h-full max-w-screen-md flex-col items-center justify-center space-y-4'>
-      <div className='space-y-2 text-center'>
-        <h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>
-          Estimate the Effort
-        </h2>
-        <p className='text-muted-foreground max-w-md text-center text-sm'>
-          Pick a card that reflects how complex you think this task is.
-        </p>
-      </div>
-      <VotingIndicator />
-      <VoteCards />
-      <VoteControls />
-      <UserVotesTable roomCode={roomCode} />
+      {isJoining ? (
+        <RoomJoinController />
+      ) : (
+        <>
+          <div className='space-y-2 text-center'>
+            <h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>
+              Estimate the Effort
+            </h2>
+            <p className='text-muted-foreground max-w-md text-center text-sm'>
+              Pick a card that reflects how complex you think this task is.
+            </p>
+          </div>
+          <VotingIndicator />
+          <VoteCards />
+          <VoteControls />
+          <UserVotesTable roomCode={roomCode} />
+        </>
+      )}
     </div>
   );
 };

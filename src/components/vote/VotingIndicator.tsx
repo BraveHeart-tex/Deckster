@@ -2,6 +2,7 @@
 import { useMemo } from 'react';
 
 import { Badge } from '@/src/components/ui/badge';
+import { Skeleton } from '@/src/components/ui/skeleton';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
 const VotingIndicator = () => {
@@ -14,7 +15,11 @@ const VotingIndicator = () => {
       : 0;
   }, [roomDetails?.participants]);
 
-  if (!roomDetails || !roomDetails.roomSettings?.showVotingIndicator) {
+  if (!roomDetails) {
+    return <Skeleton className='h-6 w-16' />;
+  }
+
+  if (!roomDetails.roomSettings?.showVotingIndicator) {
     return null;
   }
 

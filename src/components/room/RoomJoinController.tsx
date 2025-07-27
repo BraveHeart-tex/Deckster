@@ -3,11 +3,12 @@
 import { useAuth } from '@clerk/nextjs';
 import { useMutation } from 'convex/react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import JoiningRoomIndicator from '@/src/components/room/JoiningRoomIndicator';
+import RoomPasswordForm from '@/src/components/room/RoomPasswordFormDialog';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import {
   defaultDomainErrorHandler,
@@ -25,15 +26,18 @@ const RoomJoinController = () => {
   const router = useRouter();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
-  useEffect(() => {
-    if (!isSignedIn || !parameters.code) {
-      return;
-    }
-
-    const doJoin = async () => {
+  const handleJoinRoom = useCallback(
+    async ({
+      roomCode,
+      roomPassword,
+    }: {
+      roomCode: string;
+      roomPassword: string;
+    }) => {
       setIsJoining(true);
+
       try {
-        await joinRoom({ roomCode: parameters.code });
+        await joinRoom({ roomCode, roomPassword });
         setIsJoining(false);
       } catch (error) {
         handleDomainError(
@@ -47,6 +51,10 @@ const RoomJoinController = () => {
               showErrorToast(domainError.data.message);
               setShowPasswordForm(true);
             },
+            [DOMAIN_ERROR_CODES.ROOM.INVALID_PASSWORD]: (domainError) => {
+              showErrorToast(domainError.data.message);
+              setShowPasswordForm(true);
+            },
           },
           (error) => {
             defaultDomainErrorHandler(error);
@@ -54,14 +62,34 @@ const RoomJoinController = () => {
           }
         );
       }
-    };
+    },
+    [joinRoom, setIsJoining, router]
+  );
 
-    doJoin();
-  }, [isSignedIn, joinRoom, parameters.code, router, setIsJoining]);
+  const onPasswordFormSubmit = useCallback(
+    async (roomPassword: string) => {
+      await handleJoinRoom({
+        roomCode: parameters.code,
+        roomPassword,
+      });
+    },
+    [handleJoinRoom, parameters.code]
+  );
+
+  useEffect(() => {
+    if (!isSignedIn || !parameters.code) {
+      return;
+    }
+
+    handleJoinRoom({
+      roomCode: parameters.code,
+      roomPassword: '',
+    });
+  }, [isSignedIn, parameters.code, handleJoinRoom]);
 
   if (isJoining) {
     if (showPasswordForm) {
-      return <div>Room password form</div>;
+      return <RoomPasswordForm onFormSubmit={onPasswordFormSubmit} />;
     }
     return <JoiningRoomIndicator />;
   }
