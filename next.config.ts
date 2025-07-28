@@ -36,12 +36,13 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://*.convex.cloud wss://*.convex.cloud https://clerk-telemetry.com",
-              "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev",
+              "img-src 'self' data: https: https://img.clerk.com",
+              "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://clerk-telemetry.com https://*.convex.cloud wss://*.convex.cloud",
+              "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com",
               "worker-src 'self' blob:",
+              "form-action 'self'",
             ].join('; '),
           },
           // Prevent browsers from caching sensitive pages
