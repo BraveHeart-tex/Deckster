@@ -39,8 +39,9 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
-              "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://*.convex.cloud",
+              "connect-src 'self' https://clerk.com https://*.clerk.accounts.dev https://*.convex.cloud wss://*.convex.cloud https://clerk-telemetry.com",
               "frame-src 'self' https://clerk.com https://*.clerk.accounts.dev",
+              "worker-src 'self' blob:",
             ].join('; '),
           },
           // Prevent browsers from caching sensitive pages
