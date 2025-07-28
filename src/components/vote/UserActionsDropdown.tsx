@@ -1,7 +1,7 @@
 'use client';
 import { EllipsisIcon } from 'lucide-react';
 
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -53,28 +53,30 @@ const UserActionsDropdown = ({
   };
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="ghost">
-            <EllipsisIcon />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={onTransferOwnership}>
-            Transfer Ownership
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={onRemoveFromRoom}>
-            Remove from Room
-          </DropdownMenuItem>
-          <DropdownMenuItem variant="destructive" onClick={onBanUser}>
-            Ban
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          size='icon'
+          variant='ghost'
+          aria-label={`Actions for ${userName}`}
+        >
+          <EllipsisIcon />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end'>
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem onClick={onTransferOwnership}>
+          Transfer Ownership
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onRemoveFromRoom}>
+          Remove from Room
+        </DropdownMenuItem>
+        <DropdownMenuItem variant='destructive' onClick={onBanUser}>
+          Ban
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

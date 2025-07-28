@@ -16,7 +16,14 @@ const VoteControls = () => {
   const renderControls = useCallback(() => {
     if (!roomDetails) {
       return (
-        <div className='flex items-center gap-2'>
+        // biome-ignore lint/a11y/useSemanticElements: its fine
+        <div
+          className='flex items-center gap-2'
+          role='status'
+          aria-live='polite'
+          aria-label='Loading controls'
+        >
+          <span className='sr-only'>Loading controls...</span>
           <Skeleton className='w-[5rem] h-9 rounded-md' />
           <Skeleton className='w-[5rem] h-9 rounded-md' />
           <Skeleton className='size-9 rounded-md' />

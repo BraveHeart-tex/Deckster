@@ -14,14 +14,23 @@ const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
     }
   };
 
+  const handleKeydown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <Button
       aria-pressed={isSelected}
+      aria-label={`Vote for ${option} story points`}
       title={`Vote for ${option}`}
-      type="button"
-      className="flex h-[6.25rem] w-[4.375rem] items-center justify-center text-3xl font-medium"
+      type='button'
+      className='flex h-[6.25rem] w-[4.375rem] items-center justify-center text-3xl font-medium'
       variant={isSelected ? 'default' : 'outline'}
       onClick={handleClick}
+      onKeyDown={handleKeydown}
     >
       {option}
     </Button>

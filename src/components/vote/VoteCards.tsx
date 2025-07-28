@@ -12,7 +12,7 @@ import { DEFAULT_DECK } from '@/src/constants/vote.constants';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomPageParameters } from '@/src/types/room';
+import type { RoomPageParameters } from '@/src/types/room';
 
 const VoteCards = () => {
   const router = useRouter();
@@ -67,7 +67,11 @@ const VoteCards = () => {
   );
 
   return (
-    <div className="flex max-w-screen-sm flex-wrap items-center justify-center gap-2">
+    <fieldset
+      className='flex max-w-screen-sm flex-wrap items-center justify-center gap-2'
+      aria-label='Vote options'
+    >
+      <legend className='sr-only'>Vote options</legend>
       {(roomDetails?.roomSettings?.deck || DEFAULT_DECK).map(
         (option, index) => (
           <VoteCard
@@ -78,7 +82,7 @@ const VoteCards = () => {
           />
         )
       )}
-    </div>
+    </fieldset>
   );
 };
 
