@@ -55,6 +55,11 @@ const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
             type='button'
             aria-label='Change base app theme'
           >
+            <span className='sr-only'>
+              {baseTheme === 'default'
+                ? 'Change base app theme'
+                : `Change base app theme to ${baseTheme}`}
+            </span>
             <PaletteIcon />
           </Button>
         </DropdownMenuTrigger>
