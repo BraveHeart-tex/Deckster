@@ -49,7 +49,12 @@ const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="outline">
+          <Button
+            size='icon'
+            variant='outline'
+            type='button'
+            aria-label='Change base app theme'
+          >
             <PaletteIcon />
           </Button>
         </DropdownMenuTrigger>
@@ -66,7 +71,7 @@ const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
               )}
             >
               {option.label}
-              {option.value === baseTheme && <CheckIcon className="ml-auto" />}
+              {option.value === baseTheme && <CheckIcon className='ml-auto' />}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

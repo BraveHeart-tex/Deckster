@@ -58,7 +58,7 @@ const UserActionsDropdown = ({
         <Button
           size='icon'
           variant='ghost'
-          aria-label={`Actions for ${userName}`}
+          aria-label={`See actions for ${userName}`}
         >
           <EllipsisIcon />
         </Button>

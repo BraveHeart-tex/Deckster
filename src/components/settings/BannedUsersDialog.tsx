@@ -95,7 +95,9 @@ const BannedUsersDialog = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant='outline'>Close</Button>
+            <Button variant='outline' aria-label='Close dialog'>
+              Close
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

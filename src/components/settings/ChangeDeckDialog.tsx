@@ -30,7 +30,7 @@ import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import { cn } from '@/src/lib/utils';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 
 const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
   const roomDetails = useRoomDetails();
@@ -139,7 +139,7 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
           <DialogTitle>Change Point Deck</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <Alert variant="destructive">
+        <Alert variant='destructive'>
           <AlertCircleIcon />
           <AlertTitle>Heads up!</AlertTitle>
           <AlertDescription>
@@ -149,7 +149,7 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
             </p>
           </AlertDescription>
         </Alert>
-        <div className="space-y-4 overflow-auto">
+        <div className='space-y-4 overflow-auto'>
           <div
             className={cn(
               'w-full overflow-auto',
@@ -158,20 +158,20 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
           >
             <ScrollablePresetButtons onDeckSelect={handleDeckSelect} />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="deck">Deck</Label>
+          <div className='grid gap-2'>
+            <Label htmlFor='deck'>Deck</Label>
             <Input
-              type="text"
-              id="deck"
+              type='text'
+              id='deck'
               placeholder="Comma-separated list of options (e.g. '1, 3, 5')"
               value={draftDeck.join(',')}
               onChange={handleDeckChange}
               disabled={isSaving}
             />
             <p
-              className="text-destructive mt-1 min-h-[1rem] text-xs"
-              aria-live="polite"
-              aria-atomic="true"
+              className='text-destructive mt-1 min-h-[1rem] text-xs'
+              aria-live='polite'
+              aria-atomic='true'
             >
               {errorMessage || '\u00A0' /* non-breaking space to keep height */}
             </p>
@@ -180,7 +180,11 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" disabled={isSaving}>
+            <Button
+              variant='outline'
+              disabled={isSaving}
+              aria-label='Close dialog'
+            >
               Close
             </Button>
           </DialogClose>
@@ -188,6 +192,7 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
             disabled={!!errorMessage || isSaving}
             isLoading={isSaving}
             onClick={handleSaveDeck}
+            aria-label='Save deck'
           >
             {isSaving ? 'Saving' : 'Save'} Deck
           </Button>

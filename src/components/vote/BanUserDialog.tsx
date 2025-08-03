@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import {
   AlertDialog,
@@ -14,7 +14,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/src/components/ui/alert-dialog';
 import { Button } from '@/src/components/ui/button';
 import { Label } from '@/src/components/ui/label';
@@ -22,7 +21,7 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { Textarea } from '@/src/components/ui/textarea';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface BanUserDialogProps extends CommonDialogProps {
   userName: string;
@@ -70,7 +69,6 @@ const BanUserDialog = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger>Open</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -80,20 +78,20 @@ const BanUserDialog = ({
             They won’t be able to rejoin this room in the future.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex w-full flex-col gap-2 overflow-y-auto">
-          <Label htmlFor="reason">Reason</Label>
+        <div className='flex w-full flex-col gap-2 overflow-y-auto'>
+          <Label htmlFor='reason'>Reason</Label>
           <Textarea
-            id="reason"
-            name="reason"
+            id='reason'
+            name='reason'
             value={reason}
             onChange={handleReasonChange}
             maxLength={BAN_USER_REASON_MAX_LENGTH}
           />
-          <div className="flex w-full items-center justify-between gap-2">
-            <p className="text-muted-foreground text-xs">
+          <div className='flex w-full items-center justify-between gap-2'>
+            <p className='text-muted-foreground text-xs'>
               Optional reason for banning the user.
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p className='text-muted-foreground text-xs'>
               {reason.length}/{BAN_USER_REASON_MAX_LENGTH}
             </p>
           </div>
@@ -101,10 +99,11 @@ const BanUserDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            variant="destructive"
+            variant='destructive'
             onClick={handleBanUser}
             disabled={isBanning}
             isLoading={isBanning}
+            aria-label={`Ban User named ${userName}`}
           >
             {isBanning ? 'Banning' : 'Ban'} User
           </Button>

@@ -84,7 +84,7 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {trigger || <Button>Create Room</Button>}
+        {trigger || <Button aria-label='Create a new room'>Create Room</Button>}
       </DialogTrigger>
 
       <DialogContent>

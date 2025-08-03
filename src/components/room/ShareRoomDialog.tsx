@@ -77,7 +77,7 @@ const ShareRoomDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='ghost'>
+        <Button variant='ghost' aria-label='Share room details'>
           {roomDetails?.room.locked ? <LockIcon /> : <Share2Icon />}
           Room {parameters.code}
         </Button>
@@ -114,6 +114,7 @@ const ShareRoomDialog = () => {
             <Button
               variant='outline'
               size='sm'
+              aria-label='Copy room URL'
               className='w-full max-w-xs justify-between font-mono'
               onClick={handleCopyUrl}
             >
@@ -128,7 +129,9 @@ const ShareRoomDialog = () => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant='outline'>Close</Button>
+            <Button variant='outline' aria-label='Close dialog'>
+              Close
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

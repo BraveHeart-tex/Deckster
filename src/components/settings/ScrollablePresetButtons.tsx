@@ -23,23 +23,23 @@ const ScrollablePresetButtons = ({
   };
 
   return (
-    <div className="space-y-1">
+    <div className='space-y-1'>
       <Label>Presets</Label>
       <ScrollArea>
-        {/* Scroll Area */}
-        <div className="flex gap-2 gap-x-2 py-2 whitespace-nowrap">
+        <div className='flex gap-2 gap-x-2 py-2 whitespace-nowrap'>
           {VOTE_OPTION_PRESETS.map((preset) => (
             <Button
               key={preset.label}
-              variant="outline"
-              className="shrink-0"
+              variant='outline'
+              className='shrink-0'
+              aria-label={`Select preset deck named ${preset.label}`}
               onClick={(event) => handlePresetClick(event, preset.deck)}
             >
               {preset.label}
             </Button>
           ))}
         </div>
-        <ScrollBar orientation="horizontal" />
+        <ScrollBar orientation='horizontal' />
       </ScrollArea>
     </div>
   );

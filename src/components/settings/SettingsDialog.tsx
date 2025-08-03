@@ -115,12 +115,16 @@ const SettingsDialog = () => {
     });
   };
 
+  const handleOpenClick = () => {
+    setIsOpen(true);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant='ghost' size='icon' onClick={() => setIsOpen(true)}>
+            <Button variant='ghost' size='icon' onClick={handleOpenClick}>
               <CogIcon />
             </Button>
           </TooltipTrigger>

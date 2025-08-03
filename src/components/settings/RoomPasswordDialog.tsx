@@ -128,6 +128,7 @@ const RoomPasswordDialog = ({
               (form.formState.isSubmitted && !form.formState.isValid) ||
               isLoading
             }
+            aria-label='Set Room Password'
             isLoading={isLoading}
             onClick={form.handleSubmit(onSubmit)}
           >

@@ -21,7 +21,12 @@ const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
         <CardTitle className='text-xl'>{room.name}</CardTitle>
       </CardHeader>
       <CardFooter className='justify-end'>
-        <Button onClick={() => onJoinRoom(room.code)}>Enter Room</Button>
+        <Button
+          onClick={() => onJoinRoom(room.code)}
+          aria-label={`Join Room named ${room.name}`}
+        >
+          Enter Room
+        </Button>
       </CardFooter>
     </Card>
   );

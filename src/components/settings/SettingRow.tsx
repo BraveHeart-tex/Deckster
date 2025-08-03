@@ -1,4 +1,4 @@
-import { Button, ButtonVariants } from '@/src/components/ui/button';
+import { Button, type ButtonVariants } from '@/src/components/ui/button';
 import { cn } from '@/src/lib/utils';
 
 interface DangerZoneRowProps {
@@ -19,12 +19,13 @@ const SettingRow = ({
   onClick,
 }: DangerZoneRowProps) => {
   return (
-    <div className="grid w-full gap-2 not-last:border-b md:flex md:flex-row md:items-center md:justify-between md:gap-4 md:p-3">
-      <div className="grid p-3 md:p-0">
-        <span className="text-sm font-semibold tracking-tight">{title}</span>
-        <p className="text-muted-foreground text-xs">{description}</p>
+    <div className='grid w-full gap-2 not-last:border-b md:flex md:flex-row md:items-center md:justify-between md:gap-4 md:p-3'>
+      <div className='grid p-3 md:p-0'>
+        <span className='text-sm font-semibold tracking-tight'>{title}</span>
+        <p className='text-muted-foreground text-xs'>{description}</p>
       </div>
       <Button
+        aria-label={buttonText}
         variant={buttonVariant}
         className={cn(
           'w-full rounded-none border-x-0 border-b-0 md:w-auto md:rounded-md md:border md:border-b',

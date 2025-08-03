@@ -73,8 +73,12 @@ const ToggleVotesButton = () => {
   };
 
   return (
-    <Button onClick={handleRevealVotes} className="min-w-[110px]">
-      {roomDetails && roomDetails.room.votesRevealed ? 'Hide' : 'Show'} Votes
+    <Button
+      onClick={handleRevealVotes}
+      className='min-w-[110px]'
+      aria-label={roomDetails?.room.votesRevealed ? 'Hide votes' : 'Show votes'}
+    >
+      {roomDetails?.room.votesRevealed ? 'Hide' : 'Show'} Votes
     </Button>
   );
 };

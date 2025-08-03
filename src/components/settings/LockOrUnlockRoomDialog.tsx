@@ -19,7 +19,7 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 
 const LockOrUnlockRoomDialog = ({
   isOpen,
@@ -80,6 +80,7 @@ const LockOrUnlockRoomDialog = ({
             disabled={isPending}
             onClick={handleLockOrUnlockRoom}
             isLoading={isPending}
+            aria-label={`${roomDetails.room.locked ? 'Unlock' : 'Lock'} room`}
           >
             {roomDetails.room.locked ? 'Unlock Room' : 'Lock Room'}
           </Button>

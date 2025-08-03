@@ -97,6 +97,7 @@ const ChangeDisplaynameDialog = ({
             <Button
               size='icon'
               variant='outline'
+              aria-label='Change display name'
               className='ml-2 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100'
             >
               <PencilIcon />
@@ -131,12 +132,18 @@ const ChangeDisplaynameDialog = ({
             />
             <div className='flex items-center gap-2 justify-end'>
               <DialogClose asChild>
-                <Button type='button' variant='outline' disabled={isChanging}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  disabled={isChanging}
+                  aria-label='Cancel changes'
+                >
                   Cancel
                 </Button>
               </DialogClose>
               <Button
                 type='submit'
+                aria-label='Save changes'
                 disabled={
                   isChanging || defaultValue === form.watch('userDisplayName')
                 }

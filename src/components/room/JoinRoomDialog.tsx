@@ -95,7 +95,9 @@ const JoinRoomDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant='secondary'>Join Room</Button>
+        <Button variant='secondary' aria-label='Join Room'>
+          Join Room
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -154,7 +156,12 @@ const JoinRoomDialog = () => {
               )}
             />
             <div className='flex justify-end'>
-              <Button type='submit' disabled={isJoining} isLoading={isJoining}>
+              <Button
+                type='submit'
+                disabled={isJoining}
+                isLoading={isJoining}
+                aria-label='Join Room'
+              >
                 {isJoining ? 'Joining' : 'Join Room'}
               </Button>
             </div>

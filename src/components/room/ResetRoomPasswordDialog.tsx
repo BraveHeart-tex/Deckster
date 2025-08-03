@@ -72,7 +72,11 @@ const ResetRoomPasswordDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant='outline' disabled={isResetting}>
+            <Button
+              variant='outline'
+              disabled={isResetting}
+              aria-label='Cancel'
+            >
               Cancel
             </Button>
           </AlertDialogCancel>
@@ -80,6 +84,7 @@ const ResetRoomPasswordDialog = ({
             disabled={isResetting}
             isLoading={isResetting}
             onClick={handleResetRoomPassword}
+            aria-label='Confirm reset'
           >
             {isResetting ? 'Resetting' : 'Reset'} Password
           </Button>

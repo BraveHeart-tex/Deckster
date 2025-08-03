@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/src/components/ui/button';
@@ -20,6 +21,7 @@ import {
   FormMessage,
 } from '@/src/components/ui/form';
 import { Input } from '@/src/components/ui/input';
+import { ROUTES } from '@/src/lib/routes';
 import {
   type SetRoomPasswordInput,
   setRoomPasswordSchema,
@@ -32,6 +34,7 @@ interface RoomPasswordFormProps {
 }
 
 const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
+  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const form = useForm<RoomPasswordInput>({
     defaultValues: {
@@ -49,6 +52,11 @@ const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
     setIsPending(true);
     await onFormSubmit(values.roomPassword);
     setIsPending(false);
+  };
+
+  const handleCancel = () => {
+    form.reset();
+    router.push(ROUTES.HOME);
   };
 
   return (
@@ -76,13 +84,19 @@ const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
               )}
             />
             <div className='flex items-center justify-end gap-2'>
-              <Button variant='outline' disabled={isPending}>
+              <Button
+                variant='outline'
+                disabled={isPending}
+                aria-label='Cancel'
+                onClick={handleCancel}
+              >
                 Cancel
               </Button>
               <Button
                 disabled={isPending}
                 isLoading={isPending}
                 className='w-[9.375rem]'
+                aria-label='Join Room'
               >
                 {isPending ? 'Joining' : 'Join'} Room
               </Button>

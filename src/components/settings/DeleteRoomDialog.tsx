@@ -20,8 +20,8 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
-import { RoomPageParameters } from '@/src/types/room';
+import type { CommonDialogProps } from '@/src/types/dialog';
+import type { RoomPageParameters } from '@/src/types/room';
 
 const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
   const [enteredCode, setEnteredCode] = useState('');
@@ -88,32 +88,33 @@ const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
             This action is permanent and cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="space-y-2">
-          <p className="text-muted-foreground text-sm">
+        <div className='space-y-2'>
+          <p className='text-muted-foreground text-sm'>
             To confirm, please type the room code:
-            <span className="text-foreground bg-muted ml-2 inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-xs font-medium tracking-wide">
+            <span className='text-foreground bg-muted ml-2 inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-xs font-medium tracking-wide'>
               {roomCode}
             </span>
           </p>
           <Input
-            type="text"
-            placeholder="Enter room code"
-            className="w-full"
+            type='text'
+            placeholder='Enter room code'
+            className='w-full'
             value={enteredCode}
             onChange={handleRoomCodeChange}
             maxLength={roomCode.length}
             disabled={isDeleting}
             onKeyDown={handleKeyDown}
-            autoComplete="off"
+            autoComplete='off'
           />
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
             disabled={enteredCode !== roomCode || isDeleting}
-            variant="destructive"
+            variant='destructive'
             onClick={handleDeleteRoom}
             isLoading={isDeleting}
+            aria-label='Delete Room'
           >
             {isDeleting ? 'Deleting' : 'Delete'} Room
           </Button>

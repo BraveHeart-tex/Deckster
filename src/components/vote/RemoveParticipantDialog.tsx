@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import {
   AlertDialog,
@@ -19,7 +19,7 @@ import { Button } from '@/src/components/ui/button';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface RemoveParticipantDialogProps extends CommonDialogProps {
   userName: string;
@@ -73,9 +73,10 @@ const RemoveParticipantDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            variant="destructive"
+            variant='destructive'
             disabled={isRemoving}
             isLoading={isRemoving}
+            aria-label='Remove Participant'
             onClick={handleRemoveParticipant}
           >
             {isRemoving ? 'Removing' : 'Remove'} Participant

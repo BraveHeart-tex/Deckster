@@ -22,7 +22,7 @@ import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
-import { CommonDialogProps } from '@/src/types/dialog';
+import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface TransferOwnershipDialogProps extends CommonDialogProps {
   selectedUserId?: string;
@@ -99,10 +99,7 @@ const TransferOwnershipDialog = ({
           <AlertDialogTitle>Transfer Room Ownership</AlertDialogTitle>
           <AlertDialogDescription>
             {!selectedUserId && !selectedUserName ? (
-              <>
-                Select the user you want to transfer ownership to. This action
-                cannot be undone.
-              </>
+              'Select the user you want to transfer ownership to. This action cannot be undone.'
             ) : (
               <>
                 Are you sure you want to transfer ownership to &quot;
@@ -112,13 +109,14 @@ const TransferOwnershipDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         {!selectedUserId && !selectedUserName && (
-          <div className="flex max-h-[300px] flex-col gap-2 overflow-y-auto">
+          <div className='flex max-h-[300px] flex-col gap-2 overflow-y-auto'>
             {roomDetails.participants.map((participant) =>
               participant.userId === user?.id ? null : (
                 <button
-                  type="button"
+                  type='button'
+                  aria-label={`Select user ${participant.userName} to transfer ownership to`}
                   key={participant._id}
-                  className="hover:bg-muted relative flex items-center justify-between gap-2 rounded-md p-2 not-last:border-b"
+                  className='hover:bg-muted relative flex items-center justify-between gap-2 rounded-md p-2 not-last:border-b'
                   onClick={setSelectedUser.bind(
                     null,
                     selectedUser === participant.userId
@@ -126,17 +124,17 @@ const TransferOwnershipDialog = ({
                       : participant.userId
                   )}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     <UserAvatar
                       userId={participant.userId}
                       username={participant.userName}
                     />
-                    <span className="font-semibold">
+                    <span className='font-semibold'>
                       {participant.userName}
                     </span>
                   </div>
                   {selectedUser === participant.userId && (
-                    <CheckIcon className="h-5 w-5" />
+                    <CheckIcon className='h-5 w-5' />
                   )}
                 </button>
               )
@@ -148,9 +146,10 @@ const TransferOwnershipDialog = ({
             Cancel
           </AlertDialogCancel>
           <Button
-            variant="destructiveOutline"
+            variant='destructiveOutline'
             disabled={!selectedUser || isTransferring}
             isLoading={isTransferring}
+            aria-label="Transfer room's ownership"
             onClick={handleTransferOwnership}
           >
             {isTransferring ? 'Transferring' : 'Transfer'} Ownership

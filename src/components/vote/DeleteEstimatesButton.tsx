@@ -87,7 +87,8 @@ const DeleteEstimatesButton = () => {
     <Button
       onClick={handleDeleteEstimates}
       disabled={!roomHasVotes}
-      variant="outline"
+      variant='outline'
+      aria-label='Delete estimates'
     >
       Delete Estimates
     </Button>
