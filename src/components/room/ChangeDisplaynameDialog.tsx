@@ -100,6 +100,7 @@ const ChangeDisplaynameDialog = ({
               aria-label='Change display name'
               className='ml-2 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100'
             >
+              <span className='sr-only'>Change your display name</span>
               <PencilIcon />
             </Button>
           </TooltipTrigger>
