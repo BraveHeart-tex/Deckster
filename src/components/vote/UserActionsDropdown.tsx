@@ -60,6 +60,7 @@ const UserActionsDropdown = ({
           variant='ghost'
           aria-label={`See actions for ${userName}`}
         >
+          <span className='sr-only'>See actions for {userName}</span>
           <EllipsisIcon />
         </Button>
       </DropdownMenuTrigger>
