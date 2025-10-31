@@ -1,5 +1,3 @@
-// password-hash.ts
-
 const encoder = new TextEncoder();
 
 const CONFIG = {
@@ -35,7 +33,7 @@ export async function hashPassword(password: string): Promise<string> {
   const derivedBits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt as BufferSource,
       iterations: CONFIG.ITERATIONS,
       hash: CONFIG.HASH,
     },
@@ -73,7 +71,7 @@ export async function verifyPassword(
   const derivedBits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt as BufferSource,
       iterations: CONFIG.ITERATIONS,
       hash: CONFIG.HASH,
     },
