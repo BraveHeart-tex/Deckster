@@ -15,7 +15,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@auth/core": "0.37.0",
     "@clerk/backend": "2.6.0",
     "@clerk/nextjs": "6.23.3",
     "@convex-dev/presence": "0.1.5",
