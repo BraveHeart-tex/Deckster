@@ -1,7 +1,7 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
+import { CrownIcon, ShieldUserIcon } from 'lucide-react';
 import { memo, useMemo } from 'react';
-
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
@@ -62,7 +62,18 @@ const UserVotesTableRow = memo(
               <span className='truncate'>{userName}</span>
               {isSelf && ' (You)'}{' '}
             </div>
-            {isOwner && <Badge variant='secondary'>Owner</Badge>}
+            {isOwner && (
+              <Badge variant='secondary' className='flex items-center gap-2'>
+                <CrownIcon className='size-4' />
+                Owner
+              </Badge>
+            )}
+            {role === 'moderator' && (
+              <Badge variant='secondary' className='flex items-center gap-2'>
+                <ShieldUserIcon className='size-4' />
+                Moderator
+              </Badge>
+            )}
             {isSelf && (
               <ChangeDisplaynameDialog
                 defaultValue={userName}
