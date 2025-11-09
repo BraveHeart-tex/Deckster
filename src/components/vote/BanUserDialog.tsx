@@ -97,7 +97,7 @@ const BanUserDialog = ({
           </div>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isBanning}>Cancel</AlertDialogCancel>
           <Button
             variant='destructive'
             onClick={handleBanUser}

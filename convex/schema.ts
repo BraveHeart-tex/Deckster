@@ -33,6 +33,11 @@ export default defineSchema({
     roomId: v.id('rooms'),
     userId: v.string(),
     userName: v.string(),
+    role: v.union(
+      v.literal('owner'),
+      v.literal('moderator'),
+      v.literal('participant')
+    ),
   })
     .index('by_room', ['roomId'])
     .index('by_room_and_user', ['roomId', 'userId'])

@@ -1,7 +1,7 @@
 'use client';
 import { EllipsisIcon } from 'lucide-react';
 
-import type { Id } from '@/convex/_generated/dataModel';
+import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ interface UserActionsDropdownProps {
   participantId: Id<'participants'>;
   roomId: Id<'rooms'>;
   userId: string;
+  role: Doc<'participants'>['role'];
 }
 
 const UserActionsDropdown = ({
@@ -25,6 +26,7 @@ const UserActionsDropdown = ({
   userName,
   roomId,
   userId,
+  role,
 }: UserActionsDropdownProps) => {
   const openModal = useModalStore((state) => state.openModal);
 
@@ -52,6 +54,13 @@ const UserActionsDropdown = ({
     });
   };
 
+  const handleModifyRole = () => {
+    openModal({
+      type: MODAL_TYPES.MODIFY_ROLE,
+      payload: { participantId, userName, currentRole: role },
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -68,6 +77,13 @@ const UserActionsDropdown = ({
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem onClick={onTransferOwnership}>
           Transfer Ownership
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          variant={role === 'participant' ? 'default' : 'destructive'}
+          onClick={handleModifyRole}
+        >
+          {role === 'participant' && 'Make Moderator'}
+          {role === 'moderator' && 'Revoke Moderator'}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onRemoveFromRoom}>

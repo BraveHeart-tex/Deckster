@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import SettingsDialog from '@/src/components/settings/SettingsDialog';
 import { Skeleton } from '@/src/components/ui/skeleton';
@@ -12,6 +12,13 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 const VoteControls = () => {
   const roomDetails = useRoomDetails();
   const { user } = useUser();
+
+  const isCurrentUserModerator = useMemo(() => {
+    return roomDetails?.participants.some(
+      (participant) =>
+        participant.isCurrentUser && participant.role === 'moderator'
+    );
+  }, [roomDetails?.participants]);
 
   const renderControls = useCallback(() => {
     if (!roomDetails) {
@@ -45,15 +52,13 @@ const VoteControls = () => {
 
     return (
       <>
-        {roomDetails.roomSettings?.allowOthersToDeleteVotes && (
-          <DeleteEstimatesButton />
-        )}
-        {roomDetails.roomSettings?.allowOthersToRevealVotes && (
-          <ToggleVotesButton />
-        )}
+        {(roomDetails.roomSettings?.allowOthersToDeleteVotes ||
+          isCurrentUserModerator) && <DeleteEstimatesButton />}
+        {(roomDetails.roomSettings?.allowOthersToRevealVotes ||
+          isCurrentUserModerator) && <ToggleVotesButton />}
       </>
     );
-  }, [roomDetails, user?.id]);
+  }, [roomDetails, user?.id, isCurrentUserModerator]);
 
   return <div className='flex gap-2'>{renderControls()}</div>;
 };

@@ -72,3 +72,37 @@ export const removeParticipantFromRoom = authMutation({
     await ctx.db.delete(args.participantId);
   },
 });
+
+export const modifyParticipantRole = authMutation({
+  args: {
+    participantId: v.id('participants'),
+    role: v.union(v.literal('participant'), v.literal('moderator')),
+  },
+  handler: async (ctx, args) => {
+    const participant = await ctx.db.get(args.participantId);
+
+    if (!participant) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.PARTICIPANT.NOT_FOUND,
+        message: 'Participant not found',
+      });
+    }
+
+    const room = await ctx.db.get(participant.roomId);
+
+    assertRoomExists(room);
+
+    if (room.ownerId !== ctx.userIdentity.userId) {
+      throw new DomainError({
+        code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
+        message: 'Only the room owner can modify participant roles',
+      });
+    }
+
+    await ctx.db.patch(args.participantId, {
+      role: args.role,
+    });
+
+    return args.role;
+  },
+});

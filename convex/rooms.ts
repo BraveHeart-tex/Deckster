@@ -53,6 +53,7 @@ export const createRoom = authMutation({
       userName:
         args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
       roomId,
+      role: 'owner',
     });
 
     return {
@@ -143,6 +144,7 @@ export const joinRoom = authMutation({
         userId: ctx.userIdentity.userId as string,
         userName:
           args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
+        role: 'participant',
       });
     }
 
@@ -230,6 +232,7 @@ export const getRoomWithDetailsByCode = authQuery({
         ...participant,
         isOwner: participant.userId === room.ownerId,
         vote: votes.find((vote) => vote.userId === participant.userId)?.value,
+        isCurrentUser: participant.userId === ctx.userIdentity.userId,
       })),
       roomSettings,
       currentUserVote: votes.find(

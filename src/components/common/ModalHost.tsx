@@ -4,6 +4,7 @@ import BannedUsersDialog from '@/src/components/settings/BannedUsersDialog';
 import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
 import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
 import LockOrUnlockRoomDialog from '@/src/components/settings/LockOrUnlockRoomDialog';
+import ModifyRoleDialog from '@/src/components/settings/ModifyRoleDialog';
 import RoomPasswordDialog from '@/src/components/settings/RoomPasswordDialog';
 import TransferOwnershipDialog from '@/src/components/settings/TransferOwnershipDialog';
 import BanUserDialog from '@/src/components/vote/BanUserDialog';
@@ -80,6 +81,12 @@ const ModalHost = () => {
           onOpenChange={closeModal}
           {...modal.payload}
         />
+      );
+    }
+
+    case MODAL_TYPES.MODIFY_ROLE: {
+      return (
+        <ModifyRoleDialog isOpen onOpenChange={closeModal} {...modal.payload} />
       );
     }
 

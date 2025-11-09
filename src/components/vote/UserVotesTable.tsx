@@ -106,6 +106,7 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
                       (p) => p.userId === participant.userId
                     )?.online
                   }
+                  role={participant.role}
                   shouldHighlightConsensus={shouldHighlightConsensus}
                 />
               ))}

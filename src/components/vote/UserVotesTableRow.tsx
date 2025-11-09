@@ -2,7 +2,7 @@
 import { useUser } from '@clerk/nextjs';
 import { memo, useMemo } from 'react';
 
-import type { Id } from '@/convex/_generated/dataModel';
+import type { Doc, Id } from '@/convex/_generated/dataModel';
 import UserAvatar from '@/src/components/common/UserAvatar';
 import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
@@ -20,6 +20,7 @@ interface UserVotesTableRowProps {
   isOwner: boolean;
   isOnline: boolean;
   shouldHighlightConsensus: boolean;
+  role: Doc<'participants'>['role'];
 }
 
 const UserVotesTableRow = memo(
@@ -31,6 +32,7 @@ const UserVotesTableRow = memo(
     isOwner,
     isOnline,
     shouldHighlightConsensus,
+    role,
   }: UserVotesTableRowProps) => {
     const roomDetails = useRoomDetails();
     const { user } = useUser();
@@ -83,6 +85,7 @@ const UserVotesTableRow = memo(
               participantId={participantId}
               roomId={roomDetails.room._id}
               userId={participantUserId}
+              role={role}
             />
           </TableCell>
         )}
