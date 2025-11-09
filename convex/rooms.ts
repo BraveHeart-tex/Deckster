@@ -278,9 +278,21 @@ export const toggleVotesRevealed = authMutation({
       }
     );
 
+    const participant = await ctx.db
+      .query('participants')
+      .withIndex('by_room_and_user', (q) =>
+        q
+          .eq('roomId', args.roomId)
+          .eq('userId', ctx.userIdentity.userId as string)
+      )
+      .unique();
+
+    const isModerator = participant?.role === 'moderator';
+
     if (
       !roomSettings.allowOthersToRevealVotes &&
-      room.ownerId !== ctx.userIdentity.userId
+      room.ownerId !== ctx.userIdentity.userId &&
+      !isModerator
     ) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
