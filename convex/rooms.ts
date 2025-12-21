@@ -97,7 +97,7 @@ export const joinRoom = authMutation({
     if (bannedUser) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.ROOM.BANNED,
-        message: `You are banned from this entering this room. Reason: ${bannedUser.reason}`,
+        message: `You are banned from this entering this room. ${bannedUser.reason && `Reason: ${bannedUser.reason}`}`,
       });
     }
 

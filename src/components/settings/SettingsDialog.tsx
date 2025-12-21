@@ -51,6 +51,10 @@ const roomSettingToggles: {
     settingKey: 'showVotingIndicator',
   },
   {
+    label: 'Auto-reveal votes',
+    settingKey: 'autoRevealVotes',
+  },
+  {
     label: 'Highlight consensus votes',
     settingKey: 'highlightConsensusVotes',
     helperText:

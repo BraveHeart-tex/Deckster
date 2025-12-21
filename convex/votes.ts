@@ -49,6 +49,39 @@ export const castVote = authMutation({
         value: args.value,
       });
     }
+
+    const roomSettings = await ctx.db
+      .query('roomSettings')
+      .withIndex('by_room', (q) => q.eq('roomId', room._id))
+      .unique();
+
+    if (!roomSettings) return;
+
+    if (roomSettings.autoRevealVotes && !room.votesRevealed) {
+      const [participants, votes] = await Promise.all([
+        ctx.db
+          .query('participants')
+          .withIndex('by_room', (q) => q.eq('roomId', room._id))
+          .collect(),
+        ctx.db
+          .query('votes')
+          .withIndex('by_room', (q) => q.eq('roomId', room._id))
+          .collect(),
+      ]);
+
+      const votedUserIds = new Set(votes.map((v) => v.userId));
+      const votedCount = votedUserIds.size;
+
+      const allVoted =
+        votedCount === participants.length &&
+        participants.every((p) => votedUserIds.has(p.userId));
+
+      if (allVoted) {
+        await ctx.db.patch(room._id, {
+          votesRevealed: true,
+        });
+      }
+    }
   },
 });
 

@@ -8,31 +8,23 @@
  * @module
  */
 
-import type * as cleanUp from "../cleanUp.js";
-import type * as helpers from "../helpers.js";
-import type * as http from "../http.js";
-import type * as participants from "../participants.js";
-import type * as presence from "../presence.js";
-import type * as roomSettings from "../roomSettings.js";
-import type * as rooms from "../rooms.js";
-import type * as router from "../router.js";
-import type * as users from "../users.js";
-import type * as votes from "../votes.js";
+import type * as cleanUp from '../cleanUp.js';
+import type * as helpers from '../helpers.js';
+import type * as http from '../http.js';
+import type * as participants from '../participants.js';
+import type * as presence from '../presence.js';
+import type * as roomSettings from '../roomSettings.js';
+import type * as rooms from '../rooms.js';
+import type * as router from '../router.js';
+import type * as users from '../users.js';
+import type * as votes from '../votes.js';
 
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
-} from "convex/server";
+} from 'convex/server';
 
-/**
- * A utility for referencing Convex functions in your app's API.
- *
- * Usage:
- * ```js
- * const myFunctionReference = api.myModule.myFunction;
- * ```
- */
 declare const fullApi: ApiFromModules<{
   cleanUp: typeof cleanUp;
   helpers: typeof helpers;
@@ -45,29 +37,45 @@ declare const fullApi: ApiFromModules<{
   users: typeof users;
   votes: typeof votes;
 }>;
-declare const fullApiWithMounts: typeof fullApi;
 
+/**
+ * A utility for referencing Convex functions in your app's public API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = api.myModule.myFunction;
+ * ```
+ */
 export declare const api: FilterApi<
-  typeof fullApiWithMounts,
-  FunctionReference<any, "public">
+  typeof fullApi,
+  FunctionReference<any, 'public'>
 >;
+
+/**
+ * A utility for referencing Convex functions in your app's internal API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = internal.myModule.myFunction;
+ * ```
+ */
 export declare const internal: FilterApi<
-  typeof fullApiWithMounts,
-  FunctionReference<any, "internal">
+  typeof fullApi,
+  FunctionReference<any, 'internal'>
 >;
 
 export declare const components: {
   presence: {
     public: {
       disconnect: FunctionReference<
-        "mutation",
-        "internal",
+        'mutation',
+        'internal',
         { sessionToken: string },
         null
       >;
       heartbeat: FunctionReference<
-        "mutation",
-        "internal",
+        'mutation',
+        'internal',
         {
           interval?: number;
           roomId: string;
@@ -77,32 +85,32 @@ export declare const components: {
         { roomToken: string; sessionToken: string }
       >;
       list: FunctionReference<
-        "query",
-        "internal",
+        'query',
+        'internal',
         { limit?: number; roomToken: string },
         Array<{ lastDisconnected: number; online: boolean; userId: string }>
       >;
       listRoom: FunctionReference<
-        "query",
-        "internal",
+        'query',
+        'internal',
         { limit?: number; onlineOnly?: boolean; roomId: string },
         Array<{ lastDisconnected: number; online: boolean; userId: string }>
       >;
       listUser: FunctionReference<
-        "query",
-        "internal",
+        'query',
+        'internal',
         { limit?: number; onlineOnly?: boolean; userId: string },
         Array<{ lastDisconnected: number; online: boolean; roomId: string }>
       >;
       removeRoom: FunctionReference<
-        "mutation",
-        "internal",
+        'mutation',
+        'internal',
         { roomId: string },
         null
       >;
       removeRoomUser: FunctionReference<
-        "mutation",
-        "internal",
+        'mutation',
+        'internal',
         { roomId: string; userId: string },
         null
       >;
