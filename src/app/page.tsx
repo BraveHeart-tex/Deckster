@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const HomePage = async () => {
   return (
     <div className='bg-background h-full'>
-      <div className='mx-auto h-full w-full max-w-screen-xl'>
+      <div className='mx-auto h-full w-full max-w-7xl'>
         <RoomList />
       </div>
     </div>
