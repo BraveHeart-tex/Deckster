@@ -1,6 +1,6 @@
+import type { FunctionReturnType } from 'convex/server';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
@@ -10,6 +10,10 @@ import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';
 
 let handledError = false;
+
+export type RoomDetails = FunctionReturnType<
+  typeof api.rooms.getRoomWithDetailsByCode
+>;
 
 export const useRoomDetails = () => {
   const roomCode = useParams<RoomPageParameters>().code;

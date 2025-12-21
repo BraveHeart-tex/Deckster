@@ -12,9 +12,15 @@ interface UserAvatarProps {
   userId: string;
   username: string;
   presence?: 'online' | 'offline';
+  className?: string;
 }
 
-export const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
+export const UserAvatar = ({
+  userId,
+  username,
+  presence,
+  className,
+}: UserAvatarProps) => {
   const avatarUrl = useMemo(() => {
     if (!userId) {
       return '';
@@ -24,9 +30,9 @@ export const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
   }, [userId]);
 
   return (
-    <div className='relative inline-block'>
-      <Avatar>
-        <AvatarImage src={avatarUrl} />
+    <div className='relative inline-block w-max'>
+      <Avatar className={cn(className)}>
+        <AvatarImage loading='lazy' fetchPriority='low' src={avatarUrl} />
         <AvatarFallback>{getAvatarFallback(username)}</AvatarFallback>
       </Avatar>
       {presence ? (

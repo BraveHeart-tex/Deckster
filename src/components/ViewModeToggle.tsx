@@ -15,9 +15,10 @@ export const ViewModeToggle = ({ initialViewMode }: ViewModeToggleProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
 
   const toggleViewMode = () => {
-    setViewMode(viewMode === 'chart' ? 'table' : 'chart');
+    const nextViewMode = viewMode === 'chart' ? 'table' : 'chart';
+    setViewMode(nextViewMode);
     startTransition(async () => {
-      await setViewModeCookie(viewMode);
+      await setViewModeCookie(nextViewMode);
     });
   };
 
@@ -25,7 +26,7 @@ export const ViewModeToggle = ({ initialViewMode }: ViewModeToggleProps) => {
     <Tooltip>
       <TooltipTrigger asChild>
         <Button variant='outline' size='icon' onClick={toggleViewMode}>
-          {viewMode === 'chart' ? <ChartBarIcon /> : <TableIcon />}
+          {viewMode === 'table' ? <ChartBarIcon /> : <TableIcon />}
         </Button>
       </TooltipTrigger>
       <TooltipContent>
