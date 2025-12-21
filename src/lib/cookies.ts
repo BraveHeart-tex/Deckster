@@ -1,7 +1,8 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { VIEW_MODE_COOKIE, type ViewMode } from '@/constants';
+import { VIEW_MODE_COOKIE } from '@/constants';
+import type { ViewMode } from '../types/view';
 
 export const setViewModeCookie = async (viewMode: ViewMode) => {
   const cookieStore = await cookies();

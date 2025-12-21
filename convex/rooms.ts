@@ -478,6 +478,8 @@ export const getBannedUsers = authQuery({
       .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
       .collect();
 
+    console.log(bannedUsers);
+
     const userInfos = await Promise.all(
       bannedUsers.map((bannedUser) =>
         ctx.db
@@ -488,6 +490,8 @@ export const getBannedUsers = authQuery({
           .unique()
       )
     );
+
+    console.log('userInfos', userInfos);
 
     const userInfoMap = userInfos.reduce((map, user) => {
       if (user !== null) {
