@@ -172,7 +172,7 @@ export const ChangeDeckDialog = ({
               disabled={isSaving}
             />
             <p
-              className='text-destructive mt-1 min-h-[1rem] text-xs'
+              className='text-destructive mt-1 min-h-4 text-xs'
               aria-live='polite'
               aria-atomic='true'
             >

@@ -27,7 +27,7 @@ export const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
       aria-label={`Vote for ${option} story points`}
       title={`Vote for ${option}`}
       type='button'
-      className='flex h-[6.25rem] w-[4.375rem] items-center justify-center text-3xl font-medium'
+      className='flex h-25 w-17.5 items-center justify-center text-3xl font-medium'
       variant={isSelected ? 'default' : 'outline'}
       onClick={handleClick}
       onKeyDown={handleKeydown}
