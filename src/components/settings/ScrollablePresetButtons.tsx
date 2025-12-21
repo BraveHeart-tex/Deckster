@@ -7,7 +7,7 @@ interface ScrollablePresetButtonsProps {
   onDeckSelect: (deck: string[]) => void;
 }
 
-const ScrollablePresetButtons = ({
+export const ScrollablePresetButtons = ({
   onDeckSelect,
 }: ScrollablePresetButtonsProps) => {
   const handlePresetClick = (
@@ -44,5 +44,3 @@ const ScrollablePresetButtons = ({
     </div>
   );
 };
-
-export default ScrollablePresetButtons;

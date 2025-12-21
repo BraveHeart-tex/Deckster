@@ -11,7 +11,7 @@ import {
 } from '@/src/components/ui/card';
 import { ROUTES } from '@/src/lib/routes';
 
-const JoiningRoomIndicator = () => {
+export const JoiningRoomIndicator = () => {
   const onCancel = () => redirect(ROUTES.HOME);
 
   return (
@@ -56,5 +56,3 @@ const JoiningRoomIndicator = () => {
     </div>
   );
 };
-
-export default JoiningRoomIndicator;

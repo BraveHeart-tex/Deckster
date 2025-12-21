@@ -3,12 +3,12 @@ import { useUser } from '@clerk/nextjs';
 import { CrownIcon, ShieldUserIcon } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
-import UserAvatar from '@/src/components/common/UserAvatar';
-import ChangeDisplaynameDialog from '@/src/components/room/ChangeDisplaynameDialog';
+import { UserAvatar } from '@/src/components/common/UserAvatar';
+import { ChangeDisplaynameDialog } from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
 import { TableCell, TableRow } from '@/src/components/ui/table';
-import UserActionsDropdown from '@/src/components/vote/UserActionsDropdown';
-import UserVoteCard from '@/src/components/vote/UserVoteCard';
+import { UserActionsDropdown } from '@/src/components/vote/UserActionsDropdown';
+import { UserVoteCard } from '@/src/components/vote/UserVoteCard';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { cn } from '@/src/lib/utils';
 
@@ -23,7 +23,7 @@ interface UserVotesTableRowProps {
   role: Doc<'participants'>['role'];
 }
 
-const UserVotesTableRow = memo(
+export const UserVotesTableRow = memo(
   ({
     vote,
     userName,
@@ -106,5 +106,3 @@ const UserVotesTableRow = memo(
 );
 
 UserVotesTableRow.displayName = 'UserVotesTableRow';
-
-export default UserVotesTableRow;

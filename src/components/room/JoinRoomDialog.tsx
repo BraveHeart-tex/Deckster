@@ -38,7 +38,7 @@ import {
   joinRoomSchema,
 } from '@/src/validation/join-room.schema';
 
-const JoinRoomDialog = () => {
+export const JoinRoomDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -171,5 +171,3 @@ const JoinRoomDialog = () => {
     </Dialog>
   );
 };
-
-export default JoinRoomDialog;

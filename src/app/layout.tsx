@@ -8,9 +8,9 @@ import { cookies } from 'next/headers';
 import { ThemeProvider } from 'next-themes';
 
 import { APP_NAME } from '@/constants';
-import Header from '@/src/components/common/Header';
-import ModalHost from '@/src/components/common/ModalHost';
 import { ConvexClientProvider } from '@/src/components/ConvexClientProvider';
+import { Header } from '@/src/components/common/Header';
+import { ModalHost } from '@/src/components/common/ModalHost';
 import { Toaster } from '@/src/components/ui/sonner';
 
 const inter = Inter({
@@ -33,19 +33,19 @@ export default async function RootLayout({
   const defaultTheme = cookieStore.get('base-theme')?.value || '';
 
   return (
-    <html lang="en" suppressHydrationWarning className={defaultTheme}>
+    <html lang='en' suppressHydrationWarning className={defaultTheme}>
       <ClerkProvider>
         <ConvexClientProvider>
           <body className={`${inter.className} antialiased`}>
             <ThemeProvider
-              attribute="class"
+              attribute='class'
               enableSystem
               defaultTheme={defaultTheme || 'system'}
             >
-              <div className="flex min-h-screen flex-col">
+              <div className='flex min-h-screen flex-col'>
                 {authResult.isAuthenticated ? <Header /> : null}
-                <main className="flex flex-1 pt-14">
-                  <div className="container mx-auto px-4 py-8 md:px-6">
+                <main className='flex flex-1 pt-14'>
+                  <div className='container mx-auto px-4 py-8 md:px-6'>
                     {children}
                   </div>
                 </main>

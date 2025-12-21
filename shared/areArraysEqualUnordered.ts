@@ -16,8 +16,8 @@ export const areArraysEqualUnordered = (
     if (!countMap.has(string_)) {
       return false;
     }
-    countMap.set(string_, countMap.get(string_)! - 1);
-    if (countMap.get(string_)! < 0) {
+    countMap.set(string_, (countMap.get(string_) ?? 0) - 1);
+    if ((countMap.get(string_) ?? 0) < 0) {
       return false;
     }
   }

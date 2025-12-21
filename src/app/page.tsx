@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { APP_NAME } from '@/constants';
-import RoomList from '@/src/components/room/RoomList';
+import { RoomList } from '@/src/components/room/RoomList';
 
 export const metadata: Metadata = {
   title: `${APP_NAME} | Home`,

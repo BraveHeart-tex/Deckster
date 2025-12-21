@@ -7,14 +7,14 @@ import { useCallback } from 'react';
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { showErrorToast } from '@/src/components/ui/sonner';
-import VoteCard from '@/src/components/vote/VoteCard';
+import { VoteCard } from '@/src/components/vote/VoteCard';
 import { DEFAULT_DECK } from '@/src/constants/vote.constants';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';
 
-const VoteCards = () => {
+export const VoteCards = () => {
   const router = useRouter();
   const roomPageParameters = useParams<RoomPageParameters>();
   const roomDetails = useRoomDetails();
@@ -85,5 +85,3 @@ const VoteCards = () => {
     </fieldset>
   );
 };
-
-export default VoteCards;

@@ -33,7 +33,7 @@ interface RoomPasswordFormProps {
   onFormSubmit: (roomPassword: string) => Promise<void>;
 }
 
-const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
+export const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const form = useForm<RoomPasswordInput>({
@@ -107,5 +107,3 @@ const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
     </Card>
   );
 };
-
-export default RoomPasswordForm;

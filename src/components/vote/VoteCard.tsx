@@ -7,7 +7,7 @@ interface VoteCardProps {
   onClick: (option: string) => void;
 }
 
-const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
+export const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
   const handleClick = () => {
     if (!isSelected) {
       onClick(option);
@@ -36,5 +36,3 @@ const VoteCard = ({ option, isSelected, onClick }: VoteCardProps) => {
     </Button>
   );
 };
-
-export default VoteCard;

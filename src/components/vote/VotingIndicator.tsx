@@ -5,7 +5,7 @@ import { Badge } from '@/src/components/ui/badge';
 import { Skeleton } from '@/src/components/ui/skeleton';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
-const VotingIndicator = () => {
+export const VotingIndicator = () => {
   const roomDetails = useRoomDetails();
 
   const voted: number = useMemo(() => {
@@ -33,5 +33,3 @@ const VotingIndicator = () => {
     </Badge>
   );
 };
-
-export default VotingIndicator;

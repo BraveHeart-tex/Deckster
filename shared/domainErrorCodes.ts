@@ -47,8 +47,4 @@ export type DomainErrorData = {
 // Domain-specific error class
 import { ConvexError } from 'convex/values';
 
-export class DomainError extends ConvexError<DomainErrorData> {
-  constructor(data: DomainErrorData) {
-    super(data);
-  }
-}
+export class DomainError extends ConvexError<DomainErrorData> {}

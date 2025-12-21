@@ -6,7 +6,7 @@ import { TableHead, TableRow } from '@/src/components/ui/table';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { cn } from '@/src/lib/utils';
 
-const AverageOfVotesRow = () => {
+export const AverageOfVotesRow = () => {
   const roomDetails = useRoomDetails();
 
   const average = useMemo(() => {
@@ -19,7 +19,7 @@ const AverageOfVotesRow = () => {
 
     for (const participant of roomDetails.participants) {
       const vote = parseFloat(participant.vote || '0');
-      if (!isNaN(vote)) {
+      if (!Number.isNaN(vote)) {
         sum += vote;
         count += 1;
       }
@@ -58,5 +58,3 @@ const AverageOfVotesRow = () => {
     </TableRow>
   );
 };
-
-export default AverageOfVotesRow;

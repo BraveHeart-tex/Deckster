@@ -1,13 +1,13 @@
 import { Skeleton } from '@/src/components/ui/skeleton';
 import { TableCell, TableRow } from '@/src/components/ui/table';
 
-const UserRowSkeleton = () => {
+export const UserRowSkeleton = () => {
   return (
-    <TableRow className='h-[4.0625rem]'>
+    <TableRow className='h-16.25'>
       <TableCell>
         <div className='flex items-center gap-4'>
           {/* Avatar */}
-          <Skeleton className='size-[2rem] rounded-full' />
+          <Skeleton className='size-8 rounded-full' />
           {/* Name and other labels */}
           <div className='flex items-center gap-2'>
             <Skeleton className='h-4 w-32' />
@@ -28,4 +28,3 @@ const UserRowSkeleton = () => {
     </TableRow>
   );
 };
-export default UserRowSkeleton;

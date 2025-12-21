@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
-import UserAvatar from '@/src/components/common/UserAvatar';
+import { UserAvatar } from '@/src/components/common/UserAvatar';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -29,7 +29,7 @@ interface TransferOwnershipDialogProps extends CommonDialogProps {
   selectedUserName?: string;
 }
 
-const TransferOwnershipDialog = ({
+export const TransferOwnershipDialog = ({
   isOpen,
   onOpenChange,
   selectedUserId,
@@ -159,5 +159,3 @@ const TransferOwnershipDialog = ({
     </AlertDialog>
   );
 };
-
-export default TransferOwnershipDialog;

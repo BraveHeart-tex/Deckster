@@ -21,7 +21,7 @@ interface UserActionsDropdownProps {
   role: Doc<'participants'>['role'];
 }
 
-const UserActionsDropdown = ({
+export const UserActionsDropdown = ({
   participantId,
   userName,
   roomId,
@@ -96,5 +96,3 @@ const UserActionsDropdown = ({
     </DropdownMenu>
   );
 };
-
-export default UserActionsDropdown;

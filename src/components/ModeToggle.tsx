@@ -3,7 +3,7 @@
 import { CheckIcon, PaletteIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import ThemeToggle from '@/src/components/ThemeToggle';
+import { ThemeToggle } from '@/src/components/ThemeToggle';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ const baseThemeOptions = [
   { label: 'Velvet', value: 'velvet' },
 ];
 
-const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
+export const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
   const [baseTheme, setBaseTheme] = useState<string>(initialTheme);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
     if (baseTheme !== 'default') {
       htmlElement.classList.add(baseTheme);
     }
+    // biome-ignore lint/suspicious/noDocumentCookie: this is intentional
     document.cookie = `base-theme=${baseTheme}; path=/`;
     localStorage.setItem('base-theme', baseTheme);
   }, [baseTheme]);
@@ -86,4 +87,4 @@ const ModeToggle = ({ initialTheme }: { initialTheme: string }) => {
   );
 };
 
-export default ModeToggle;
+ModeToggle;

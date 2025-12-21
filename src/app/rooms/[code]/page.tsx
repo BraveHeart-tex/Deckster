@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { APP_NAME } from '@/constants';
 import { isValidRoomCode } from '@/shared/generateRoomCode';
-import RoomPageClient from '@/src/components/room/RoomPageClient';
+import { RoomPageClient } from '@/src/components/room/RoomPageClient';
 import { getViewModeCookie } from '@/src/lib/cookies';
 import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';

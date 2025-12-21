@@ -41,7 +41,7 @@ interface RoomPasswordDialogProps extends CommonDialogProps {
   roomId: Id<'rooms'>;
 }
 
-const RoomPasswordDialog = ({
+export const RoomPasswordDialog = ({
   isOpen,
   onOpenChange,
   roomId,
@@ -139,5 +139,3 @@ const RoomPasswordDialog = ({
     </Dialog>
   );
 };
-
-export default RoomPasswordDialog;

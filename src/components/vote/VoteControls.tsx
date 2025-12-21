@@ -3,13 +3,13 @@
 import { useUser } from '@clerk/nextjs';
 import { useCallback, useMemo } from 'react';
 
-import SettingsDialog from '@/src/components/settings/SettingsDialog';
+import { SettingsDialog } from '@/src/components/settings/SettingsDialog';
 import { Skeleton } from '@/src/components/ui/skeleton';
-import DeleteEstimatesButton from '@/src/components/vote/DeleteEstimatesButton';
-import ToggleVotesButton from '@/src/components/vote/ToggleVotesButton';
+import { DeleteEstimatesButton } from '@/src/components/vote/DeleteEstimatesButton';
+import { ToggleVotesButton } from '@/src/components/vote/ToggleVotesButton';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
-const VoteControls = () => {
+export const VoteControls = () => {
   const roomDetails = useRoomDetails();
   const { user } = useUser();
 
@@ -62,5 +62,3 @@ const VoteControls = () => {
 
   return <div className='flex gap-2'>{renderControls()}</div>;
 };
-
-export default VoteControls;

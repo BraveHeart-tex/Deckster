@@ -39,7 +39,9 @@ type CreateRoomFormDialogProps = {
   trigger?: React.ReactNode;
 };
 
-const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
+export const CreateRoomFormDialog = ({
+  trigger,
+}: CreateRoomFormDialogProps) => {
   const form = useForm<CreateRoomInput>({
     defaultValues: {
       roomName: '',
@@ -145,5 +147,3 @@ const CreateRoomFormDialog = ({ trigger }: CreateRoomFormDialogProps) => {
     </Dialog>
   );
 };
-
-export default CreateRoomFormDialog;

@@ -4,8 +4,8 @@ import { CogIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import SettingRow from '@/src/components/settings/SettingRow';
-import SettingsToggle from '@/src/components/settings/SettingsToggle';
+import { SettingRow } from '@/src/components/settings/SettingRow';
+import { SettingsToggle } from '@/src/components/settings/SettingsToggle';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -62,7 +62,7 @@ const roomSettingToggles: {
   },
 ];
 
-const SettingsDialog = () => {
+export const SettingsDialog = () => {
   const parameters = useParams<RoomPageParameters>();
   const roomDetails = useRoomDetails();
   const { user } = useUser();
@@ -254,5 +254,3 @@ const SettingsDialog = () => {
     </Dialog>
   );
 };
-
-export default SettingsDialog;

@@ -4,14 +4,14 @@ import { AlertTriangleIcon, PlusCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-import CreateRoomFormDialog from '@/src/components/room/CreateRoomFormDialog';
-import JoinRoomDialog from '@/src/components/room/JoinRoomDialog';
-import RoomCard from '@/src/components/room/RoomCard';
-import RoomCardSkeleton from '@/src/components/room/RoomCardSkeleton';
+import { CreateRoomFormDialog } from '@/src/components/room/CreateRoomFormDialog';
+import { JoinRoomDialog } from '@/src/components/room/JoinRoomDialog';
+import { RoomCard } from '@/src/components/room/RoomCard';
+import { RoomCardSkeleton } from '@/src/components/room/RoomCardSkeleton';
 import { useUserRooms } from '@/src/hooks/useUserRooms';
 import { ROUTES } from '@/src/lib/routes';
 
-const RoomList = () => {
+export const RoomList = () => {
   const { data: rooms, isPending, isError } = useUserRooms();
   const router = useRouter();
 
@@ -68,5 +68,3 @@ const RoomList = () => {
     </div>
   );
 };
-
-export default RoomList;

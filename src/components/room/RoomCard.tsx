@@ -18,7 +18,7 @@ interface RoomCardProps {
   onJoinRoom: (roomCode: string) => void;
 }
 
-const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
+export const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -68,5 +68,3 @@ const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
     </Card>
   );
 };
-
-export default RoomCard;

@@ -7,8 +7,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
-import JoiningRoomIndicator from '@/src/components/room/JoiningRoomIndicator';
-import RoomPasswordForm from '@/src/components/room/RoomPasswordFormDialog';
+import { JoiningRoomIndicator } from '@/src/components/room/JoiningRoomIndicator';
+import { RoomPasswordForm } from '@/src/components/room/RoomPasswordFormDialog';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import {
   defaultDomainErrorHandler,
@@ -18,7 +18,7 @@ import { useStateBus } from '@/src/hooks/useStateBus';
 import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';
 
-const RoomJoinController = () => {
+export const RoomJoinController = () => {
   const [isJoining, setIsJoining] = useStateBus('isJoiningRoom');
   const parameters = useParams<RoomPageParameters>();
   const { isSignedIn } = useAuth();
@@ -96,5 +96,3 @@ const RoomJoinController = () => {
 
   return null;
 };
-
-export default RoomJoinController;

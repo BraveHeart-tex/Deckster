@@ -21,7 +21,7 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 
-const LockOrUnlockRoomDialog = ({
+export const LockOrUnlockRoomDialog = ({
   isOpen,
   onOpenChange,
 }: CommonDialogProps) => {
@@ -89,5 +89,3 @@ const LockOrUnlockRoomDialog = ({
     </AlertDialog>
   );
 };
-
-export default LockOrUnlockRoomDialog;

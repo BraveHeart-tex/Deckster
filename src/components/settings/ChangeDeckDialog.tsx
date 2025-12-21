@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import { areArraysEqualUnordered } from '@/shared/areArraysEqualUnordered';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
-import ScrollablePresetButtons from '@/src/components/settings/ScrollablePresetButtons';
+import { ScrollablePresetButtons } from '@/src/components/settings/ScrollablePresetButtons';
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { Button } from '@/src/components/ui/button';
 import {
@@ -32,7 +32,10 @@ import { ROUTES } from '@/src/lib/routes';
 import { cn } from '@/src/lib/utils';
 import type { CommonDialogProps } from '@/src/types/dialog';
 
-const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
+export const ChangeDeckDialog = ({
+  isOpen,
+  onOpenChange,
+}: CommonDialogProps) => {
   const roomDetails = useRoomDetails();
   const [draftDeck, setDraftDeck] = useState<string[]>(
     roomDetails?.roomSettings?.deck || DEFAULT_DECK
@@ -201,5 +204,3 @@ const ChangeDeckDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
     </Dialog>
   );
 };
-
-export default ChangeDeckDialog;
