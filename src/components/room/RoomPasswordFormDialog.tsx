@@ -95,7 +95,7 @@ export const RoomPasswordForm = ({ onFormSubmit }: RoomPasswordFormProps) => {
               <Button
                 disabled={isPending}
                 isLoading={isPending}
-                className='w-[9.375rem]'
+                className='w-37.5'
                 aria-label='Join Room'
               >
                 {isPending ? 'Joining' : 'Join'} Room

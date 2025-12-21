@@ -39,7 +39,7 @@ export const BannedUsersDialog = ({
   const renderContent = useCallback(() => {
     if (isPending) {
       return (
-        <div className='flex h-[2.5rem] w-full items-center justify-center gap-2'>
+        <div className='flex h-10 w-full items-center justify-center gap-2'>
           <LoaderIcon className='animate-spin' />
           <span className='font-semibold'>Loading...</span>
         </div>
@@ -62,7 +62,7 @@ export const BannedUsersDialog = ({
     }
 
     return bannedUsers.length === 0 ? (
-      <div className='h-[2.5rem] w-full'>
+      <div className='h-10 w-full'>
         <h3 className='scroll-m-20 text-center text-lg font-semibold tracking-tight'>
           No banned users were found
         </h3>

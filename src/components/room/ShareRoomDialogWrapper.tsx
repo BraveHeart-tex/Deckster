@@ -12,8 +12,8 @@ export const ShareRoomDialogWrapper = () => {
   if (isJoining && pathname.includes(ROUTES.ROOM('')))
     return (
       <div className='flex items-center gap-2'>
-        <Skeleton className='size-[1.5rem] rounded-md' />
-        <Skeleton className='h-[1.5rem] w-20 rounded-md' />
+        <Skeleton className='size-6 rounded-md' />
+        <Skeleton className='h-6 w-20 rounded-md' />
       </div>
     );
 
