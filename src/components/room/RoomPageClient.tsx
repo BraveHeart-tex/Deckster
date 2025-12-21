@@ -1,21 +1,24 @@
 'use client';
 
+import type { ViewMode } from '@/constants';
 import RoomJoinController from '@/src/components/room/RoomJoinController';
 import UserVotesTable from '@/src/components/vote/UserVotesTable';
 import VoteCards from '@/src/components/vote/VoteCards';
 import VoteControls from '@/src/components/vote/VoteControls';
 import VotingIndicator from '@/src/components/vote/VotingIndicator';
 import { useStateBus } from '@/src/hooks/useStateBus';
+import { ViewModeToggle } from '../ViewModeToggle';
 
 interface VoteCardsProps {
   roomCode: string;
+  initialViewMode: ViewMode;
 }
 
-const RoomPageClient = ({ roomCode }: VoteCardsProps) => {
+const RoomPageClient = ({ roomCode, initialViewMode }: VoteCardsProps) => {
   const [isJoining] = useStateBus('isJoiningRoom');
 
   return (
-    <div className='mx-auto flex h-full max-w-screen-md flex-col items-center justify-center space-y-4'>
+    <div className='mx-auto flex h-full max-w-3xl flex-col items-center justify-center space-y-4'>
       {isJoining ? (
         <RoomJoinController />
       ) : (
@@ -30,7 +33,10 @@ const RoomPageClient = ({ roomCode }: VoteCardsProps) => {
           </div>
           <VotingIndicator />
           <VoteCards />
-          <VoteControls />
+          <div className='flex items-center gap-2'>
+            <VoteControls />
+            <ViewModeToggle initialViewMode={initialViewMode} />
+          </div>
           <UserVotesTable roomCode={roomCode} />
         </>
       )}

@@ -31,8 +31,8 @@ const VoteControls = () => {
           aria-label='Loading controls'
         >
           <span className='sr-only'>Loading controls...</span>
-          <Skeleton className='w-[5rem] h-9 rounded-md' />
-          <Skeleton className='w-[5rem] h-9 rounded-md' />
+          <Skeleton className='w-20 h-9 rounded-md' />
+          <Skeleton className='w-20 h-9 rounded-md' />
           <Skeleton className='size-9 rounded-md' />
         </div>
       );
