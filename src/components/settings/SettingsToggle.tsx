@@ -5,7 +5,7 @@ import { CircleQuestionMark } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast } from '@/src/components/ui/sonner';
@@ -17,7 +17,7 @@ import {
 } from '@/src/components/ui/tooltip';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { ROUTES } from '@/src/lib/routes';
-import { RoomSettingKey } from '@/src/types/room';
+import type { RoomSettingKey } from '@/src/types/room';
 
 interface SettingsToggleProps {
   label: string;
@@ -78,8 +78,8 @@ const SettingsToggle = ({
   };
 
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex items-center gap-2">
+    <div className='flex w-full items-center justify-between'>
+      <div className='flex items-center gap-2'>
         <Label htmlFor={settingKey}>{label}</Label>
         {helperText && helperText?.length > 0 && (
           <Tooltip>
@@ -87,8 +87,8 @@ const SettingsToggle = ({
               <CircleQuestionMark size={16} />
             </TooltipTrigger>
             <TooltipContent
-              className="w-max max-w-sm px-4 py-2 text-sm leading-relaxed shadow-lg"
-              side="top"
+              className='max-w-xs text-center px-3 py-2 text-sm shadow-lg prose prose-sm prose-neutral prose-p:leading-relaxed prose-p:my-0'
+              side='top'
             >
               <p>{helperText}</p>
             </TooltipContent>
