@@ -37,8 +37,8 @@ const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
       <CardHeader className='flex items-center justify-between gap-4'>
         <CardTitle className='text-xl'>{room.name}</CardTitle>
 
-        <div className='flex items-center justify-between rounded-md bg-muted px-1 gap-2'>
-          <CardDescription className='font-mono font-semibold text-sm tracking-wide'>
+        <div className='flex items-center justify-between gap-2'>
+          <CardDescription className='font-mono font-medium text-sm tracking-widest rounded-md bg-secondary p-2'>
             {room.code}
           </CardDescription>
 
