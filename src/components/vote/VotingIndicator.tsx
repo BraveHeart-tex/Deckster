@@ -26,7 +26,7 @@ const VotingIndicator = () => {
   return (
     <Badge
       variant={
-        voted === roomDetails.participants.length ? 'success' : 'default'
+        voted === roomDetails.participants.length ? 'success' : 'outline'
       }
     >
       {voted} / {roomDetails.participants.length} Voted

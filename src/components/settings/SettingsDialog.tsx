@@ -128,7 +128,7 @@ const SettingsDialog = () => {
       <DialogTrigger asChild>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant='ghost' size='icon' onClick={handleOpenClick}>
+            <Button variant='outline' size='icon' onClick={handleOpenClick}>
               <CogIcon />
             </Button>
           </TooltipTrigger>

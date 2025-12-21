@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { APP_NAME } from '@/constants';
 import { isValidRoomCode } from '@/shared/generateRoomCode';
 import RoomPageClient from '@/src/components/room/RoomPageClient';
+import { getViewModeCookie } from '@/src/lib/cookies';
 import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';
 
@@ -23,6 +24,7 @@ export async function generateMetadata({
 }
 
 const RoomPage = async ({ params }: RoomPageProps) => {
+  const viewMode = await getViewModeCookie();
   const { isAuthenticated } = await auth();
 
   if (!isAuthenticated) {
@@ -33,7 +35,9 @@ const RoomPage = async ({ params }: RoomPageProps) => {
     redirect(ROUTES.HOME);
   }
 
-  return <RoomPageClient roomCode={(await params).code} />;
+  return (
+    <RoomPageClient roomCode={(await params).code} initialViewMode={viewMode} />
+  );
 };
 
 export default RoomPage;
