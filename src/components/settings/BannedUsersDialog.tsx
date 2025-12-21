@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
-import BannedUserItem from '@/src/components/settings/BannedUserItem';
+import { BannedUserItem } from '@/src/components/settings/BannedUserItem';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -22,7 +22,7 @@ interface BannedUsersDialogProps extends CommonDialogProps {
   roomId: Id<'rooms'>;
 }
 
-const BannedUsersDialog = ({
+export const BannedUsersDialog = ({
   roomId,
   isOpen,
   onOpenChange,
@@ -104,5 +104,3 @@ const BannedUsersDialog = ({
     </Dialog>
   );
 };
-
-export default BannedUsersDialog;

@@ -15,7 +15,9 @@ export function getState(): State {
 
 export function setState(newState: Partial<State>) {
   currentState = { ...currentState, ...newState };
-  listeners.forEach((listener) => listener(currentState));
+  listeners.forEach((listener) => {
+    listener(currentState);
+  });
 }
 
 export function subscribe(listener: Listener): () => void {

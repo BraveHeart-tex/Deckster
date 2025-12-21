@@ -1,6 +1,5 @@
 import type { WebhookEvent } from '@clerk/backend';
 import { Webhook } from 'svix';
-
 import { internal } from './_generated/api';
 import { httpAction } from './_generated/server';
 import router from './router';
@@ -23,7 +22,11 @@ http.route({
         });
         break;
       case 'user.deleted': {
-        const clerkUserId = event.data.id!;
+        const clerkUserId = event.data.id;
+        if (!clerkUserId) {
+          console.error('Missing user ID in delete event');
+          return new Response('Missing user ID', { status: 400 });
+        }
         await ctx.runMutation(internal.users.deleteFromClerk, { clerkUserId });
         break;
       }
@@ -35,13 +38,30 @@ http.route({
 });
 
 async function validateRequest(request: Request): Promise<WebhookEvent | null> {
+  const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error('CLERK_WEBHOOK_SECRET is not configured');
+    return null;
+  }
+
   const payloadString = await request.text();
+
+  const svixId = request.headers.get('svix-id');
+  const svixTimestamp = request.headers.get('svix-timestamp');
+  const svixSignature = request.headers.get('svix-signature');
+
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    console.error('Missing required svix headers');
+    return null;
+  }
+
   const svixHeaders = {
-    'svix-id': request.headers.get('svix-id')!,
-    'svix-timestamp': request.headers.get('svix-timestamp')!,
-    'svix-signature': request.headers.get('svix-signature')!,
+    'svix-id': svixId,
+    'svix-timestamp': svixTimestamp,
+    'svix-signature': svixSignature,
   };
-  const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!);
+
+  const wh = new Webhook(webhookSecret);
   try {
     return wh.verify(payloadString, svixHeaders) as unknown as WebhookEvent;
   } catch (error) {

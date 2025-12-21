@@ -26,7 +26,7 @@ interface RemoveParticipantDialogProps extends CommonDialogProps {
   participantId: Id<'participants'>;
 }
 
-const RemoveParticipantDialog = ({
+export const RemoveParticipantDialog = ({
   isOpen,
   onOpenChange,
   userName,
@@ -86,5 +86,3 @@ const RemoveParticipantDialog = ({
     </AlertDialog>
   );
 };
-
-export default RemoveParticipantDialog;

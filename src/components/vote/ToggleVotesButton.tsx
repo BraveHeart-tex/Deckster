@@ -12,7 +12,7 @@ import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 
-const ToggleVotesButton = () => {
+export const ToggleVotesButton = () => {
   const roomDetails = useRoomDetails();
   const { user } = useUser();
   const router = useRouter();
@@ -82,5 +82,3 @@ const ToggleVotesButton = () => {
     </Button>
   );
 };
-
-export default ToggleVotesButton;

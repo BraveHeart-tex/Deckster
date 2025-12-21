@@ -1,3 +1,4 @@
+// biome-ignore lint/style/useNodejsImportProtocol: the node: protocol is not supported in our setup
 import { createHash } from 'crypto';
 
 export const generateAvatarUrl = (userId: string): string => {

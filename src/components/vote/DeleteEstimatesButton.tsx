@@ -11,7 +11,7 @@ import { handleDomainError } from '@/src/helpers/handleDomainError';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 
-const DeleteEstimatesButton = () => {
+export const DeleteEstimatesButton = () => {
   const roomDetails = useRoomDetails();
   const { user } = useUser();
   const router = useRouter();
@@ -94,4 +94,3 @@ const DeleteEstimatesButton = () => {
     </Button>
   );
 };
-export default DeleteEstimatesButton;

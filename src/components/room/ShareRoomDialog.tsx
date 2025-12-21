@@ -28,7 +28,7 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { ROUTES } from '@/src/lib/routes';
 import type { RoomPageParameters } from '@/src/types/room';
 
-const ShareRoomDialog = () => {
+export const ShareRoomDialog = () => {
   const parameters = useParams<RoomPageParameters>();
   const roomDetails = useRoomDetails();
   const [isCopied, setIsCopied] = useState(false);
@@ -138,5 +138,3 @@ const ShareRoomDialog = () => {
     </Dialog>
   );
 };
-
-export default ShareRoomDialog;

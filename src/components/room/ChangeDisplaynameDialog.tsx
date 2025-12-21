@@ -46,7 +46,7 @@ interface ChangeDisplaynameDialogProps {
   participantId: Id<'participants'>;
 }
 
-const ChangeDisplaynameDialog = ({
+export const ChangeDisplaynameDialog = ({
   defaultValue,
   participantId,
 }: ChangeDisplaynameDialogProps) => {
@@ -159,5 +159,3 @@ const ChangeDisplaynameDialog = ({
     </Dialog>
   );
 };
-
-export default ChangeDisplaynameDialog;

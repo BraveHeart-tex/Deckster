@@ -12,7 +12,11 @@ function bytesToHex(bytes: Uint8Array): string {
 }
 
 function hexToBytes(hex: string): Uint8Array {
-  return new Uint8Array(hex.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)));
+  const matches = hex.match(/.{2}/g);
+  if (!matches) {
+    throw new Error('Invalid hex string');
+  }
+  return new Uint8Array(matches.map((byte) => parseInt(byte, 16)));
 }
 
 /**

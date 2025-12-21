@@ -11,7 +11,7 @@ export function isDomainError(error: unknown): error is DomainError {
     typeof error === 'object' &&
     error !== null &&
     'data' in error &&
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: this is intentional
     typeof (error as any).data.code === 'string'
   );
 }

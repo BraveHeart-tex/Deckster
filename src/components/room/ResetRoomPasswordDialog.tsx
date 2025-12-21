@@ -24,7 +24,7 @@ interface ResetRoomPasswordDialogProps extends CommonDialogProps {
   roomId: Id<'rooms'>;
 }
 
-const ResetRoomPasswordDialog = ({
+export const ResetRoomPasswordDialog = ({
   isOpen,
   onOpenChange,
   roomId,
@@ -93,5 +93,3 @@ const ResetRoomPasswordDialog = ({
     </AlertDialog>
   );
 };
-
-export default ResetRoomPasswordDialog;

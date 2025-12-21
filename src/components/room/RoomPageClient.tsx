@@ -1,11 +1,11 @@
 'use client';
 
 import type { ViewMode } from '@/constants';
-import RoomJoinController from '@/src/components/room/RoomJoinController';
-import UserVotesTable from '@/src/components/vote/UserVotesTable';
-import VoteCards from '@/src/components/vote/VoteCards';
-import VoteControls from '@/src/components/vote/VoteControls';
-import VotingIndicator from '@/src/components/vote/VotingIndicator';
+import { RoomJoinController } from '@/src/components/room/RoomJoinController';
+import { UserVotesTable } from '@/src/components/vote/UserVotesTable';
+import { VoteCards } from '@/src/components/vote/VoteCards';
+import { VoteControls } from '@/src/components/vote/VoteControls';
+import { VotingIndicator } from '@/src/components/vote/VotingIndicator';
 import { useStateBus } from '@/src/hooks/useStateBus';
 import { ViewModeToggle } from '../ViewModeToggle';
 
@@ -14,7 +14,10 @@ interface VoteCardsProps {
   initialViewMode: ViewMode;
 }
 
-const RoomPageClient = ({ roomCode, initialViewMode }: VoteCardsProps) => {
+export const RoomPageClient = ({
+  roomCode,
+  initialViewMode,
+}: VoteCardsProps) => {
   const [isJoining] = useStateBus('isJoiningRoom');
 
   return (
@@ -43,5 +46,3 @@ const RoomPageClient = ({ roomCode, initialViewMode }: VoteCardsProps) => {
     </div>
   );
 };
-
-export default RoomPageClient;

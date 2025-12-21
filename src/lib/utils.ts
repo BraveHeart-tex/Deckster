@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const isValidConvexId = (value: string): boolean => {
   return (
-    value != undefined &&
+    value !== undefined &&
     value != null &&
     !!value &&
     value.length === CONVEX_ID_LENGTH

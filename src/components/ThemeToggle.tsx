@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { cn } from '@/src/lib/utils';
 
-const ThemeToggle = () => {
+export const ThemeToggle = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -39,10 +39,8 @@ const ThemeToggle = () => {
           'data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0'
         )}
       >
-        {isChecked ? <Moon className="size-3" /> : <Sun className="size-3" />}
+        {isChecked ? <Moon className='size-3' /> : <Sun className='size-3' />}
       </SwitchPrimitives.Thumb>
     </SwitchPrimitives.Root>
   );
 };
-
-export default ThemeToggle;

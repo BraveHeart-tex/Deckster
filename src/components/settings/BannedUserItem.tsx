@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
-import UserAvatar from '@/src/components/common/UserAvatar';
+import { UserAvatar } from '@/src/components/common/UserAvatar';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ interface BannedUserItemProps {
   roomId: Id<'rooms'>;
 }
 
-const BannedUserItem = ({ user, roomId }: BannedUserItemProps) => {
+export const BannedUserItem = ({ user, roomId }: BannedUserItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
   const revokeBan = useMutation(api.rooms.revokeBan);
@@ -105,5 +105,3 @@ const BannedUserItem = ({ user, roomId }: BannedUserItemProps) => {
     </div>
   );
 };
-
-export default BannedUserItem;

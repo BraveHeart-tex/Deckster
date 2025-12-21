@@ -5,7 +5,7 @@ import type { PresenceState } from '@convex-dev/presence/react';
 import { useConvexAuth } from 'convex/react';
 import { useCallback, useMemo, useState } from 'react';
 
-import PresenceSubscriber from '@/src/components/common/PresenceSubscriber';
+import { PresenceSubscriber } from '@/src/components/common/PresenceSubscriber';
 import {
   Table,
   TableBody,
@@ -13,16 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/src/components/ui/table';
-import AverageOfVotesRow from '@/src/components/vote/AverageOfVotesRow';
-import UserRowSkeleton from '@/src/components/vote/UserRowSkeleton';
-import UserVotesTableRow from '@/src/components/vote/UserVotesTableRow';
+import { AverageOfVotesRow } from '@/src/components/vote/AverageOfVotesRow';
+import { UserRowSkeleton } from '@/src/components/vote/UserRowSkeleton';
+import { UserVotesTableRow } from '@/src/components/vote/UserVotesTableRow';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
 interface UserVotesTable {
   roomCode: string;
 }
 
-const UserVotesTable = ({ roomCode }: UserVotesTable) => {
+export const UserVotesTable = ({ roomCode }: UserVotesTable) => {
   const [presenceState, setPresenceState] = useState<
     PresenceState[] | undefined
   >(undefined);
@@ -131,5 +131,3 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
     </>
   );
 };
-
-export default UserVotesTable;

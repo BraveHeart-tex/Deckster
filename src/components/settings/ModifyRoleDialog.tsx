@@ -26,7 +26,7 @@ interface ModifyRoleDialogProps extends CommonDialogProps {
   currentRole: Doc<'participants'>['role'];
 }
 
-const ModifyRoleDialog = ({
+export const ModifyRoleDialog = ({
   isOpen,
   onOpenChange,
   participantId,
@@ -106,4 +106,3 @@ const ModifyRoleDialog = ({
     </AlertDialog>
   );
 };
-export default ModifyRoleDialog;

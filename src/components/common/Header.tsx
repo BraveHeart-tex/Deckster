@@ -2,12 +2,12 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { APP_NAME } from '@/constants';
-import AppLogo from '@/src/components/common/AppLogo';
-import UserMenu from '@/src/components/common/UserMenu';
-import ModeToggle from '@/src/components/ModeToggle';
-import ShareRoomDialogWrapper from '@/src/components/room/ShareRoomDialogWrapper';
+import { AppLogo } from '@/src/components/common/AppLogo';
+import { UserMenu } from '@/src/components/common/UserMenu';
+import { ModeToggle } from '@/src/components/ModeToggle';
+import { ShareRoomDialogWrapper } from '@/src/components/room/ShareRoomDialogWrapper';
 
-const Header = async () => {
+export const Header = async () => {
   const cookieStore = await cookies();
   return (
     <header className='bg-background fixed top-0 right-0 left-0 z-50 flex h-14 w-full items-center border-b px-4 md:px-6'>
@@ -35,5 +35,3 @@ const Header = async () => {
     </header>
   );
 };
-
-export default Header;

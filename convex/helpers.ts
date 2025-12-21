@@ -1,4 +1,4 @@
-import { UserIdentity } from 'convex/server';
+import type { UserIdentity } from 'convex/server';
 import {
   customAction,
   customCtx,
@@ -7,14 +7,14 @@ import {
 } from 'convex-helpers/server/customFunctions';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
-import { Doc as Document_ } from './_generated/dataModel';
+import type { Doc as Document_ } from './_generated/dataModel';
 import {
-  action,
   type ActionCtx,
-  mutation,
+  action,
   type MutationCtx,
-  query,
+  mutation,
   type QueryCtx,
+  query,
 } from './_generated/server';
 
 export const getUserNameFromIdentity = (userIdentity: UserIdentity): string => {

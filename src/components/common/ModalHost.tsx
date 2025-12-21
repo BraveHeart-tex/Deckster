@@ -1,17 +1,17 @@
 'use client';
-import ResetRoomPasswordDialog from '@/src/components/room/ResetRoomPasswordDialog';
-import BannedUsersDialog from '@/src/components/settings/BannedUsersDialog';
-import ChangeDeckDialog from '@/src/components/settings/ChangeDeckDialog';
-import DeleteRoomDialog from '@/src/components/settings/DeleteRoomDialog';
-import LockOrUnlockRoomDialog from '@/src/components/settings/LockOrUnlockRoomDialog';
-import ModifyRoleDialog from '@/src/components/settings/ModifyRoleDialog';
-import RoomPasswordDialog from '@/src/components/settings/RoomPasswordDialog';
-import TransferOwnershipDialog from '@/src/components/settings/TransferOwnershipDialog';
-import BanUserDialog from '@/src/components/vote/BanUserDialog';
-import RemoveParticipantDialog from '@/src/components/vote/RemoveParticipantDialog';
+import { ResetRoomPasswordDialog } from '@/src/components/room/ResetRoomPasswordDialog';
+import { BannedUsersDialog } from '@/src/components/settings/BannedUsersDialog';
+import { ChangeDeckDialog } from '@/src/components/settings/ChangeDeckDialog';
+import { DeleteRoomDialog } from '@/src/components/settings/DeleteRoomDialog';
+import { LockOrUnlockRoomDialog } from '@/src/components/settings/LockOrUnlockRoomDialog';
+import { ModifyRoleDialog } from '@/src/components/settings/ModifyRoleDialog';
+import { RoomPasswordDialog } from '@/src/components/settings/RoomPasswordDialog';
+import { TransferOwnershipDialog } from '@/src/components/settings/TransferOwnershipDialog';
+import { BanUserDialog } from '@/src/components/vote/BanUserDialog';
+import { RemoveParticipantDialog } from '@/src/components/vote/RemoveParticipantDialog';
 import { MODAL_TYPES, useModalStore } from '@/src/store/modal';
 
-const ModalHost = () => {
+export const ModalHost = () => {
   const modal = useModalStore((state) => state.modal);
   const closeModal = useModalStore((state) => state.closeModal);
 
@@ -95,4 +95,3 @@ const ModalHost = () => {
     }
   }
 };
-export default ModalHost;

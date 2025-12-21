@@ -1,7 +1,7 @@
-import { WithoutSystemFields } from 'convex/server';
+import type { WithoutSystemFields } from 'convex/server';
 
-import { Doc } from '@/convex/_generated/dataModel';
-import { User } from '@/src/types/user';
+import type { Doc } from '@/convex/_generated/dataModel';
+import type { User } from '@/src/types/user';
 
 export interface RoomSettings {
   allowOthersToRevealVotes?: boolean;

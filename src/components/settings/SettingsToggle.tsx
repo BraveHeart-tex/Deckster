@@ -28,7 +28,7 @@ interface SettingsToggleProps {
   helperText?: string;
 }
 
-const SettingsToggle = ({
+export const SettingsToggle = ({
   settingKey,
   checked,
   label,
@@ -43,7 +43,7 @@ const SettingsToggle = ({
     const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
       roomCode,
     });
-    if (current && current.roomSettings) {
+    if (current?.roomSettings) {
       localStore.setQuery(
         api.rooms.getRoomWithDetailsByCode,
         { roomCode },
@@ -104,5 +104,3 @@ const SettingsToggle = ({
     </div>
   );
 };
-
-export default SettingsToggle;

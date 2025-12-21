@@ -10,7 +10,7 @@ interface DangerZoneRowProps {
   onClick: () => void;
 }
 
-const SettingRow = ({
+export const SettingRow = ({
   title,
   description,
   isLast,
@@ -43,5 +43,3 @@ const SettingRow = ({
     </div>
   );
 };
-
-export default SettingRow;

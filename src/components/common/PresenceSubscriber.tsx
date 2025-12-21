@@ -1,5 +1,5 @@
 'use client';
-import usePresence, { PresenceState } from '@convex-dev/presence/react';
+import usePresence, { type PresenceState } from '@convex-dev/presence/react';
 import { useEffect } from 'react';
 
 import { api } from '@/convex/_generated/api';
@@ -10,7 +10,7 @@ interface PresenceSubscriberProps {
   onStateChange: (state: PresenceState[] | undefined) => void;
 }
 
-const PresenceSubscriber = ({
+export const PresenceSubscriber = ({
   roomCode,
   userId,
   onStateChange,
@@ -27,5 +27,3 @@ const PresenceSubscriber = ({
 
   return null;
 };
-
-export default PresenceSubscriber;

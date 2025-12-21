@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/src/components/ui/dropdown-menu';
 
-const UserMenu = () => {
+export const UserMenu = () => {
   const { user } = useUser();
   if (!user) {
     return null;
@@ -19,12 +19,7 @@ const UserMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        {/* <UserAvatar
-          src={generateAvatarUrl(user.id)}
-          username={user?.username || ''}
-        /> */}
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger></DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -38,5 +33,3 @@ const UserMenu = () => {
     </DropdownMenu>
   );
 };
-
-export default UserMenu;

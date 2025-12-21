@@ -14,7 +14,7 @@ interface UserAvatarProps {
   presence?: 'online' | 'offline';
 }
 
-const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
+export const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
   const avatarUrl = useMemo(() => {
     if (!userId) {
       return '';
@@ -36,13 +36,9 @@ const UserAvatar = ({ userId, username, presence }: UserAvatarProps) => {
             presence === 'online' && 'bg-green-500',
             presence === 'offline' && 'bg-gray-500'
           )}
-          role='status'
-          aria-label={presence === 'online' ? 'Online' : 'Offline'}
           title={presence === 'online' ? 'Online' : 'Offline'}
         />
       ) : null}
     </div>
   );
 };
-
-export default UserAvatar;

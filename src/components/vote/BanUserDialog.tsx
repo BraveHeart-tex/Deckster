@@ -31,7 +31,7 @@ interface BanUserDialogProps extends CommonDialogProps {
 
 const BAN_USER_REASON_MAX_LENGTH = 200;
 
-const BanUserDialog = ({
+export const BanUserDialog = ({
   isOpen,
   onOpenChange,
   roomId,
@@ -112,5 +112,3 @@ const BanUserDialog = ({
     </AlertDialog>
   );
 };
-
-export default BanUserDialog;

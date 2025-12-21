@@ -23,7 +23,10 @@ import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 import type { RoomPageParameters } from '@/src/types/room';
 
-const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
+export const DeleteRoomDialog = ({
+  isOpen,
+  onOpenChange,
+}: CommonDialogProps) => {
   const [enteredCode, setEnteredCode] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -123,5 +126,3 @@ const DeleteRoomDialog = ({ isOpen, onOpenChange }: CommonDialogProps) => {
     </AlertDialog>
   );
 };
-
-export default DeleteRoomDialog;
