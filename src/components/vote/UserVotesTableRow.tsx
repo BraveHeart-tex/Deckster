@@ -89,8 +89,8 @@ const UserVotesTableRow = memo(
             shouldHighlightConsensus={shouldHighlightConsensus}
           />
         </TableCell>
-        {roomDetails && roomDetails?.room.ownerId === user?.id && !isSelf && (
-          <TableCell className='text-center'>
+        <TableCell className='text-center'>
+          {roomDetails && roomDetails?.room.ownerId === user?.id && !isSelf && (
             <UserActionsDropdown
               userName={userName}
               participantId={participantId}
@@ -98,8 +98,8 @@ const UserVotesTableRow = memo(
               userId={participantUserId}
               role={role}
             />
-          </TableCell>
-        )}
+          )}
+        </TableCell>
       </TableRow>
     );
   }

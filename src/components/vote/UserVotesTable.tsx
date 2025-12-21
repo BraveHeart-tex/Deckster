@@ -80,9 +80,11 @@ const UserVotesTable = ({ roomCode }: UserVotesTable) => {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead className='text-center'>Story Points</TableHead>
-            {roomDetails && roomDetails.room.ownerId === user?.id && (
-              <TableHead className='text-center'>Actions</TableHead>
-            )}
+            <TableHead className='text-center'>
+              {roomDetails &&
+                roomDetails.room.ownerId === user?.id &&
+                'Actions'}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

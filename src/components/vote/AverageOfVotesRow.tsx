@@ -34,9 +34,9 @@ const AverageOfVotesRow = () => {
 
   return (
     <TableRow>
-      <TableHead className="font-semibold">Average</TableHead>
-      <TableHead className="relative text-center font-semibold">
-        <div className="relative inline-block h-6 w-12">
+      <TableHead className='font-semibold'>Average</TableHead>
+      <TableHead className='relative text-center font-semibold'>
+        <div className='relative inline-block h-6 w-12'>
           <span
             className={cn(
               'absolute inset-0 flex items-center justify-center opacity-100 transition-opacity duration-500',
