@@ -118,11 +118,12 @@ export const UserVotesChart = ({
                         </div>
                       </div>
                     </TooltipTrigger>
-                    {voteToParticipantNames[option] !== undefined && (
-                      <TooltipContent>
-                        {voteToParticipantNames[option]?.join(', ')}
-                      </TooltipContent>
-                    )}
+                    {voteToParticipantNames[option] !== undefined &&
+                      votesRevealed && (
+                        <TooltipContent>
+                          {voteToParticipantNames[option]?.join(', ')}
+                        </TooltipContent>
+                      )}
                   </Tooltip>
                 </div>
               </div>
