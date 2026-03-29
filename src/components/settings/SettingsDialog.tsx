@@ -1,9 +1,9 @@
 'use client';
-import { useUser } from '@clerk/nextjs';
 import { CogIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { SettingRow } from '@/src/components/settings/SettingRow';
 import { SettingsToggle } from '@/src/components/settings/SettingsToggle';
 import { Button } from '@/src/components/ui/button';
@@ -65,7 +65,7 @@ const roomSettingToggles: {
 export const SettingsDialog = () => {
   const parameters = useParams<RoomPageParameters>();
   const roomDetails = useRoomDetails();
-  const { user } = useUser();
+  const { user } = useGuestSession();
   const [isOpen, setIsOpen] = useState(false);
   const openModal = useModalStore((state) => state.openModal);
 

@@ -11,6 +11,7 @@ import {
   type DomainError,
 } from '@/shared/domainErrorCodes';
 import { ROOM_CODE_DEFAULT_SIZE } from '@/shared/generateRoomCode';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -39,6 +40,7 @@ import {
 } from '@/src/validation/join-room.schema';
 
 export const JoinRoomDialog = () => {
+  const { user, setDisplayName } = useGuestSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -46,7 +48,7 @@ export const JoinRoomDialog = () => {
   const form = useForm<JoinRoomInput>({
     defaultValues: {
       roomCode: '',
-      userDisplayName: '',
+      userDisplayName: user?.name || '',
       roomPassword: '',
     },
     resolver: zodResolver(joinRoomSchema),
@@ -57,7 +59,17 @@ export const JoinRoomDialog = () => {
     setIsJoining(true);
 
     try {
-      const result = await joinRoom(data);
+      const userDisplayName = data.userDisplayName.trim() || user?.name || '';
+
+      if (userDisplayName) {
+        setDisplayName(userDisplayName);
+      }
+
+      const result = await joinRoom({
+        ...data,
+        userDisplayName,
+        sessionToken: user?.id || '',
+      });
       router.push(ROUTES.ROOM(result.roomCode));
     } catch (error) {
       const handlePasswordError = (domainError: DomainError) => {
@@ -70,7 +82,6 @@ export const JoinRoomDialog = () => {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
           showErrorToast(domainError.data.message);
-          router.push(ROUTES.SIGN_IN);
         },
         [DOMAIN_ERROR_CODES.ROOM.BANNED]: (domainError) => {
           showErrorToast(domainError.data.message);
@@ -87,6 +98,12 @@ export const JoinRoomDialog = () => {
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       form.reset();
+    } else {
+      form.reset({
+        roomCode: '',
+        userDisplayName: user?.name || '',
+        roomPassword: '',
+      });
     }
 
     setIsOpen(isOpen);

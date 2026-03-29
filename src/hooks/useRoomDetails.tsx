@@ -33,7 +33,7 @@ export const useRoomDetails = () => {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (domainError) => {
           showErrorToast(domainError.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
           handledError = true;
         },
         [DOMAIN_ERROR_CODES.ROOM.INVALID_CODE]: (domainError) => {

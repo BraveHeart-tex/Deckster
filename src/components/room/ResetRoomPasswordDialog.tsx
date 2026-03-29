@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -29,6 +30,7 @@ export const ResetRoomPasswordDialog = ({
   onOpenChange,
   roomId,
 }: ResetRoomPasswordDialogProps) => {
+  const { user } = useGuestSession();
   const [isResetting, setIsResetting] = useState(false);
   const resetRoomPassword = useMutation(api.rooms.resetRoomPassword);
   const router = useRouter();
@@ -36,14 +38,14 @@ export const ResetRoomPasswordDialog = ({
   const handleResetRoomPassword = async () => {
     setIsResetting(true);
     try {
-      await resetRoomPassword({ roomId });
+      await resetRoomPassword({ roomId, sessionToken: user?.id || '' });
       showSuccessToast('Room password reset successfully!');
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

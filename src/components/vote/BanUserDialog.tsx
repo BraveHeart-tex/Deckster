@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -20,7 +21,6 @@ import { Label } from '@/src/components/ui/label';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { Textarea } from '@/src/components/ui/textarea';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface BanUserDialogProps extends CommonDialogProps {
@@ -38,6 +38,7 @@ export const BanUserDialog = ({
   userId,
   userName,
 }: BanUserDialogProps) => {
+  const { user } = useGuestSession();
   const [isBanning, setIsBanning] = useState(false);
   const [reason, setReason] = useState('');
   const banUser = useMutation(api.rooms.banUser);
@@ -46,14 +47,19 @@ export const BanUserDialog = ({
   const handleBanUser = async () => {
     setIsBanning(true);
     try {
-      await banUser({ roomId, userId, reason });
+      await banUser({
+        roomId,
+        userId,
+        reason,
+        sessionToken: user?.id || '',
+      });
       showSuccessToast('User banned successfully!');
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
       });
     } finally {

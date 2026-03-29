@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -35,7 +36,6 @@ import {
   TooltipTrigger,
 } from '@/src/components/ui/tooltip';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 import {
   type ChangeDisplayNameInput,
   changeDisplayNameSchema,
@@ -50,6 +50,7 @@ export const ChangeDisplaynameDialog = ({
   defaultValue,
   participantId,
 }: ChangeDisplaynameDialogProps) => {
+  const { user, setDisplayName } = useGuestSession();
   const [isChanging, setIsChanging] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const form = useForm<ChangeDisplayNameInput>({
@@ -71,9 +72,11 @@ export const ChangeDisplaynameDialog = ({
   const onSubmit = async (data: ChangeDisplayNameInput) => {
     setIsChanging(true);
     try {
+      setDisplayName(data.userDisplayName);
       await changeDisplayName({
         displayName: data.userDisplayName,
         participantId,
+        sessionToken: user?.id || '',
       });
       showSuccessToast('Display name changed successfully!');
       setIsOpen(false);
@@ -81,7 +84,7 @@ export const ChangeDisplaynameDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
       });
     } finally {

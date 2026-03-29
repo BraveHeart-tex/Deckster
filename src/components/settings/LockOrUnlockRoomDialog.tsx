@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -25,6 +26,7 @@ export const LockOrUnlockRoomDialog = ({
   isOpen,
   onOpenChange,
 }: CommonDialogProps) => {
+  const { user } = useGuestSession();
   const [isPending, setIsPending] = useState(false);
   const roomDetails = useRoomDetails();
   const toggleRoomLock = useMutation(api.rooms.toggleRoomLock);
@@ -41,14 +43,17 @@ export const LockOrUnlockRoomDialog = ({
     } successfully.`;
 
     try {
-      await toggleRoomLock({ roomId: roomDetails.room._id });
+      await toggleRoomLock({
+        roomId: roomDetails.room._id,
+        sessionToken: user?.id || '',
+      });
       showSuccessToast(successToastMessage);
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

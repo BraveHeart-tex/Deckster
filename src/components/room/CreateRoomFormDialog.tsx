@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -42,10 +43,11 @@ type CreateRoomFormDialogProps = {
 export const CreateRoomFormDialog = ({
   trigger,
 }: CreateRoomFormDialogProps) => {
+  const { user, setDisplayName } = useGuestSession();
   const form = useForm<CreateRoomInput>({
     defaultValues: {
       roomName: '',
-      userDisplayName: '',
+      userDisplayName: user?.name || '',
     },
     resolver: zodResolver(createRoomSchema),
   });
@@ -59,7 +61,17 @@ export const CreateRoomFormDialog = ({
     setIsCreating(true);
 
     try {
-      const createRoomResult = await createRoom(input);
+      const userDisplayName = input.userDisplayName.trim() || user?.name || '';
+
+      if (userDisplayName) {
+        setDisplayName(userDisplayName);
+      }
+
+      const createRoomResult = await createRoom({
+        ...input,
+        userDisplayName,
+        sessionToken: user?.id || '',
+      });
       showSuccessToast('Room created successfully!');
       setIsOpen(false);
 
@@ -68,7 +80,6 @@ export const CreateRoomFormDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
         },
       });
     } finally {
@@ -80,7 +91,13 @@ export const CreateRoomFormDialog = ({
     setIsOpen(isOpen);
     if (!isOpen) {
       form.reset();
+      return;
     }
+
+    form.reset({
+      roomName: '',
+      userDisplayName: user?.name || '',
+    });
   };
 
   return (

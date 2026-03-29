@@ -1,8 +1,8 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { useCallback, useMemo } from 'react';
 
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { SettingsDialog } from '@/src/components/settings/SettingsDialog';
 import { Skeleton } from '@/src/components/ui/skeleton';
 import { DeleteEstimatesButton } from '@/src/components/vote/DeleteEstimatesButton';
@@ -11,7 +11,7 @@ import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 
 export const VoteControls = () => {
   const roomDetails = useRoomDetails();
-  const { user } = useUser();
+  const { user } = useGuestSession();
 
   const isCurrentUserModerator = useMemo(() => {
     return roomDetails?.participants.some(

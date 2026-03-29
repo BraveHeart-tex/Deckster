@@ -1,5 +1,4 @@
 'use client';
-import { useUser } from '@clerk/nextjs';
 import { useMutation } from 'convex/react';
 import { CheckIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -8,6 +7,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { UserAvatar } from '@/src/components/common/UserAvatar';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -40,7 +40,7 @@ export const TransferOwnershipDialog = ({
     selectedUserId || null
   );
   const [isTransferring, setIsTransferring] = useState(false);
-  const { user } = useUser();
+  const { user } = useGuestSession();
   const transferRoomOwnership = useMutation(api.rooms.transferRoomOwnership);
   const router = useRouter();
 
@@ -59,13 +59,14 @@ export const TransferOwnershipDialog = ({
       await transferRoomOwnership({
         newOwnerId: selectedUser,
         roomId: roomDetails.room._id,
+        sessionToken: user?.id || '',
       });
       showSuccessToast('Ownership transferred successfully!');
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: () => {
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

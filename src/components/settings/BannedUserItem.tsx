@@ -8,6 +8,7 @@ import { api } from '@/convex/_generated/api';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { UserAvatar } from '@/src/components/common/UserAvatar';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -16,7 +17,6 @@ import {
 } from '@/src/components/ui/dropdown-menu';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 
 interface BannedUserItemProps {
   user: Doc<'bannedUsers'> & {
@@ -27,6 +27,7 @@ interface BannedUserItemProps {
 }
 
 export const BannedUserItem = ({ user, roomId }: BannedUserItemProps) => {
+  const { user: currentUser } = useGuestSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
   const revokeBan = useMutation(api.rooms.revokeBan);
@@ -40,13 +41,17 @@ export const BannedUserItem = ({ user, roomId }: BannedUserItemProps) => {
     setIsRevoking(true);
     setIsOpen(false);
     try {
-      await revokeBan({ roomId, userId: user.userId });
+      await revokeBan({
+        roomId,
+        userId: user.userId,
+        sessionToken: currentUser?.id || '',
+      });
       showSuccessToast('Ban revoked successfully!');
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
       });
     } finally {

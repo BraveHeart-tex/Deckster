@@ -1,15 +1,8 @@
-import type { UserIdentity } from 'convex/server';
-import {
-  customAction,
-  customCtx,
-  customMutation,
-  customQuery,
-} from 'convex-helpers/server/customFunctions';
+import { v } from 'convex/values';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import type { Doc as Document_ } from './_generated/dataModel';
 import {
-  type ActionCtx,
   action,
   type MutationCtx,
   mutation,
@@ -17,13 +10,10 @@ import {
   query,
 } from './_generated/server';
 
-export const getUserNameFromIdentity = (userIdentity: UserIdentity): string => {
-  if (userIdentity.name || userIdentity.familyName) {
-    return `${userIdentity.name ?? ''} ${userIdentity.familyName ?? ''}`.trim();
-  }
-
-  return userIdentity.preferredUsername || userIdentity.email || 'Anonymous';
-};
+export const authQuery = query;
+export const authMutation = mutation;
+export const authAction = action;
+export const sessionTokenValidator = v.string();
 
 export const ensureUniqueDisplayName = async (
   ctx: QueryCtx,
@@ -42,38 +32,55 @@ export const ensureUniqueDisplayName = async (
   }
 };
 
-const ensureAuthenticated = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
+export const requireSessionToken = (sessionToken: string): string => {
+  if (!sessionToken.trim()) {
     throw new DomainError({
       code: DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED,
-      message: 'You must be logged in to perform this action',
+      message: 'A guest session is required to perform this action',
     });
   }
-  return identity;
+
+  return sessionToken;
 };
 
-const injectUserIdentity = async (ctx: QueryCtx | MutationCtx | ActionCtx) => {
-  const userIdentity = await ensureAuthenticated(ctx);
-  return {
-    userIdentity,
-  };
+export const getStoredUser = async (
+  ctx: QueryCtx | MutationCtx,
+  userId: string
+) => {
+  return await ctx.db
+    .query('users')
+    .withIndex('byExternalId', (query) => query.eq('externalId', userId))
+    .unique();
 };
 
-export const authQuery = customQuery(
-  query,
-  customCtx(async (ctx) => injectUserIdentity(ctx))
-);
+export const getStoredUserName = async (
+  ctx: QueryCtx | MutationCtx,
+  userId: string
+) => {
+  const user = await getStoredUser(ctx, userId);
+  return user?.name || 'Anonymous';
+};
 
-export const authMutation = customMutation(
-  mutation,
-  customCtx(async (ctx) => injectUserIdentity(ctx))
-);
+export const upsertGuestUser = async (
+  ctx: MutationCtx,
+  { userId, name }: { userId: string; name: string }
+) => {
+  const user = await getStoredUser(ctx, userId);
 
-export const authAction = customAction(
-  action,
-  customCtx(async (ctx) => injectUserIdentity(ctx))
-);
+  if (user === null) {
+    await ctx.db.insert('users', {
+      externalId: userId,
+      name,
+    });
+    return;
+  }
+
+  if (user.name !== name) {
+    await ctx.db.patch(user._id, {
+      name,
+    });
+  }
+};
 
 export function assertRoomExists(
   room: Document_<'rooms'> | null

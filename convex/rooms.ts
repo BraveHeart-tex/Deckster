@@ -10,15 +10,20 @@ import {
   assertRoomExists,
   authMutation,
   authQuery,
-  getUserNameFromIdentity,
+  getStoredUserName,
+  requireSessionToken,
+  sessionTokenValidator,
+  upsertGuestUser,
 } from './helpers';
 
 export const createRoom = authMutation({
   args: {
     roomName: v.string(),
     userDisplayName: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     let roomCode: string;
     let exists: Doc<'rooms'> | null;
 
@@ -32,10 +37,18 @@ export const createRoom = authMutation({
 
     const roomId = await ctx.db.insert('rooms', {
       name: args.roomName,
-      ownerId: ctx.userIdentity.userId as string,
+      ownerId: userId,
       votesRevealed: false,
       code: roomCode,
       locked: false,
+    });
+
+    const userName =
+      args.userDisplayName.trim() || (await getStoredUserName(ctx, userId));
+
+    await upsertGuestUser(ctx, {
+      userId,
+      name: userName,
     });
 
     await ctx.db.insert('roomSettings', {
@@ -49,9 +62,8 @@ export const createRoom = authMutation({
     });
 
     await ctx.db.insert('participants', {
-      userId: ctx.userIdentity.userId as string,
-      userName:
-        args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
+      userId,
+      userName,
       roomId,
       role: 'owner',
     });
@@ -69,8 +81,10 @@ export const joinRoom = authMutation({
     roomCode: v.string(),
     userDisplayName: v.optional(v.string()),
     roomPassword: v.optional(v.string()),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     if (!isValidRoomCode(args.roomCode)) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.ROOM.INVALID_CODE,
@@ -88,9 +102,7 @@ export const joinRoom = authMutation({
     const bannedUser = await ctx.db
       .query('bannedUsers')
       .withIndex('by_room_and_user', (query) =>
-        query
-          .eq('roomId', room._id)
-          .eq('userId', ctx.userIdentity.userId as string)
+        query.eq('roomId', room._id).eq('userId', userId)
       )
       .unique();
 
@@ -104,9 +116,7 @@ export const joinRoom = authMutation({
     const existingParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (query) =>
-        query
-          .eq('roomId', room._id)
-          .eq('userId', ctx.userIdentity.userId as string)
+        query.eq('roomId', room._id).eq('userId', userId)
       )
       .unique();
 
@@ -139,11 +149,18 @@ export const joinRoom = authMutation({
         }
       }
 
+      const userName =
+        args.userDisplayName?.trim() || (await getStoredUserName(ctx, userId));
+
+      await upsertGuestUser(ctx, {
+        userId,
+        name: userName,
+      });
+
       await ctx.db.insert('participants', {
         roomId: room._id,
-        userId: ctx.userIdentity.userId as string,
-        userName:
-          args.userDisplayName || getUserNameFromIdentity(ctx.userIdentity),
+        userId,
+        userName,
         role: 'participant',
       });
     }
@@ -158,8 +175,10 @@ export const joinRoom = authMutation({
 export const getRoomWithDetailsByCode = authQuery({
   args: {
     roomCode: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     if (!isValidRoomCode(args.roomCode)) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.ROOM.INVALID_CODE,
@@ -177,7 +196,7 @@ export const getRoomWithDetailsByCode = authQuery({
     const isBanned = await ctx.db
       .query('bannedUsers')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', room._id).eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', room._id).eq('userId', userId)
       )
       .unique();
 
@@ -191,7 +210,7 @@ export const getRoomWithDetailsByCode = authQuery({
     const isParticipant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q.eq('roomId', room._id).eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', room._id).eq('userId', userId)
       )
       .unique();
 
@@ -232,24 +251,23 @@ export const getRoomWithDetailsByCode = authQuery({
         ...participant,
         isOwner: participant.userId === room.ownerId,
         vote: votes.find((vote) => vote.userId === participant.userId)?.value,
-        isCurrentUser: participant.userId === ctx.userIdentity.userId,
+        isCurrentUser: participant.userId === userId,
       })),
       roomSettings,
-      currentUserVote: votes.find(
-        (vote) => vote.userId === ctx.userIdentity.userId
-      )?.value,
+      currentUserVote: votes.find((vote) => vote.userId === userId)?.value,
     };
   },
 });
 
 export const getUserRooms = authQuery({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    sessionToken: sessionTokenValidator,
+  },
+  handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const participations = await ctx.db
       .query('participants')
-      .withIndex('by_userId', (q) =>
-        q.eq('userId', ctx.userIdentity.userId as string)
-      )
+      .withIndex('by_userId', (q) => q.eq('userId', userId))
       .collect();
 
     const roomIds = participations.map((p) => p.roomId);
@@ -266,8 +284,10 @@ export const getUserRooms = authQuery({
 export const toggleVotesRevealed = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
@@ -275,15 +295,14 @@ export const toggleVotesRevealed = authMutation({
       api.roomSettings.getRoomSettingsByRoomId,
       {
         roomId: args.roomId,
+        sessionToken: userId,
       }
     );
 
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q
-          .eq('roomId', args.roomId)
-          .eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', args.roomId).eq('userId', userId)
       )
       .unique();
 
@@ -291,7 +310,7 @@ export const toggleVotesRevealed = authMutation({
 
     if (
       !roomSettings.allowOthersToRevealVotes &&
-      room.ownerId !== ctx.userIdentity.userId &&
+      room.ownerId !== userId &&
       !isModerator
     ) {
       throw new DomainError({
@@ -323,12 +342,14 @@ export const toggleVotesRevealed = authMutation({
 export const resetVoting = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED,
         message: 'Only room creator can reset voting',
@@ -353,12 +374,14 @@ export const resetVoting = authMutation({
 export const deleteRoom = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only room creator can delete room',
@@ -376,12 +399,14 @@ export const transferRoomOwnership = authMutation({
   args: {
     roomId: v.id('rooms'),
     newOwnerId: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room creator can transfer ownership',
@@ -413,12 +438,14 @@ export const banUser = authMutation({
     roomId: v.id('rooms'),
     userId: v.string(),
     reason: v.optional(v.string()),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const currentUserId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== currentUserId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room creator can ban users',
@@ -445,7 +472,7 @@ export const banUser = authMutation({
         userId: args.userId,
         reason: args.reason,
         bannedAt: Date.now(),
-        bannedBy: ctx.userIdentity.userId,
+        bannedBy: currentUserId,
       }),
       ctx.db.delete(participant._id),
     ]);
@@ -464,12 +491,14 @@ export const banUser = authMutation({
 export const toggleRoomLock = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can toggle the room lock',
@@ -485,14 +514,14 @@ export const toggleRoomLock = authMutation({
 export const getBannedUsers = authQuery({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    requireSessionToken(args.sessionToken);
     const bannedUsers = await ctx.db
       .query('bannedUsers')
       .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
       .collect();
-
-    console.log(bannedUsers);
 
     const userInfos = await Promise.all(
       bannedUsers.map((bannedUser) =>
@@ -505,8 +534,6 @@ export const getBannedUsers = authQuery({
       )
     );
 
-    console.log('userInfos', userInfos);
-
     const userInfoMap = userInfos.reduce((map, user) => {
       if (user !== null) {
         map.set(user.externalId, user);
@@ -517,13 +544,10 @@ export const getBannedUsers = authQuery({
     return bannedUsers.reduce(
       (accumulator, bannedUser) => {
         const userInfo = userInfoMap.get(bannedUser.userId);
-        if (!userInfo) {
-          return accumulator;
-        }
         accumulator.push({
           ...bannedUser,
-          email: userInfo.email,
-          name: userInfo.name,
+          email: userInfo?.email,
+          name: userInfo?.name || 'Guest user',
         });
         return accumulator;
       },
@@ -538,12 +562,14 @@ export const revokeBan = authMutation({
   args: {
     roomId: v.id('rooms'),
     userId: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const currentUserId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== currentUserId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can revoke bans',
@@ -572,14 +598,16 @@ export const setRoomPassword = authMutation({
   args: {
     roomId: v.id('rooms'),
     password: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const hash = await hashPassword(args.password);
 
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can set a password',
@@ -595,12 +623,14 @@ export const setRoomPassword = authMutation({
 export const resetRoomPassword = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can reset the password',

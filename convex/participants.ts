@@ -5,14 +5,19 @@ import {
   assertRoomExists,
   authMutation,
   ensureUniqueDisplayName,
+  requireSessionToken,
+  sessionTokenValidator,
+  upsertGuestUser,
 } from './helpers';
 
 export const changeDisplayName = authMutation({
   args: {
     displayName: v.string(),
     participantId: v.id('participants'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
@@ -22,7 +27,7 @@ export const changeDisplayName = authMutation({
       });
     }
 
-    if (participant.userId !== ctx.userIdentity.userId) {
+    if (participant.userId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Forbidden',
@@ -39,6 +44,11 @@ export const changeDisplayName = authMutation({
       userName: args.displayName,
     });
 
+    await upsertGuestUser(ctx, {
+      userId,
+      name: args.displayName,
+    });
+
     return args.displayName;
   },
 });
@@ -46,9 +56,11 @@ export const changeDisplayName = authMutation({
 export const removeParticipantFromRoom = authMutation({
   args: {
     participantId: v.id('participants'),
+    sessionToken: sessionTokenValidator,
   },
 
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
@@ -62,7 +74,7 @@ export const removeParticipantFromRoom = authMutation({
 
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can remove participants',
@@ -77,8 +89,10 @@ export const modifyParticipantRole = authMutation({
   args: {
     participantId: v.id('participants'),
     role: v.union(v.literal('participant'), v.literal('moderator')),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const participant = await ctx.db.get(args.participantId);
 
     if (!participant) {
@@ -92,7 +106,7 @@ export const modifyParticipantRole = authMutation({
 
     assertRoomExists(room);
 
-    if (room.ownerId !== ctx.userIdentity.userId) {
+    if (room.ownerId !== userId) {
       throw new DomainError({
         code: DOMAIN_ERROR_CODES.AUTH.FORBIDDEN,
         message: 'Only the room owner can modify participant roles',

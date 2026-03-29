@@ -1,10 +1,10 @@
-import { useUser } from '@clerk/nextjs';
 import { useMutation } from 'convex/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -34,7 +34,7 @@ export const DeleteRoomDialog = ({
   const roomDetails = useRoomDetails();
   const deleteRoom = useMutation(api.rooms.deleteRoom);
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useGuestSession();
 
   if (!roomDetails || user?.id !== roomDetails.room.ownerId) {
     return null;
@@ -47,7 +47,10 @@ export const DeleteRoomDialog = ({
   const handleDeleteRoom = async () => {
     setIsDeleting(true);
     try {
-      await deleteRoom({ roomId: roomDetails.room._id });
+      await deleteRoom({
+        roomId: roomDetails.room._id,
+        sessionToken: user?.id || '',
+      });
       router.push(ROUTES.HOME);
       showSuccessToast('Room deleted successfully!');
       onOpenChange(false);
@@ -55,7 +58,7 @@ export const DeleteRoomDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

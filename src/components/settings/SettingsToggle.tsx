@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Label } from '@/src/components/ui/label';
 import { showErrorToast } from '@/src/components/ui/sonner';
 import { Switch } from '@/src/components/ui/switch';
@@ -36,17 +37,19 @@ export const SettingsToggle = ({
   roomCode,
   helperText,
 }: SettingsToggleProps) => {
+  const { user } = useGuestSession();
   const router = useRouter();
   const updateRoomSettings = useMutation(
     api.roomSettings.updateRoomSettings
   ).withOptimisticUpdate((localStore, args) => {
     const current = localStore.getQuery(api.rooms.getRoomWithDetailsByCode, {
       roomCode,
+      sessionToken: user?.id || '',
     });
     if (current?.roomSettings) {
       localStore.setQuery(
         api.rooms.getRoomWithDetailsByCode,
-        { roomCode },
+        { roomCode, sessionToken: user?.id || '' },
         {
           ...current,
           roomSettings: {
@@ -62,12 +65,13 @@ export const SettingsToggle = ({
       await updateRoomSettings({
         roomSettingId,
         [settingKey]: isChecked,
+        sessionToken: user?.id || '',
       });
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

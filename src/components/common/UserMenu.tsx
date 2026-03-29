@@ -1,7 +1,7 @@
 'use client';
-import { SignOutButton, useUser } from '@clerk/nextjs';
-import { LogOutIcon } from 'lucide-react';
-
+import { RefreshCwIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,23 +12,30 @@ import {
 } from '@/src/components/ui/dropdown-menu';
 
 export const UserMenu = () => {
-  const { user } = useUser();
+  const { user, resetSession } = useGuestSession();
+  const router = useRouter();
+
   if (!user) {
     return null;
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger></DropdownMenuTrigger>
+      <DropdownMenuTrigger className='rounded-md border px-3 py-2 text-sm font-medium'>
+        {user.name}
+      </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>{user.username}</DropdownMenuLabel>
+        <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <SignOutButton>
-          <DropdownMenuItem>
-            <LogOutIcon />
-            Logout
-          </DropdownMenuItem>
-        </SignOutButton>
+        <DropdownMenuItem
+          onClick={() => {
+            resetSession();
+            router.refresh();
+          }}
+        >
+          <RefreshCwIcon />
+          New guest session
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

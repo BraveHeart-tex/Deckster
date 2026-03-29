@@ -1,9 +1,8 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import type { PresenceState } from '@convex-dev/presence/react';
-import { useConvexAuth } from 'convex/react';
 import { useCallback, useMemo, useState } from 'react';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import type { ViewMode } from '@/src/types/view';
 import { PresenceSubscriber } from '../common/PresenceSubscriber';
@@ -24,8 +23,7 @@ export const VotesViewContainer = ({
   >(undefined);
   const roomDetails = useRoomDetails();
 
-  const { user } = useUser();
-  const { isAuthenticated } = useConvexAuth();
+  const { user } = useGuestSession();
 
   const onPresenceStateChange = useCallback(
     (state: PresenceState[] | undefined) => {
@@ -71,8 +69,7 @@ export const VotesViewContainer = ({
 
   return (
     <>
-      {isAuthenticated &&
-        user?.id !== undefined &&
+      {user?.id !== undefined &&
         roomDetails?.roomSettings?.showUserPresence && (
           <PresenceSubscriber
             onStateChange={onPresenceStateChange}

@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
@@ -30,7 +31,6 @@ import {
 import { Input } from '@/src/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 import {
   type SetRoomPasswordInput,
@@ -46,6 +46,7 @@ export const RoomPasswordDialog = ({
   onOpenChange,
   roomId,
 }: RoomPasswordDialogProps) => {
+  const { user } = useGuestSession();
   const [isLoading, setIsLoading] = useState(false);
   const setRoomPassword = useMutation(api.rooms.setRoomPassword);
   const form = useForm<SetRoomPasswordInput>({
@@ -61,14 +62,18 @@ export const RoomPasswordDialog = ({
   const onSubmit = async (values: SetRoomPasswordInput) => {
     setIsLoading(true);
     try {
-      await setRoomPassword({ roomId, password: values.roomPassword });
+      await setRoomPassword({
+        roomId,
+        password: values.roomPassword,
+        sessionToken: user?.id || '',
+      });
       showSuccessToast('Room password set successfully!');
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
       });
     } finally {
