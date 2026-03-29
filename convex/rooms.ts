@@ -56,7 +56,6 @@ export const createRoom = authMutation({
       allowOthersToRevealVotes: true,
       allowOthersToDeleteVotes: true,
       showAverageOfVotes: true,
-      showUserPresence: true,
       showVotingIndicator: true,
       highlightConsensusVotes: true,
     });

@@ -18,7 +18,6 @@ interface UserVotesTableRowProps {
   userName: string;
   participantUserId: string;
   isOwner: boolean;
-  isOnline: boolean;
   shouldHighlightConsensus: boolean;
   role: Doc<'participants'>['role'];
 }
@@ -30,7 +29,6 @@ export const UserVotesTableRow = memo(
     participantUserId,
     participantId,
     isOwner,
-    isOnline,
     shouldHighlightConsensus,
     role,
   }: UserVotesTableRowProps) => {
@@ -47,17 +45,7 @@ export const UserVotesTableRow = memo(
           className={cn('font-medium', isSelf && 'group font-semibold')}
         >
           <div className='flex items-center gap-2'>
-            <UserAvatar
-              userId={participantUserId}
-              username={userName}
-              presence={
-                roomDetails?.roomSettings?.showUserPresence
-                  ? isOnline
-                    ? 'online'
-                    : 'offline'
-                  : undefined
-              }
-            />
+            <UserAvatar userId={participantUserId} username={userName} />
             <div>
               <span className='truncate'>{userName}</span>
               {isSelf && ' (You)'}{' '}

@@ -16,7 +16,6 @@ export default defineSchema({
     roomId: v.id('rooms'),
     allowOthersToRevealVotes: v.boolean(),
     allowOthersToDeleteVotes: v.boolean(),
-    showUserPresence: v.boolean(),
     showAverageOfVotes: v.boolean(),
     deck: v.optional(v.array(v.string())),
     showVotingIndicator: v.optional(v.boolean()),

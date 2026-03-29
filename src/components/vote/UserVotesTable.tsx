@@ -15,7 +15,6 @@ import type { CommonViewProps } from '@/src/types/view';
 interface UserVotesTableProps extends CommonViewProps {}
 
 export const UserVotesTable = ({
-  presenceState,
   roomDetails,
   shouldHighlightConsensus,
   user,
@@ -47,10 +46,6 @@ export const UserVotesTable = ({
                 participantUserId={participant.userId}
                 participantId={participant._id}
                 isOwner={roomDetails.room.ownerId === participant.userId}
-                isOnline={
-                  !!presenceState?.find((p) => p.userId === participant.userId)
-                    ?.online
-                }
                 role={participant.role}
                 shouldHighlightConsensus={shouldHighlightConsensus}
               />
