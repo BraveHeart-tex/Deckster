@@ -47,7 +47,10 @@ import {
 
 export const UserMenu = () => {
   const { user, resetSession, setDisplayName } = useGuestSession();
-  const roomDetails = useRoomDetails();
+  const roomDetails = useRoomDetails({
+    suppressNotParticipantRedirect: true,
+    skipWhileJoining: true,
+  });
   const router = useRouter();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
