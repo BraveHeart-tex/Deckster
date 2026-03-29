@@ -39,10 +39,6 @@ const roomSettingToggles: {
     settingKey: 'allowOthersToRevealVotes',
   },
   {
-    label: 'Show user presence',
-    settingKey: 'showUserPresence',
-  },
-  {
     label: 'Show average of votes',
     settingKey: 'showAverageOfVotes',
   },
@@ -142,8 +138,7 @@ export const SettingsDialog = () => {
           <DialogTitle>Room Settings</DialogTitle>
           <DialogDescription>
             Customize how this room works by choosing who can manage votes,
-            showing averages or user presence, and setting your own voting
-            options.
+            showing averages, and setting your own voting options.
           </DialogDescription>
         </DialogHeader>
         <div className='flex flex-1 flex-col gap-6 overflow-y-auto'>

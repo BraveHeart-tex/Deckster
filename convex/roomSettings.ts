@@ -15,7 +15,6 @@ export const updateRoomSettings = authMutation({
     roomSettingId: v.id('roomSettings'),
     allowOthersToRevealVotes: v.optional(v.boolean()),
     allowOthersToDeleteVotes: v.optional(v.boolean()),
-    showUserPresence: v.optional(v.boolean()),
     showAverageOfVotes: v.optional(v.boolean()),
     showVotingIndicator: v.optional(v.boolean()),
     highlightConsensusVotes: v.optional(v.boolean()),

@@ -114,7 +114,7 @@ export const VoteProgressBar = memo(
               )
             : null}
         </div>
-        {votesRevealed ? (
+        {votesRevealed && percentage > 0 ? (
           <div className='text-sm text-muted-foreground'>
             {percentage.toFixed(0)}%
           </div>

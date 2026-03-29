@@ -6,7 +6,6 @@ import type { User } from '@/src/types/user';
 export interface RoomSettings {
   allowOthersToRevealVotes?: boolean;
   allowOthersToDeleteVotes?: boolean;
-  showUserPresence?: boolean;
   showAverageOfVotes?: boolean;
 }
 

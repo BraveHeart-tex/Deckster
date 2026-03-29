@@ -25,7 +25,6 @@
   "dependencies": {
     "@clerk/backend": "2.6.0",
     "@clerk/nextjs": "6.23.3",
-    "@convex-dev/presence": "0.1.5",
     "@hookform/resolvers": "5.1.1",
     "@radix-ui/react-alert-dialog": "1.1.14",
     "@radix-ui/react-avatar": "1.1.10",

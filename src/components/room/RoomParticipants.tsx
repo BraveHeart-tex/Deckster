@@ -1,4 +1,5 @@
 'use client';
+
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import { UserAvatar } from '../common/UserAvatar';
 
@@ -6,19 +7,20 @@ export const RoomParticipants = () => {
   const roomDetails = useRoomDetails();
 
   return (
-    <div className='flex flex-wrap gap-2'>
+    <div className='flex flex-wrap justify-center gap-5'>
       {roomDetails?.participants.map((participant) => (
         <div
           key={participant._id}
-          className='flex flex-col items-center justify-center gap-2'
+          className='flex min-w-28 flex-col items-center justify-center gap-2'
         >
           <UserAvatar
             userId={participant.userId}
             username={participant.userName}
-            presence={'online'}
-            className='size-11'
+            hasVoted={!!participant.vote}
+            role={participant.isOwner ? 'owner' : participant.role}
+            className='size-12'
           />
-          <span className='max-w-28 text-center text-sm prose prose-sm prose-neutral font-semibold overflow-hidden truncate'>
+          <span className='max-w-28 truncate text-center text-sm font-semibold'>
             {participant.userName}
           </span>
         </div>

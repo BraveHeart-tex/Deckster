@@ -1,11 +1,9 @@
 'use client';
 
-import type { PresenceState } from '@convex-dev/presence/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { useRoomDetails } from '@/src/hooks/useRoomDetails';
 import type { ViewMode } from '@/src/types/view';
-import { PresenceSubscriber } from '../common/PresenceSubscriber';
 import { UserVotesChart } from '../vote/UserVotesChart';
 import { UserVotesTable } from '../vote/UserVotesTable';
 
@@ -15,22 +13,12 @@ interface ViewContainerProps {
 }
 
 export const VotesViewContainer = ({
-  roomCode,
+  roomCode: _roomCode,
   viewMode,
 }: ViewContainerProps) => {
-  const [presenceState, setPresenceState] = useState<
-    PresenceState[] | undefined
-  >(undefined);
   const roomDetails = useRoomDetails();
 
   const { user } = useGuestSession();
-
-  const onPresenceStateChange = useCallback(
-    (state: PresenceState[] | undefined) => {
-      setPresenceState(state);
-    },
-    []
-  );
 
   const shouldHighlightConsensus: boolean = useMemo(() => {
     if (
@@ -69,17 +57,8 @@ export const VotesViewContainer = ({
 
   return (
     <>
-      {user?.id !== undefined &&
-        roomDetails?.roomSettings?.showUserPresence && (
-          <PresenceSubscriber
-            onStateChange={onPresenceStateChange}
-            roomCode={roomCode}
-            userId={user.id}
-          />
-        )}
       {viewMode === 'table' && (
         <UserVotesTable
-          presenceState={presenceState}
           roomDetails={roomDetails}
           shouldHighlightConsensus={shouldHighlightConsensus}
           user={user}
@@ -87,7 +66,6 @@ export const VotesViewContainer = ({
       )}
       {viewMode === 'chart' && (
         <UserVotesChart
-          presenceState={presenceState}
           roomDetails={roomDetails}
           shouldHighlightConsensus={shouldHighlightConsensus}
           user={user}
