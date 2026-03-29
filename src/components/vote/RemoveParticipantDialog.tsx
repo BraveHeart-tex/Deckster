@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,7 +19,6 @@ import {
 import { Button } from '@/src/components/ui/button';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface RemoveParticipantDialogProps extends CommonDialogProps {
@@ -32,6 +32,7 @@ export const RemoveParticipantDialog = ({
   userName,
   participantId,
 }: RemoveParticipantDialogProps) => {
+  const { user } = useGuestSession();
   const [isRemoving, setIsRemoving] = useState(false);
   const removeParticipant = useMutation(
     api.participants.removeParticipantFromRoom
@@ -43,6 +44,7 @@ export const RemoveParticipantDialog = ({
     try {
       await removeParticipant({
         participantId,
+        sessionToken: user?.id || '',
       });
       showSuccessToast('Participant removed successfully!');
       onOpenChange(false);
@@ -50,7 +52,7 @@ export const RemoveParticipantDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
       });
     } finally {

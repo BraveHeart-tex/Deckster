@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,7 +18,6 @@ import {
 import { Button } from '@/src/components/ui/button';
 import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
 import { handleDomainError } from '@/src/helpers/handleDomainError';
-import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 
 interface ModifyRoleDialogProps extends CommonDialogProps {
@@ -33,6 +33,7 @@ export const ModifyRoleDialog = ({
   currentRole,
   userName,
 }: ModifyRoleDialogProps) => {
+  const { user } = useGuestSession();
   const [isModifyingRole, setIsModifyingRole] = useState(false);
   const isPromotion = currentRole === 'participant';
   const modifyParticipantRole = useMutation(
@@ -47,6 +48,7 @@ export const ModifyRoleDialog = ({
       await modifyParticipantRole({
         participantId,
         role: isPromotion ? 'moderator' : 'participant',
+        sessionToken: user?.id || '',
       });
       showSuccessToast(
         isPromotion
@@ -58,7 +60,7 @@ export const ModifyRoleDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.AUTH.FORBIDDEN]: (error) => {
           showErrorToast(error.data.message);

@@ -1,13 +1,7 @@
-import { SignIn } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 
 const SignInPage = () => {
-  return (
-    <div className='bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10'>
-      <div className='w-full max-w-sm'>
-        <SignIn />
-      </div>
-    </div>
-  );
+  redirect('/');
 };
 
 export default SignInPage;

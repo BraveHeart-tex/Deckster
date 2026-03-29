@@ -1,9 +1,9 @@
 'use client';
-import { useUser } from '@clerk/nextjs';
 import { CrownIcon, ShieldUserIcon } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { UserAvatar } from '@/src/components/common/UserAvatar';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { ChangeDisplaynameDialog } from '@/src/components/room/ChangeDisplaynameDialog';
 import { Badge } from '@/src/components/ui/badge';
 import { TableCell, TableRow } from '@/src/components/ui/table';
@@ -35,7 +35,7 @@ export const UserVotesTableRow = memo(
     role,
   }: UserVotesTableRowProps) => {
     const roomDetails = useRoomDetails();
-    const { user } = useUser();
+    const { user } = useGuestSession();
 
     const isSelf = useMemo(() => {
       return user?.id && participantUserId && user.id === participantUserId;

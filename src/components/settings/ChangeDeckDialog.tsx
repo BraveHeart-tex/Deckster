@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { api } from '@/convex/_generated/api';
 import { areArraysEqualUnordered } from '@/shared/areArraysEqualUnordered';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { ScrollablePresetButtons } from '@/src/components/settings/ScrollablePresetButtons';
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { Button } from '@/src/components/ui/button';
@@ -36,6 +37,7 @@ export const ChangeDeckDialog = ({
   isOpen,
   onOpenChange,
 }: CommonDialogProps) => {
+  const { user } = useGuestSession();
   const roomDetails = useRoomDetails();
   const [draftDeck, setDraftDeck] = useState<string[]>(
     roomDetails?.roomSettings?.deck || DEFAULT_DECK
@@ -96,6 +98,7 @@ export const ChangeDeckDialog = ({
         roomId: roomDetails.room._id,
         roomSettingId: roomDetails.roomSettings._id,
         newDeck: draftDeck,
+        sessionToken: user?.id || '',
       });
       showSuccessToast('Deck updated successfully');
       onOpenChange(false);
@@ -103,7 +106,7 @@ export const ChangeDeckDialog = ({
       handleDomainError(error, {
         [DOMAIN_ERROR_CODES.AUTH.UNAUTHORIZED]: (error) => {
           showErrorToast(error.data.message);
-          router.push(ROUTES.SIGN_IN);
+          router.refresh();
         },
         [DOMAIN_ERROR_CODES.ROOM.NOT_FOUND]: (error) => {
           showErrorToast(error.data.message);

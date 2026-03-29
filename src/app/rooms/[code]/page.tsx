@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
@@ -25,11 +24,6 @@ export async function generateMetadata({
 
 const RoomPage = async ({ params }: RoomPageProps) => {
   const viewMode = await getViewModeCookie();
-  const { isAuthenticated } = await auth();
-
-  if (!isAuthenticated) {
-    redirect(ROUTES.SIGN_IN);
-  }
 
   if (!isValidRoomCode((await params).code)) {
     redirect(ROUTES.HOME);

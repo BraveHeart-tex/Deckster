@@ -2,23 +2,28 @@ import { v } from 'convex/values';
 
 import { DOMAIN_ERROR_CODES, DomainError } from '../shared/domainErrorCodes';
 import { api } from './_generated/api';
-import { assertRoomExists, authMutation } from './helpers';
+import {
+  assertRoomExists,
+  authMutation,
+  requireSessionToken,
+  sessionTokenValidator,
+} from './helpers';
 
 export const castVote = authMutation({
   args: {
     roomId: v.id('rooms'),
     value: v.string(),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q
-          .eq('roomId', args.roomId)
-          .eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', args.roomId).eq('userId', userId)
       )
       .unique();
 
@@ -32,9 +37,7 @@ export const castVote = authMutation({
     const existingVote = await ctx.db
       .query('votes')
       .withIndex('by_room_and_user', (q) =>
-        q
-          .eq('roomId', args.roomId)
-          .eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', args.roomId).eq('userId', userId)
       )
       .unique();
 
@@ -45,7 +48,7 @@ export const castVote = authMutation({
     } else {
       await ctx.db.insert('votes', {
         roomId: args.roomId,
-        userId: ctx.userIdentity.userId as string,
+        userId,
         value: args.value,
       });
     }
@@ -88,8 +91,10 @@ export const castVote = authMutation({
 export const deleteVotes = authMutation({
   args: {
     roomId: v.id('rooms'),
+    sessionToken: sessionTokenValidator,
   },
   handler: async (ctx, args) => {
+    const userId = requireSessionToken(args.sessionToken);
     const room = await ctx.db.get(args.roomId);
     assertRoomExists(room);
 
@@ -97,15 +102,14 @@ export const deleteVotes = authMutation({
       api.roomSettings.getRoomSettingsByRoomId,
       {
         roomId: room._id,
+        sessionToken: userId,
       }
     );
 
     const participant = await ctx.db
       .query('participants')
       .withIndex('by_room_and_user', (q) =>
-        q
-          .eq('roomId', args.roomId)
-          .eq('userId', ctx.userIdentity.userId as string)
+        q.eq('roomId', args.roomId).eq('userId', userId)
       )
       .unique();
 
@@ -113,7 +117,7 @@ export const deleteVotes = authMutation({
 
     if (
       !roomSettings.allowOthersToDeleteVotes &&
-      room.ownerId !== ctx.userIdentity.userId &&
+      room.ownerId !== userId &&
       !isModerator
     ) {
       throw new DomainError({
