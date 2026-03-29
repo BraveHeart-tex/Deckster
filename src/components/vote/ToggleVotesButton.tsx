@@ -3,6 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { useMutation } from 'convex/react';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 import { api } from '@/convex/_generated/api';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
@@ -16,6 +17,13 @@ export const ToggleVotesButton = () => {
   const roomDetails = useRoomDetails();
   const { user } = useUser();
   const router = useRouter();
+  const roomHasVotes = useMemo(() => {
+    if (!roomDetails) {
+      return false;
+    }
+
+    return roomDetails.participants.some((participant) => participant.vote);
+  }, [roomDetails]);
 
   const toggleVotesRevealed = useMutation(
     api.rooms.toggleVotesRevealed
@@ -54,6 +62,10 @@ export const ToggleVotesButton = () => {
       return;
     }
 
+    if (!roomDetails.room.votesRevealed && !roomHasVotes) {
+      return;
+    }
+
     try {
       await toggleVotesRevealed({
         roomId: roomDetails.room._id,
@@ -68,6 +80,9 @@ export const ToggleVotesButton = () => {
           showErrorToast(error.data.message);
           router.push(ROUTES.HOME);
         },
+        [DOMAIN_ERROR_CODES.ROOM.NO_VOTES_TO_REVEAL]: (error) => {
+          showErrorToast(error.data.message);
+        },
       });
     }
   };
@@ -75,6 +90,7 @@ export const ToggleVotesButton = () => {
   return (
     <Button
       onClick={handleRevealVotes}
+      disabled={!roomDetails?.room.votesRevealed && !roomHasVotes}
       className='min-w-[110px]'
       aria-label={roomDetails?.room.votesRevealed ? 'Hide votes' : 'Show votes'}
     >

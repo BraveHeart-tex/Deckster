@@ -300,6 +300,20 @@ export const toggleVotesRevealed = authMutation({
       });
     }
 
+    if (!room.votesRevealed) {
+      const votes = await ctx.db
+        .query('votes')
+        .withIndex('by_room', (q) => q.eq('roomId', args.roomId))
+        .take(1);
+
+      if (votes.length === 0) {
+        throw new DomainError({
+          code: DOMAIN_ERROR_CODES.ROOM.NO_VOTES_TO_REVEAL,
+          message: 'There are no votes to reveal yet',
+        });
+      }
+    }
+
     await ctx.db.patch(args.roomId, {
       votesRevealed: !room.votesRevealed,
     });
