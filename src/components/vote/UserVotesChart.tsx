@@ -62,7 +62,7 @@ export const UserVotesChart = ({
   const votesRevealed = roomDetails?.room.votesRevealed;
 
   return (
-    <div className='flex flex-col gap-2 justify-center items-center w-full'>
+    <div className='flex flex-col gap-2 justify-center items-center max-w-xl w-full'>
       <fieldset className='flex flex-col gap-2 justify-center items-center w-full'>
         {(roomDetails?.roomSettings?.deck || DEFAULT_DECK).map(
           (option, index) => (
