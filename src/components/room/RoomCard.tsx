@@ -1,8 +1,8 @@
 'use client';
 
-import { CheckIcon, CopyIcon } from 'lucide-react';
-import { useState } from 'react';
+import { CopyIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import type { Doc } from '@/convex/_generated/dataModel';
+import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import { Button } from '@/src/components/ui/button';
 import {
   Card,
@@ -11,7 +11,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/src/components/ui/card';
-import { showErrorToast } from '@/src/components/ui/sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/src/components/ui/dropdown-menu';
+import { showErrorToast, showSuccessToast } from '@/src/components/ui/sonner';
+import { MODAL_TYPES, useModalStore } from '@/src/store/modal';
 
 interface RoomCardProps {
   room: Doc<'rooms'>;
@@ -19,13 +26,14 @@ interface RoomCardProps {
 }
 
 export const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
-  const [copied, setCopied] = useState(false);
+  const { user } = useGuestSession();
+  const openModal = useModalStore((state) => state.openModal);
+  const isOwner = user?.id === room.ownerId;
 
-  const handleCopy = async () => {
+  const handleCopyRoomCode = async () => {
     try {
       await navigator.clipboard.writeText(room.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      showSuccessToast('Room code copied to clipboard!');
     } catch (error) {
       console.error('Failed to copy room code:', error);
       showErrorToast('Failed to copy room code');
@@ -33,28 +41,54 @@ export const RoomCard = ({ onJoinRoom, room }: RoomCardProps) => {
   };
 
   return (
-    <Card className='flex flex-col justify-between transition-shadow hover:shadow-lg'>
-      <CardHeader className='flex items-center justify-between gap-4'>
-        <CardTitle className='text-xl'>{room.name}</CardTitle>
-
-        <div className='flex items-center justify-between gap-2'>
-          <CardDescription className='font-mono font-medium text-sm tracking-widest rounded-md bg-secondary p-2'>
+    <Card className='group flex flex-col justify-between transition-shadow hover:shadow-lg'>
+      <CardHeader className='flex items-start justify-between gap-4'>
+        <div className='min-w-0 flex-1'>
+          <CardTitle className='line-clamp-2 text-xl leading-snug'>
+            {room.name}
+          </CardTitle>
+          <CardDescription className='mt-2 font-mono text-xs tracking-[0.24em] uppercase'>
             {room.code}
           </CardDescription>
-
-          <Button
-            variant='ghost'
-            size='icon'
-            onClick={handleCopy}
-            aria-label='Copy room code'
-          >
-            {copied ? (
-              <CheckIcon className='h-4 w-4 text-success' />
-            ) : (
-              <CopyIcon className='h-4 w-4' />
-            )}
-          </Button>
         </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant='ghost'
+              size='icon'
+              aria-label={`More actions for ${room.name}`}
+              className='shrink-0 opacity-70 transition-opacity group-hover:opacity-100'
+            >
+              <MoreHorizontalIcon className='h-4 w-4' />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end'>
+            <DropdownMenuItem onClick={handleCopyRoomCode}>
+              <CopyIcon className='h-4 w-4' />
+              Copy Room Code
+            </DropdownMenuItem>
+            {isOwner ? (
+              <DropdownMenuItem
+                variant='destructive'
+                onClick={() =>
+                  openModal({
+                    type: MODAL_TYPES.DELETE_ROOM,
+                    payload: {
+                      roomId: room._id,
+                      roomCode: room.code,
+                      roomName: room.name,
+                      ownerId: room.ownerId,
+                    },
+                  })
+                }
+              >
+                <Trash2Icon className='h-4 w-4' />
+                Delete Room
+              </DropdownMenuItem>
+            ) : null}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
 
       <CardFooter className='justify-end'>

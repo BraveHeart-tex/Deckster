@@ -43,7 +43,9 @@ export const ModalHost = () => {
     }
 
     case MODAL_TYPES.DELETE_ROOM: {
-      return <DeleteRoomDialog isOpen onOpenChange={closeModal} />;
+      return (
+        <DeleteRoomDialog isOpen onOpenChange={closeModal} {...modal.payload} />
+      );
     }
 
     case MODAL_TYPES.LOCK_OR_UNLOCK_ROOM: {

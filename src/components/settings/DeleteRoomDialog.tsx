@@ -3,6 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import { DOMAIN_ERROR_CODES } from '@/shared/domainErrorCodes';
 import { useGuestSession } from '@/src/components/GuestSessionProvider';
 import {
@@ -23,20 +24,42 @@ import { ROUTES } from '@/src/lib/routes';
 import type { CommonDialogProps } from '@/src/types/dialog';
 import type { RoomPageParameters } from '@/src/types/room';
 
+interface DeleteRoomDialogProps extends CommonDialogProps {
+  roomId?: Id<'rooms'>;
+  roomCode?: string;
+  roomName?: string;
+  ownerId?: string;
+}
+
 export const DeleteRoomDialog = ({
   isOpen,
   onOpenChange,
-}: CommonDialogProps) => {
+  roomId: roomIdProp,
+  roomCode: roomCodeProp,
+  roomName,
+  ownerId,
+}: DeleteRoomDialogProps) => {
   const [enteredCode, setEnteredCode] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const roomCode = useParams<RoomPageParameters>().code;
+  const routeRoomCode = useParams<RoomPageParameters>().code;
   const roomDetails = useRoomDetails();
   const deleteRoom = useMutation(api.rooms.deleteRoom);
   const router = useRouter();
   const { user } = useGuestSession();
 
-  if (!roomDetails || user?.id !== roomDetails.room.ownerId) {
+  const targetRoomId = roomIdProp || roomDetails?.room._id;
+  const targetRoomCode =
+    roomCodeProp || roomDetails?.room.code || routeRoomCode;
+  const targetRoomName = roomName || roomDetails?.room.name;
+  const targetOwnerId = ownerId || roomDetails?.room.ownerId;
+  const isDeletingCurrentRoom = routeRoomCode === targetRoomCode;
+
+  if (
+    !targetRoomId ||
+    !targetRoomCode ||
+    (targetOwnerId && user?.id !== targetOwnerId)
+  ) {
     return null;
   }
 
@@ -48,11 +71,15 @@ export const DeleteRoomDialog = ({
     setIsDeleting(true);
     try {
       await deleteRoom({
-        roomId: roomDetails.room._id,
-        sessionToken: user?.id || '',
+        roomId: targetRoomId,
+        sessionToken: targetOwnerId as string,
       });
-      router.push(ROUTES.HOME);
       showSuccessToast('Room deleted successfully!');
+      if (isDeletingCurrentRoom) {
+        router.push(ROUTES.HOME);
+      } else {
+        router.refresh();
+      }
       onOpenChange(false);
     } catch (error) {
       handleDomainError(error, {
@@ -71,7 +98,7 @@ export const DeleteRoomDialog = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && enteredCode === roomCode) {
+    if (event.key === 'Enter' && enteredCode === targetRoomCode) {
       handleDeleteRoom();
     }
   };
@@ -88,7 +115,8 @@ export const DeleteRoomDialog = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to delete this room?
+            Are you sure you want to delete this room
+            {targetRoomName ? `, ${targetRoomName}` : ''}?
           </AlertDialogTitle>
           <AlertDialogDescription>
             This action is permanent and cannot be undone.
@@ -98,7 +126,7 @@ export const DeleteRoomDialog = ({
           <p className='text-muted-foreground text-sm'>
             To confirm, please type the room code:
             <span className='text-foreground bg-muted ml-2 inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-xs font-medium tracking-wide'>
-              {roomCode}
+              {targetRoomCode}
             </span>
           </p>
           <Input
@@ -107,7 +135,7 @@ export const DeleteRoomDialog = ({
             className='w-full'
             value={enteredCode}
             onChange={handleRoomCodeChange}
-            maxLength={roomCode.length}
+            maxLength={targetRoomCode.length}
             disabled={isDeleting}
             onKeyDown={handleKeyDown}
             autoComplete='off'
@@ -116,7 +144,7 @@ export const DeleteRoomDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            disabled={enteredCode !== roomCode || isDeleting}
+            disabled={enteredCode !== targetRoomCode || isDeleting}
             variant='destructive'
             onClick={handleDeleteRoom}
             isLoading={isDeleting}

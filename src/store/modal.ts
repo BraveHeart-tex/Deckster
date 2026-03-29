@@ -30,6 +30,12 @@ export type Modal =
     }
   | {
       type: typeof MODAL_TYPES.DELETE_ROOM;
+      payload?: {
+        roomId: Id<'rooms'>;
+        roomCode: string;
+        roomName: string;
+        ownerId: string;
+      };
     }
   | {
       type: typeof MODAL_TYPES.LOCK_OR_UNLOCK_ROOM;
