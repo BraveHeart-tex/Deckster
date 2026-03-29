@@ -1,17 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/src/components/ui/tooltip';
 import { DEFAULT_DECK } from '@/src/constants/vote.constants';
 import { useVote } from '@/src/hooks/useVote';
 import { cn } from '@/src/lib/utils';
 import type { CommonViewProps } from '@/src/types/view';
 import { VoteCard } from './VoteCard';
+import { VoteProgressBar } from './VoteProgressBar';
 
 interface UserVotesChartProps extends CommonViewProps {}
 
@@ -67,14 +62,21 @@ export const UserVotesChart = ({
   const votesRevealed = roomDetails?.room.votesRevealed;
 
   return (
-    <TooltipProvider>
-      <div className='flex flex-col gap-2 justify-center items-center w-full'>
-        <fieldset className='flex flex-col gap-2 justify-center items-center w-full'>
-          {(roomDetails?.roomSettings?.deck || DEFAULT_DECK).map(
-            (option, index) => (
+    <div className='flex flex-col gap-2 justify-center items-center w-full'>
+      <fieldset className='flex flex-col gap-2 justify-center items-center w-full'>
+        {(roomDetails?.roomSettings?.deck || DEFAULT_DECK).map(
+          (option, index) => (
+            <div
+              key={`${index}--${option}`}
+              className='relative w-full min-h-11'
+            >
               <div
-                key={`${index}--${option}`}
-                className='flex gap-2 items-center w-full transition-all duration-500 ease-in-out'
+                className={cn(
+                  'absolute top-1/2 z-10 -translate-y-1/2 transition-all duration-500 ease-in-out',
+                  votesRevealed
+                    ? 'left-0 translate-x-0'
+                    : 'left-1/2 -translate-x-1/2'
+                )}
               >
                 <VoteCard
                   option={option}
@@ -82,55 +84,26 @@ export const UserVotesChart = ({
                   onClick={vote}
                   size='small'
                 />
-                <div className='overflow-hidden w-full'>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={cn(
-                          'space-y-2 min-w-0 transition-all duration-500 ease-in-out',
-                          votesRevealed && voteToParticipantNames[option]
-                            ? 'opacity-100'
-                            : 'opacity-0'
-                        )}
-                      >
-                        <div className='h-3 w-full overflow-hidden rounded-md'>
-                          <div
-                            className={cn(
-                              'h-full rounded-md transition-all duration-500 ease-in-out',
-                              shouldHighlightConsensus
-                                ? 'bg-success'
-                                : 'bg-primary'
-                            )}
-                            style={{
-                              width: `${votePercentages[option] ?? 0}%`,
-                            }}
-                          />
-                        </div>
-                        <div
-                          className={cn(
-                            'text-sm text-muted-foreground transition-all duration-500 ease-in-out',
-                            votePercentages[option] !== undefined
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        >
-                          {(votePercentages[option] ?? 0)?.toFixed(0)}%
-                        </div>
-                      </div>
-                    </TooltipTrigger>
-                    {voteToParticipantNames[option] !== undefined &&
-                      votesRevealed && (
-                        <TooltipContent>
-                          {voteToParticipantNames[option]?.join(', ')}
-                        </TooltipContent>
-                      )}
-                  </Tooltip>
-                </div>
               </div>
-            )
-          )}
-        </fieldset>
-      </div>
-    </TooltipProvider>
+              <div
+                className={cn(
+                  'w-full min-w-0 overflow-hidden transition-all duration-600 ease-in-out',
+                  votesRevealed
+                    ? 'pl-13 opacity-100'
+                    : 'pl-0 opacity-0 pointer-events-none duration-300'
+                )}
+              >
+                <VoteProgressBar
+                  participantNames={voteToParticipantNames[option]}
+                  percentage={votePercentages[option] ?? 0}
+                  shouldHighlightConsensus={shouldHighlightConsensus}
+                  votesRevealed={votesRevealed}
+                />
+              </div>
+            </div>
+          )
+        )}
+      </fieldset>
+    </div>
   );
 };
